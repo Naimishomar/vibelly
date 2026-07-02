@@ -1,0 +1,22 @@
+name: Daily Trend Hijacker
+
+on:
+  schedule:
+    - cron: '0 8 * * *' # Runs daily at 8:00 AM UTC
+  workflow_dispatch: # Allows manual trigger
+
+jobs:
+  trigger-build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v3
+
+      - name: Trigger Vercel Rebuild via Dummy Commit
+        run: |
+          echo "Last Trend Hijack: $(date)" > .github/trend-trigger.txt
+          git config --global user.name "Trend Hijacker Bot"
+          git config --global user.email "bot@vibelly.app"
+          git add .github/trend-trigger.txt
+          git commit -m "chore: auto-trigger Vercel build for daily trends" || echo "No changes to commit"
+          git push origin main
