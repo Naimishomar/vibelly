@@ -98,6 +98,8 @@ let indexXml = `<?xml version="1.0" encoding="UTF-8"?>\n<sitemapindex xmlns="htt
 for (const file of sitemapFiles) {
   indexXml += `  <sitemap>\n    <loc>${siteUrl}/${file}</loc>\n  </sitemap>\n`;
 }
+// Add the dynamic trend hijacker sitemap
+indexXml += `  <sitemap>\n    <loc>${siteUrl}/sitemap-trends.xml</loc>\n  </sitemap>\n`;
 indexXml += `</sitemapindex>`;
 
 // Overwrite the main sitemap.xml to act as the index
