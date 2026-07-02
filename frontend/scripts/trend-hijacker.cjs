@@ -66,6 +66,54 @@ async function hijackTrends() {
     fs.writeFileSync(path.join(publicDir, 'sitemap-trends.xml'), sitemapXml);
     console.log('✅ Saved sitemap-trends.xml successfully!');
     
+    // --- GOOGLE INDEXING API PING ---
+    const { google } = require('googleapis');
+    let auth;
+    
+    const localKeyPath = path.join(__dirname, '..', 'google-key.json');
+    if (fs.existsSync(localKeyPath)) {
+      auth = new google.auth.GoogleAuth({
+        keyFile: localKeyPath,
+        scopes: ['https://www.googleapis.com/auth/indexing'],
+      });
+    } else if (process.env.GOOGLE_APPLICATION_CREDENTIALS_JSON) {
+      const keys = JSON.parse(process.env.GOOGLE_APPLICATION_CREDENTIALS_JSON);
+      auth = new google.auth.GoogleAuth({
+        credentials: {
+          client_email: keys.client_email,
+          private_key: keys.private_key,
+        },
+        scopes: ['https://www.googleapis.com/auth/indexing'],
+      });
+    }
+
+    if (auth) {
+      console.log('🚀 Authenticating with Google Indexing API to force instant crawl...');
+      const client = await auth.getClient();
+      const indexing = google.indexing({ version: 'v3', auth: client });
+      
+      let successCount = 0;
+      // Google limits default quotas, so we'll just ping the top 50 hottest trends to be safe
+      const urlsToPing = uniqueUrls.slice(0, 50);
+      
+      for (const url of urlsToPing) {
+        try {
+          await indexing.urlNotifications.publish({
+            requestBody: { url: url, type: 'URL_UPDATED' },
+          });
+          successCount++;
+        } catch (err) {
+          console.error(`Failed to ping ${url}:`, err.message);
+        }
+        // Small delay to prevent rate limit spikes
+        await new Promise(r => setTimeout(r, 100));
+      }
+      
+      console.log(`✅ Successfully blasted ${successCount} trending URLs to Google Indexing API!`);
+    } else {
+      console.log('⚠️ No Google JSON key found. Skipping Indexing API ping. (Add GOOGLE_APPLICATION_CREDENTIALS_JSON to Vercel to automate this).');
+    }
+    
   } catch (error) {
     console.error('Failed to hijack trends:', error);
   }
