@@ -9,9 +9,6 @@ import BlinkingDotsGrid from '../components/BlinkingDotsGrid';
 import { useAuthStore } from '../store/useAuthStore';
 import LoginModal from '../components/LoginModal';
 import FAQSection from '../components/FAQSection';
-import seoDataRaw from '../data/seoPages.json';
-
-const seoData: Record<string, any> = seoDataRaw;
 
 const features = [
   {
@@ -61,7 +58,7 @@ export default function DynamicSeoPage() {
       .split('-')
       .map(word => word.charAt(0).toUpperCase() + word.slice(1))
       .join(' ');
-      
+
     return {
       title: `${formattedTopic} | Free Random Video Call App & Stranger Chat`,
       h1: `Connect Instantly via ${formattedTopic}`,
@@ -71,23 +68,42 @@ export default function DynamicSeoPage() {
     };
   };
 
-  const pageData = (slug && seoData[slug]) ? seoData[slug] : generateWildcardData(slug || 'random-video-chat');
+  const pageData = generateWildcardData(slug || 'random-video-chat');
 
   // Dynamic content logic
   const h1Words = pageData.h1.split(' ');
   const h1FirstPart = h1Words.slice(0, Math.max(1, h1Words.length - 2)).join(' ');
   const h1SecondPart = h1Words.slice(Math.max(1, h1Words.length - 2)).join(' ');
 
-  const allSlugs = Object.keys(seoData);
   const relatedPages = useMemo(() => {
-    const shuffled = [...allSlugs].sort(() => 0.5 - Math.random());
+    // Generate 12 random related SEO slugs dynamically
+    const seeds = [
+      'random-video-chat', 'omegle-alternative', 'talk-to-strangers', 'anonymous-chat',
+      'video-chat-with-girls', 'free-cam-chat', 'stranger-cam', 'chat-roulette-free',
+      'omegle-unbanned', 'video-call-app', 'chat-with-strangers-online', 'random-cam',
+      'free-video-chat-rooms', 'meet-new-people', 'stranger-video-call', 'live-video-chat',
+      'cam-to-cam-chat', 'anonymous-video-chat', 'chat-random', 'omegle-app'
+    ];
+    const cities = [
+      'new-york', 'london', 'tokyo', 'paris', 'sydney', 'mumbai', 'toronto', 'berlin',
+      'madrid', 'dubai', 'singapore', 'los-angeles', 'chicago', 'houston', 'miami'
+    ];
+
+    const possibleSlugs = [
+      ...seeds,
+      ...seeds.map(s => `${s}-in-${cities[Math.floor(Math.random() * cities.length)]}`),
+      ...seeds.map(s => `${s}-for-introverts`),
+      ...seeds.map(s => `${s}-for-gamers`)
+    ];
+
+    const shuffled = [...possibleSlugs].sort(() => 0.5 - Math.random());
     return shuffled.filter(s => s !== slug).slice(0, 12);
   }, [slug]);
 
   return (
     <div className="min-h-screen bg-[#15171B] text-white flex flex-col font-sans">
-      <SEO 
-        title={pageData.title} 
+      <SEO
+        title={pageData.title}
         description={pageData.desc}
         canonicalUrl={`/${slug}`}
         faqs={[
@@ -119,7 +135,7 @@ export default function DynamicSeoPage() {
             <Zap size={16} className="text-yellow-400" />
             {pageData.tagline}
           </motion.div>
-          
+
           <motion.h1
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -146,14 +162,14 @@ export default function DynamicSeoPage() {
             transition={{ delay: 0.3 }}
             className="flex flex-col sm:flex-row items-center gap-4"
           >
-            <button 
+            <button
               onClick={() => handleProtectedNavigation('/setup/video')}
               className="w-full sm:w-auto px-8 py-4 rounded-xl bg-white text-black font-semibold hover:bg-zinc-200 transition-all flex items-center justify-center gap-2 group cursor-pointer"
             >
               <Video size={20} className="group-hover:scale-110 transition-transform" />
               Video Chat
             </button>
-            <button 
+            <button
               onClick={() => handleProtectedNavigation('/setup/audio')}
               className="w-full sm:w-auto px-8 py-4 rounded-xl bg-zinc-800 text-white font-semibold hover:bg-zinc-700 transition-all flex items-center justify-center gap-2 group cursor-pointer border border-white/10 hover:border-white/20"
             >
@@ -204,9 +220,9 @@ export default function DynamicSeoPage() {
                 <Link
                   key={relatedSlug}
                   to={`/${relatedSlug}`}
-                  className="px-4 py-2 rounded-lg bg-white/5 border border-white/5 hover:border-white/20 hover:bg-white/10 text-zinc-400 hover:text-white transition-all text-sm"
+                  className="px-4 py-2 rounded-lg bg-white/5 border border-white/5 hover:border-white/20 hover:bg-white/10 text-zinc-400 hover:text-white transition-all text-sm capitalize"
                 >
-                  {seoData[relatedSlug].title.split('|')[0].trim()}
+                  {relatedSlug.replace(/-/g, ' ')}
                 </Link>
               ))}
             </div>
