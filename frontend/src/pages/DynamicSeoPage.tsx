@@ -54,16 +54,24 @@ export default function DynamicSeoPage() {
     window.scrollTo(0, 0);
   }, [slug]);
 
-  // If slug is not in our database, redirect to home
-  const pageData = slug && seoData[slug] ? seoData[slug] : null;
+  // If slug is not in our database, generate a Wildcard Page dynamically!
+  const generateWildcardData = (slugStr: string) => {
+    // Convert 'random-video-call-free' to 'Random Video Call Free'
+    const formattedTopic = slugStr
+      .split('-')
+      .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+      .join(' ');
+      
+    return {
+      title: `${formattedTopic} | Free Random Video Call App & Stranger Chat`,
+      h1: `Connect Instantly via ${formattedTopic}`,
+      desc: `Looking for ${formattedTopic}? Join Vibelly, the ultimate free alternative for random video chatting. Instantly connect with strangers worldwide with zero registration.`,
+      tagline: 'Instant Connection',
+      subH1: `Experience the best of ${formattedTopic} with our high-quality video chat.`
+    };
+  };
 
-  useEffect(() => {
-    if (!pageData) {
-      navigate('/', { replace: true });
-    }
-  }, [pageData, navigate]);
-
-  if (!pageData) return null; // Prevent flicker while redirecting
+  const pageData = (slug && seoData[slug]) ? seoData[slug] : generateWildcardData(slug || 'random-video-chat');
 
   // Dynamic content logic
   const h1Words = pageData.h1.split(' ');
