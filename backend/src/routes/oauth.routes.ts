@@ -8,7 +8,7 @@ const router = Router();
 // Helper to generate tokens and redirect
 const handleAuthSuccess = (req: any, res: any) => {
   const user = req.user;
-  const frontendUrl = process.env.NODE_ENV === 'production' ? 'https://vibelly.vercel.app' : (process.env.FRONTEND_URL || 'http://localhost:5173');
+  const frontendUrl = process.env.NODE_ENV === 'production' ? 'https://vibelly.fun' : (process.env.FRONTEND_URL || 'http://localhost:5173');
 
   if (!user) {
     return res.redirect(`${frontendUrl}?error=auth_failed`);

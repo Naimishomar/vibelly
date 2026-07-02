@@ -6,7 +6,7 @@ const router = express.Router();
 
 router.get('/', async (req, res) => {
   try {
-    const frontendUrl = ENV.FRONTEND_URL || 'https://vibelly.vercel.app';
+    const frontendUrl = ENV.FRONTEND_URL || 'https://vibelly.fun';
     const blogs = await Blog.find().select('slug updatedAt').lean();
 
     const staticRoutes = [

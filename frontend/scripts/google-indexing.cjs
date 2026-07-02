@@ -8,7 +8,7 @@ const seoDataPath = path.join(__dirname, '..', 'src', 'data', 'seoPages.json');
 const seoData = JSON.parse(fs.readFileSync(seoDataPath, 'utf8'));
 
 const slugs = Object.keys(seoData);
-const baseUrl = 'https://vibelly.vercel.app';
+const baseUrl = 'https://vibelly.fun';
 
 // Google allows 200 requests per batch and 200 per day by default
 // We will take a random sample of 200 important URLs to push immediately

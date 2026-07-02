@@ -2,7 +2,7 @@ const fs = require('fs');
 const path = require('path');
 
 const publicDir = path.join(__dirname, 'public');
-const siteUrl = 'https://vibelly.vercel.app';
+const siteUrl = 'https://vibelly.fun';
 
 // 20 Base Keywords
 const keywords = [
