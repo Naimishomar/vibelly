@@ -23,7 +23,6 @@ import passport from './config/passport';
 
 import hpp from 'hpp';
 import helmet from 'helmet';
-import mongoSanitize from 'express-mongo-sanitize';
 import rateLimit from 'express-rate-limit';
 
 const app = express();
@@ -43,7 +42,6 @@ const corsOptions = {
 
 // Security Hardening
 app.use(helmet());
-app.use(mongoSanitize());
 app.use(hpp());
 
 // Rate Limiting (500 requests per 10 minutes per IP)
