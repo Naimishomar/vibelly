@@ -33,6 +33,7 @@ const corsOptions = {
   origin: [
     'https://vibelly.fun',
     'https://www.vibelly.fun',
+    'https://vibelly.vercel.app',
     'http://localhost:5173',
     'http://localhost:3000'
   ],
