@@ -17,7 +17,7 @@ export default function Lobby() {
   const [agreed, setAgreed] = useState(false);
   const [targetCountry, setTargetCountry] = useState(() => localStorage.getItem('vibe_target_country') || 'Global');
   const [isCountryDropdownOpen, setIsCountryDropdownOpen] = useState(false);
-  const [targetGender, setTargetGender] = useState(() => localStorage.getItem('vibe_target_gender') || 'Opposite Gender');
+  const [targetGender, setTargetGender] = useState(() => localStorage.getItem('vibe_target_gender') || 'Girl');
   const { user, isAuthenticated, guestAccessEnabled } = useAuthStore();
   
   const COMMON_COUNTRIES = [
@@ -326,8 +326,8 @@ export default function Lobby() {
                 {/* Gender Preference */}
                 <label className="text-sm text-zinc-300 font-medium mb-3 block">Gender Preference</label>
                 <div className="grid grid-cols-3 gap-2">
-                  {['Opposite', 'Same', 'Random'].map((g) => {
-                    const fullGender = g === 'Random' ? 'Random Gender' : `${g} Gender`;
+                  {['Girl', 'Boy', 'Random'].map((g) => {
+                    const fullGender = g === 'Random' ? 'Random Gender' : g;
                     const isSelected = targetGender === fullGender;
                     return (
                       <button

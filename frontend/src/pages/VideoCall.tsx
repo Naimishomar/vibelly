@@ -285,8 +285,8 @@ export default function VideoCall() {
     const genderPrefStr = state?.targetGender;
     
     let targetGender = undefined;
-    if (genderPrefStr === 'Opposite Gender') targetGender = 'opposite';
-    else if (genderPrefStr === 'Same Gender') targetGender = 'same';
+    if (genderPrefStr === 'Girl') targetGender = 'female';
+    else if (genderPrefStr === 'Boy') targetGender = 'male';
     else if (genderPrefStr === 'Random Gender') targetGender = 'random';
 
     const currentUser = useAuthStore.getState().user;

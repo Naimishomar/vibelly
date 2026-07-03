@@ -22,10 +22,10 @@ export const addToQueue = async (socketId: string, userId: string, baseQueueName
   let queuesToCheck: string[] = [];
 
   if (isPremium && targetGender) {
-    if (targetGender === 'opposite' && userGender !== 'unspecified') {
-      queuesToCheck = [`${baseQueueName}:${oppositeGender}`, `${baseQueueName}:unspecified`, `${baseQueueName}:${userGender}`];
-    } else if (targetGender === 'same' && userGender !== 'unspecified') {
-      queuesToCheck = [`${baseQueueName}:${userGender}`, `${baseQueueName}:unspecified`, `${baseQueueName}:${oppositeGender}`];
+    if (targetGender === 'female') {
+      queuesToCheck = [`${baseQueueName}:female`, `${baseQueueName}:unspecified`, `${baseQueueName}:male`];
+    } else if (targetGender === 'male') {
+      queuesToCheck = [`${baseQueueName}:male`, `${baseQueueName}:unspecified`, `${baseQueueName}:female`];
     } else {
       // random gender or unspecified user gender
       queuesToCheck = [`${baseQueueName}:male`, `${baseQueueName}:female`, `${baseQueueName}:unspecified`].sort(() => Math.random() - 0.5);
