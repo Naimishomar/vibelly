@@ -200,15 +200,15 @@ export default function Home() {
         {/* ══════════════════════════════════════════
             SECTION 1 — HERO
         ══════════════════════════════════════════ */}
-        <section className="relative flex flex-col items-center justify-center text-center px-6 py-12 md:py-20 max-w-4xl mx-auto w-full">
+        <section className="relative flex flex-col items-center justify-center text-center px-6 py-8 md:py-10 lg:py-16 max-w-4xl mx-auto w-full">
           <p
-            className="text-[14px] md:text-[15px] tracking-[0.2em] text-zinc-400 font-medium uppercase mb-4"
+            className="text-[14px] md:text-[15px] tracking-[0.2em] text-zinc-400 font-medium uppercase mb-3 mt-4 md:mt-0"
           >
             Random Video &amp; Voice Chat
           </p>
 
           <h1
-            className="text-4xl sm:text-5xl md:text-6xl font-normal tracking-tight leading-[1.1] mb-6"
+            className="text-4xl sm:text-5xl lg:text-6xl font-normal tracking-tight leading-[1.1] mb-4"
             style={{ fontFamily: '"Playfair Display", "Merriweather", "Lora", ui-serif, Georgia, Cambria, "Times New Roman", Times, serif' }}
           >
             The Best Free Omegle Alternative
@@ -217,7 +217,7 @@ export default function Home() {
           </h1>
 
           <p
-            className="text-base sm:text-lg md:text-xl text-zinc-400 mb-8 max-w-2xl leading-relaxed mx-auto"
+            className="text-base sm:text-lg md:text-xl text-zinc-400 mb-6 max-w-2xl leading-relaxed mx-auto"
           >
             Talk to strangers online instantly with our free random video call app. Enjoy 100% anonymous voice chat and HD video with people from around the world. No sign-up required.
           </p>
