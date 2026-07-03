@@ -26,8 +26,14 @@ const httpServer = createServer(app);
 
 // CORS config
 const corsOptions = {
-  origin: '*',
+  origin: [
+    'https://vibelly.fun',
+    'https://www.vibelly.fun',
+    'http://localhost:5173',
+    'http://localhost:3000'
+  ],
   methods: ['GET', 'POST', 'PUT', 'DELETE'],
+  credentials: true,
 };
 
 // Compression middleware (compresses API responses for slow networks)
