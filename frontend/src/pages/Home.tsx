@@ -3,7 +3,7 @@ import { motion } from 'framer-motion';
 import { useState } from 'react';
 import {
   Video, Headphones, ArrowRight, Shield,
-  Zap, MessageSquare, SkipForward, Globe, Check, ChevronDown, Crown, User
+  Zap, SkipForward, Globe, Check, ChevronDown, Crown, User
 } from 'lucide-react';
 import Navbar from '../components/Navbar';
 import SEO from '../components/SEO';
@@ -15,39 +15,6 @@ import { useAuthStore } from '../store/useAuthStore';
 import LoginModal from '../components/LoginModal';
 
 /* ─── Data ─── */
-const features = [
-  {
-    icon: Shield,
-    title: 'Anonymous by default',
-    desc: 'No account, no profile, no trace. Connect purely on vibes.',
-  },
-  {
-    icon: Zap,
-    title: 'Instant matching',
-    desc: 'Our Redis queue matches you with someone in under a second. No waiting rooms.',
-  },
-  {
-    icon: Video,
-    title: 'HD video calls',
-    desc: 'WebRTC-powered 480p+ video with adaptive bitrate for smooth calls worldwide.',
-  },
-  {
-    icon: Headphones,
-    title: 'Voice-only mode',
-    desc: 'Keep your camera off. Audio-only for low-bandwidth or private sessions.',
-  },
-  {
-    icon: MessageSquare,
-    title: 'Live chat sidebar',
-    desc: 'Type while you talk. Messages stay in session — nothing is stored after you leave.',
-  },
-  {
-    icon: SkipForward,
-    title: 'Skip anytime',
-    desc: 'Not feeling the vibe? Hit skip and you\'re instantly matched with someone new.',
-  },
-];
-
 const steps = [
   {
     id: 'find',
@@ -233,24 +200,24 @@ export default function Home() {
         {/* ══════════════════════════════════════════
             SECTION 1 — HERO
         ══════════════════════════════════════════ */}
-        <section className="relative flex flex-col items-center justify-center text-center px-6 pt-12 pb-16 md:pt-24 md:pb-32 max-w-4xl mx-auto w-full">
+        <section className="relative flex flex-col items-center justify-center text-center px-6 py-12 md:py-20 max-w-4xl mx-auto w-full">
           <p
-            className="text-[15px] tracking-[0.2em] text-zinc-400 font-medium uppercase mb-4"
+            className="text-[14px] md:text-[15px] tracking-[0.2em] text-zinc-400 font-medium uppercase mb-4"
           >
             Random Video &amp; Voice Chat
           </p>
 
           <h1
-            className="text-5xl md:text-6xl font-normal tracking-tight leading-[1.1] mb-8"
+            className="text-4xl sm:text-5xl md:text-6xl font-normal tracking-tight leading-[1.1] mb-6"
             style={{ fontFamily: '"Playfair Display", "Merriweather", "Lora", ui-serif, Georgia, Cambria, "Times New Roman", Times, serif' }}
           >
             The Best Free Omegle Alternative
-            <br />
+            <br className="hidden sm:block" />
             &amp; Random Video Chat
           </h1>
 
           <p
-            className="text-lg md:text-xl text-zinc-400 mb-10 max-w-2xl leading-relaxed"
+            className="text-base sm:text-lg md:text-xl text-zinc-400 mb-8 max-w-2xl leading-relaxed mx-auto"
           >
             Talk to strangers online instantly with our free random video call app. Enjoy 100% anonymous voice chat and HD video with people from around the world. No sign-up required.
           </p>
@@ -368,36 +335,34 @@ export default function Home() {
             </p>
           </motion.div>
 
-          {/* Feature Card Row */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
-            {features.map(({ icon: Icon, title, desc }, i) => {
-              const isHighlighted = i === 1; // "Instant matching" highlighted
-              return (
-                <motion.div
-                  key={title}
-                  initial={{ opacity: 0, y: 20 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ delay: i * 0.06 }}
-                  className={`rounded-2xl p-6 border transition-all ${
-                    isHighlighted
-                      ? 'bg-white text-black border-white'
-                      : 'bg-zinc-900/50 text-white border-zinc-800 hover:border-zinc-700'
-                  }`}
-                >
-                  <Icon
-                    size={20}
-                    className={`mb-4 ${isHighlighted ? 'text-zinc-500' : 'text-zinc-500'}`}
-                  />
-                  <p className={`font-semibold text-base mb-2 ${isHighlighted ? 'text-black' : 'text-white'}`}>
-                    {title}
-                  </p>
-                  <p className={`text-sm leading-relaxed ${isHighlighted ? 'text-zinc-600' : 'text-zinc-500'}`}>
-                    {desc}
-                  </p>
-                </motion.div>
-              );
-            })}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              <div className="bg-[#1A1C20] border border-white/5 rounded-2xl p-8 hover:bg-[#1C1F24] transition-colors h-full">
+                <div className="w-12 h-12 rounded-full bg-white/5 flex items-center justify-center mb-6">
+                  <Shield className="text-white" size={24} />
+                </div>
+                <h3 className="text-xl font-semibold mb-3">100% Anonymous Chat</h3>
+                <p className="text-zinc-400 text-sm leading-relaxed">
+                  No profiles, no accounts, no trace. Your identity is completely hidden until you choose to share it. Talk to strangers safely and securely.
+                </p>
+              </div>
+              <div className="bg-[#1A1C20] border border-white/5 rounded-2xl p-8 hover:bg-[#1C1F24] transition-colors h-full">
+                <div className="w-12 h-12 rounded-full bg-white/5 flex items-center justify-center mb-6">
+                  <SkipForward className="text-white" size={24} />
+                </div>
+                <h3 className="text-xl font-semibold mb-3">Ephemeral &amp; Safe</h3>
+                <p className="text-zinc-400 text-sm leading-relaxed">
+                  Connections exist only in the moment. When you skip, it's gone forever. We never record your video or store your random chat history.
+                </p>
+              </div>
+              <div className="bg-[#1A1C20] border border-white/5 rounded-2xl p-8 hover:bg-[#1C1F24] transition-colors h-full">
+                <div className="w-12 h-12 rounded-full bg-white/5 flex items-center justify-center mb-6">
+                  <Zap className="text-white" size={24} />
+                </div>
+                <h3 className="text-xl font-semibold mb-3">Instant Connections</h3>
+                <p className="text-zinc-400 text-sm leading-relaxed">
+                  Match with a new stranger in milliseconds. Our optimized signaling servers ensure the fastest peer-to-peer video chat experience on the internet.
+                </p>
+              </div>
           </div>
         </section>
 
