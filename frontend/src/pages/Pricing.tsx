@@ -32,6 +32,7 @@ export default function Pricing() {
     plan: string;
   } | null>(null);
   const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
+  const [isRedirecting, setIsRedirecting] = useState(false);
   const receiptRef = useRef<HTMLDivElement>(null);
   const { user, isAuthenticated, checkAuth } = useAuthStore();
   const navigate = useNavigate();
@@ -51,10 +52,8 @@ export default function Pricing() {
     }
 
     if (token && refreshToken && plan && isRedirectBack) {
+      setIsRedirecting(true);
       // Temporarily set auth so the request works
-      // We don't have user object easily, so we just set tokens in local storage manually,
-      // or we can just patch useAuthStore state directly, but setAuth expects user.
-      // Easiest hack for immediate Razorpay popup without full user fetch:
       useAuthStore.setState({ accessToken: token, refreshToken: refreshToken, isAuthenticated: true });
       
       // We still need user data for Razorpay prefill, let's fetch it quickly using checkAuth
@@ -230,6 +229,7 @@ export default function Pricing() {
     } catch (err) {
       console.error(err);
       alert('Failed to initiate payment.');
+      setIsRedirecting(false);
     }
   };
 
@@ -292,12 +292,20 @@ export default function Pricing() {
       {/* ─── Dot Grid ─── */}
       <BlinkingDotsGrid />
 
-      <div className="relative z-10 w-full flex flex-col items-center">
-        <Navbar />
-      </div>
+      {isRedirecting ? (
+        <div className="relative z-10 w-full flex-1 flex flex-col items-center justify-center pt-20">
+          <div className="w-16 h-16 border-4 border-white/10 border-t-white rounded-full animate-spin mb-6"></div>
+          <h2 className="text-2xl font-bold text-white mb-2">Connecting to Secure Gateway</h2>
+          <p className="text-zinc-400">Please wait while we prepare your checkout...</p>
+        </div>
+      ) : (
+        <>
+          <div className="relative z-10 w-full flex flex-col items-center">
+            <Navbar />
+          </div>
 
-      <main className="flex-1 flex flex-col items-center pt-20 px-6 max-w-7xl mx-auto w-full relative z-10">
-        {/* Header */}
+          <main className="flex-1 flex flex-col items-center pt-20 px-6 max-w-7xl mx-auto w-full relative z-10">
+            {/* Header */}
         <motion.div 
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -416,6 +424,8 @@ export default function Pricing() {
           ))}
         </div>
       </main>
+      </>
+      )}
 
       {/* Active Subscription Modal */}
       {selectedPlanPrice && user?.premiumExpiryDate && (
