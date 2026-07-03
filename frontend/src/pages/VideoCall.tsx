@@ -37,6 +37,18 @@ export default function VideoCall() {
 
   const isAudioOnly = location.pathname.includes('/audio');
 
+  useEffect(() => {
+    const isAuth = useAuthStore.getState().isAuthenticated;
+    const isPremium = useAuthStore.getState().user?.premiumStatus;
+    const guestAccess = useAuthStore.getState().guestAccessEnabled;
+    
+    if (isAudioOnly && (!isAuth || !isPremium)) {
+      navigate('/pricing');
+    } else if (!isAudioOnly && !isAuth && !guestAccess) {
+      navigate('/');
+    }
+  }, [isAudioOnly, navigate]);
+
   const [isMicOn, setIsMicOn] = useState(true);
   const [isVideoOn, setIsVideoOn] = useState(!isAudioOnly);
   const [isChatOpen, setIsChatOpen] = useState(false);

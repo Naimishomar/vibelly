@@ -18,7 +18,7 @@ export default function Lobby() {
   const [targetCountry, setTargetCountry] = useState(() => localStorage.getItem('vibe_target_country') || 'Global');
   const [isCountryDropdownOpen, setIsCountryDropdownOpen] = useState(false);
   const [targetGender, setTargetGender] = useState(() => localStorage.getItem('vibe_target_gender') || 'Opposite Gender');
-  const { user, isAuthenticated } = useAuthStore();
+  const { user, isAuthenticated, guestAccessEnabled } = useAuthStore();
   
   const COMMON_COUNTRIES = [
     { name: 'Global', code: null },
@@ -250,15 +250,30 @@ export default function Lobby() {
               />
             </label>
 
-            {isAuthenticated && user?.premiumStatus && (
-              <div className="mb-8 relative z-50">
-                <label className="text-sm text-zinc-300 font-medium mb-2 block">Matchmaking Preference (Premium)</label>
+            <div className="mb-8 relative">
+              {(!isAuthenticated || !user?.premiumStatus) && (
+                <div className="absolute inset-0 z-50 bg-zinc-900/60 backdrop-blur-[2px] rounded-2xl flex flex-col items-center justify-center border border-white/10 shadow-xl">
+                  <div className="bg-zinc-800 p-2.5 rounded-full mb-3 shadow-lg border border-white/5">
+                    <Shield size={20} className="text-white/80" />
+                  </div>
+                  <p className="text-sm font-medium text-white mb-3">Premium Feature</p>
+                  <button 
+                    onClick={() => navigate('/pricing')} 
+                    className="px-5 py-2 bg-white text-black text-xs font-bold rounded-lg hover:bg-zinc-200 transition-transform active:scale-95 shadow-[0_0_15px_rgba(255,255,255,0.2)]"
+                  >
+                    Upgrade to Unlock
+                  </button>
+                </div>
+              )}
+              
+              <div className={`p-4 rounded-2xl border border-white/5 bg-black/20 ${(!isAuthenticated || !user?.premiumStatus) ? 'opacity-40 pointer-events-none filter blur-[1px]' : ''}`}>
+                <label className="text-sm text-zinc-300 font-medium mb-3 block">Matchmaking Preference</label>
                 
                 <div 
-                  className="relative cursor-pointer"
+                  className="relative cursor-pointer mb-6"
                   onClick={() => setIsCountryDropdownOpen(!isCountryDropdownOpen)}
                 >
-                  <div className="w-full bg-zinc-800 border border-white/10 rounded-xl py-3 px-4 text-white focus:outline-none focus:border-white/50 transition-colors flex items-center justify-between">
+                  <div className="w-full bg-zinc-800 border border-white/10 rounded-xl py-3 px-4 text-white transition-colors flex items-center justify-between">
                     <div className="flex items-center gap-3">
                       {COMMON_COUNTRIES.find(c => c.name === targetCountry)?.code ? (
                         <img 
@@ -281,7 +296,7 @@ export default function Lobby() {
                       initial={{ opacity: 0, y: -10 }}
                       animate={{ opacity: 1, y: 0 }}
                       exit={{ opacity: 0, y: -10 }}
-                      className="absolute z-50 w-full mt-2 bg-zinc-800 border border-white/10 rounded-xl shadow-2xl overflow-x-hidden max-h-56 overflow-y-auto overscroll-contain scrollbar-thin scrollbar-thumb-zinc-600"
+                      className="absolute z-50 w-full mt-[-20px] bg-zinc-800 border border-white/10 rounded-xl shadow-2xl overflow-x-hidden max-h-56 overflow-y-auto overscroll-contain scrollbar-thin scrollbar-thumb-zinc-600"
                     >
                       {COMMON_COUNTRIES.map(c => (
                         <div
@@ -309,7 +324,7 @@ export default function Lobby() {
                 </AnimatePresence>
 
                 {/* Gender Preference */}
-                <label className="text-sm text-zinc-300 font-medium mb-3 mt-6 block">Gender Preference (Premium)</label>
+                <label className="text-sm text-zinc-300 font-medium mb-3 block">Gender Preference</label>
                 <div className="grid grid-cols-3 gap-2">
                   {['Opposite', 'Same', 'Random'].map((g) => {
                     const fullGender = g === 'Random' ? 'Random Gender' : `${g} Gender`;
@@ -321,7 +336,7 @@ export default function Lobby() {
                         className={`py-2 px-3 rounded-xl text-sm font-medium transition-all ${
                           isSelected
                             ? 'bg-white text-black shadow-[0_0_15px_rgba(255,255,255,0.3)]'
-                            : 'bg-zinc-800 text-zinc-400 hover:bg-zinc-700 hover:text-white border border-white/5'
+                            : 'bg-zinc-800 text-zinc-400 border border-white/5'
                         }`}
                       >
                         {g}
@@ -330,9 +345,9 @@ export default function Lobby() {
                   })}
                 </div>
               </div>
-            )}
+            </div>
 
-            {isAudioOnly && isAuthenticated && !user?.premiumStatus ? (
+            {isAudioOnly && (!isAuthenticated || !user?.premiumStatus) ? (
               <div className="bg-red-500/10 border border-red-500/20 rounded-xl p-4 mb-6">
                 <p className="text-sm text-red-400 font-medium flex items-center justify-center gap-2">
                   <AlertCircle size={16} />
@@ -342,8 +357,15 @@ export default function Lobby() {
                   onClick={() => navigate('/pricing')}
                   className="w-full mt-3 bg-red-500/20 hover:bg-red-500/30 text-red-400 py-2 rounded-lg text-sm font-medium transition-colors"
                 >
-                  Upgrade to Premium
+                  {isAuthenticated ? 'Upgrade to Premium' : 'Sign In to Upgrade'}
                 </button>
+              </div>
+            ) : (!isAudioOnly && !isAuthenticated && !guestAccessEnabled) ? (
+              <div className="bg-red-500/10 border border-red-500/20 rounded-xl p-4 mb-6">
+                <p className="text-sm text-red-400 font-medium flex items-center justify-center gap-2">
+                  <AlertCircle size={16} />
+                  Sign In required for Video Chat
+                </p>
               </div>
             ) : (
               <motion.button
