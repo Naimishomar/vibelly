@@ -21,6 +21,11 @@ import analyticsRoutes from './routes/analytics.routes';
 import settingsRoutes from './routes/settings.routes';
 import passport from './config/passport';
 
+import hpp from 'hpp';
+import helmet from 'helmet';
+import mongoSanitize from 'express-mongo-sanitize';
+import rateLimit from 'express-rate-limit';
+
 const app = express();
 const httpServer = createServer(app);
 
@@ -36,10 +41,29 @@ const corsOptions = {
   credentials: true,
 };
 
+// Security Hardening
+app.use(helmet());
+app.use(mongoSanitize());
+app.use(hpp());
+
+// Rate Limiting (500 requests per 10 minutes per IP)
+const limiter = rateLimit({
+  windowMs: 10 * 60 * 1000,
+  max: 500,
+  message: 'Too many requests from this IP, please try again later.',
+  standardHeaders: true,
+  legacyHeaders: false,
+});
+app.use('/api', limiter);
+
 // Compression middleware (compresses API responses for slow networks)
 app.use(compression());
 app.use(cors(corsOptions));
-app.use(express.json());
+app.use(express.json({
+  verify: (req: any, res, buf) => {
+    req.rawBody = buf;
+  }
+}));
 app.use(passport.initialize());
 
 // Routes

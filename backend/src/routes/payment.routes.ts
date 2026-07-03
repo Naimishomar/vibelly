@@ -26,6 +26,9 @@ router.post('/create-order', requireAuth, async (req, res) => {
       amount: amount * 100, // amount in the smallest currency unit
       currency: "INR",
       receipt: `receipt_order_${Math.floor(Math.random() * 1000)}`,
+      notes: {
+        userId: (req as any).user.id
+      }
     };
 
     const order = await razorpay.orders.create(options);
@@ -89,6 +92,66 @@ router.post('/verify', requireAuth, async (req, res) => {
   } catch (error) {
     console.error('Error verifying payment:', error);
     res.status(500).json({ error: 'Failed to verify payment' });
+  }
+});
+
+// Razorpay Webhook Endpoint
+router.post('/webhook', async (req, res) => {
+  try {
+    const webhookSecret = ENV.RAZORPAY_WEBHOOK_SECRET || 'fallback_secret_never_use_in_prod';
+    const razorpaySignature = req.headers['x-razorpay-signature'];
+    
+    // Use the raw body buffer saved by express.json middleware
+    const bodyStr = (req as any).rawBody ? (req as any).rawBody.toString() : JSON.stringify(req.body);
+
+    const expectedSignature = crypto
+      .createHmac('sha256', webhookSecret)
+      .update(bodyStr)
+      .digest('hex');
+
+    if (expectedSignature !== razorpaySignature) {
+      console.error('Webhook signature mismatch!');
+      return res.status(400).send('Invalid signature');
+    }
+
+    const event = typeof req.body === 'string' ? JSON.parse(req.body) : req.body;
+
+    if (event.event === 'payment.captured' || event.event === 'order.paid') {
+      const paymentEntity = event.payload.payment.entity;
+      const amountPaid = paymentEntity.amount / 100;
+      const userId = paymentEntity.notes?.userId;
+
+      if (userId) {
+        const user = await User.findById(userId);
+        if (user) {
+          let daysToAdd = 0;
+          if (amountPaid === 9) daysToAdd = 1;
+          else if (amountPaid === 49) daysToAdd = 30;
+          else if (amountPaid === 499) daysToAdd = 365;
+
+          if (daysToAdd > 0) {
+            user.premiumStatus = true;
+            const now = new Date();
+            if (user.premiumExpiryDate && user.premiumExpiryDate > now) {
+              const newExpiry = new Date(user.premiumExpiryDate);
+              newExpiry.setDate(newExpiry.getDate() + daysToAdd);
+              user.premiumExpiryDate = newExpiry;
+            } else {
+              const newExpiry = new Date();
+              newExpiry.setDate(newExpiry.getDate() + daysToAdd);
+              user.premiumExpiryDate = newExpiry;
+            }
+            await user.save();
+            console.log(`Webhook successfully granted Premium to user: ${userId}`);
+          }
+        }
+      }
+    }
+    
+    res.status(200).send('OK');
+  } catch (error) {
+    console.error('Webhook error:', error);
+    res.status(500).send('Webhook failed');
   }
 });
 
