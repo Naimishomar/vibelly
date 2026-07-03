@@ -137,6 +137,46 @@ const faqs = [
   }
 ];
 
+const stats = [
+  { value: '5M+', label: 'Conversations' },
+  { value: '190+', label: 'Countries' },
+  { value: '<1s', label: 'Match time' },
+  { value: '24/7', label: 'Moderation' },
+];
+
+const blogPosts = [
+  {
+    title: 'Safe Fun OmeTV Alternatives: The Best Sites to chat with strangers online.',
+    category: 'Chat Platforms',
+    date: 'July 1, 2026',
+    image: 'https://images.unsplash.com/photo-1516321497487-e288fb19713f?w=600&h=400&fit=crop',
+    link: '/blog/ometv-alternatives'
+  },
+  {
+    title: 'Best Websites to Chat with Strangers',
+    category: 'Guides',
+    date: 'June 28, 2026',
+    image: 'https://images.unsplash.com/photo-1515378791036-0648a3ef77b2?w=600&h=400&fit=crop',
+    link: '/blog/best-websites-to-chat-with-strangers'
+  },
+  {
+    title: 'How to Talk to a Stranger Online safely in 2026',
+    category: 'Safety',
+    date: 'June 24, 2026',
+    image: 'https://images.unsplash.com/photo-1573164713988-8665fc963095?w=600&h=400&fit=crop',
+    link: '/blog/how-to-talk-to-a-stranger-online'
+  }
+];
+
+const comparisonFeatures = [
+  { feature: 'Text chat', vibelly: true, ometv: true, chitchat: true, chatroulette: true },
+  { feature: 'Video chat', vibelly: true, ometv: true, chitchat: true, chatroulette: true },
+  { feature: 'Voice chat', vibelly: true, ometv: false, chitchat: true, chatroulette: false },
+  { feature: 'Anonymous (No Login)', vibelly: true, ometv: true, chitchat: false, chatroulette: true },
+  { feature: 'Gender Filter', vibelly: true, ometv: true, chitchat: false, chatroulette: true },
+  { feature: 'Country Filter', vibelly: true, ometv: true, chitchat: false, chatroulette: false },
+];
+
 function FAQItem({ question, answer, isLast }: { question: string, answer: string, isLast?: boolean }) {
   const [isOpen, setIsOpen] = useState(false);
   return (
@@ -237,6 +277,27 @@ export default function Home() {
               Voice Only
             </button>
           </motion.div>
+        </section>
+
+        {/* ══════════════════════════════════════════
+            SECTION 1.25 — STATS GRID
+        ══════════════════════════════════════════ */}
+        <section className="relative w-full max-w-4xl mx-auto px-6 pb-20">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-0 border-y border-white/10 bg-zinc-900/30 backdrop-blur-sm">
+            {stats.map((stat, i) => (
+              <div 
+                key={stat.label} 
+                className={`py-8 px-4 text-center ${i !== stats.length - 1 ? 'border-r border-white/10' : ''}`}
+              >
+                <div className="text-3xl md:text-4xl font-semibold text-white mb-2" style={{ fontFamily: 'Georgia, serif' }}>
+                  {stat.value}
+                </div>
+                <div className="text-sm text-zinc-500 uppercase tracking-wider font-medium">
+                  {stat.label}
+                </div>
+              </div>
+            ))}
+          </div>
         </section>
 
         {/* ══════════════════════════════════════════
@@ -539,6 +600,64 @@ export default function Home() {
         </section>
 
         {/* ══════════════════════════════════════════
+            SECTION 5.3 — HOW WE COMPARE (SEO)
+        ══════════════════════════════════════════ */}
+        <section className="px-6 pb-28 max-w-5xl mx-auto w-full">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            className="text-center mb-12"
+          >
+            <p className="text-[11px] tracking-[0.2em] text-zinc-500 font-semibold uppercase mb-4">
+              How we compare
+            </p>
+            <h2
+              className="text-3xl md:text-4xl font-semibold mb-4"
+              style={{ fontFamily: 'Georgia, serif' }}
+            >
+              The #1 Omegle alternative - with everything Omegle never had
+            </h2>
+            <p className="text-zinc-500 text-sm max-w-2xl mx-auto leading-relaxed">
+              Omegle shut down in 2023. Millions moved to OmeTV, Chitchat.gg, and Chatroulette. Vibelly was built to be faster, more secure, and entirely anonymous.
+            </p>
+          </motion.div>
+
+          <div className="bg-[#1A1C20] border border-white/10 rounded-2xl overflow-x-auto shadow-2xl">
+            <table className="w-full min-w-[600px] text-left border-collapse">
+              <thead>
+                <tr className="border-b border-white/10 text-sm">
+                  <th className="py-5 px-6 text-zinc-400 font-semibold">Feature</th>
+                  <th className="py-5 px-6 font-semibold text-white bg-white/5 text-center">Vibelly ★</th>
+                  <th className="py-5 px-6 text-zinc-400 font-semibold text-center">OmeTV</th>
+                  <th className="py-5 px-6 text-zinc-400 font-semibold text-center">Chitchat.gg</th>
+                  <th className="py-5 px-6 text-zinc-400 font-semibold text-center">Chatroulette</th>
+                </tr>
+              </thead>
+              <tbody className="text-sm">
+                {comparisonFeatures.map((row, idx) => (
+                  <tr key={row.feature} className={`border-b border-white/5 ${idx % 2 === 0 ? 'bg-transparent' : 'bg-white/[0.02]'}`}>
+                    <td className="py-4 px-6 text-zinc-300 font-medium">{row.feature}</td>
+                    <td className="py-4 px-6 text-center bg-white/5">
+                      {row.vibelly ? <span className="inline-flex bg-green-500/20 text-green-400 px-3 py-1 rounded-full text-xs font-bold">✓</span> : <span className="inline-flex bg-red-500/20 text-red-400 px-3 py-1 rounded-full text-xs font-bold">✗</span>}
+                    </td>
+                    <td className="py-4 px-6 text-center">
+                      {row.ometv ? <span className="inline-flex bg-green-500/10 text-green-400/70 px-3 py-1 rounded-full text-xs font-bold">✓</span> : <span className="inline-flex bg-red-500/10 text-red-400/70 px-3 py-1 rounded-full text-xs font-bold">✗</span>}
+                    </td>
+                    <td className="py-4 px-6 text-center">
+                      {row.chitchat ? <span className="inline-flex bg-green-500/10 text-green-400/70 px-3 py-1 rounded-full text-xs font-bold">✓</span> : <span className="inline-flex bg-red-500/10 text-red-400/70 px-3 py-1 rounded-full text-xs font-bold">✗</span>}
+                    </td>
+                    <td className="py-4 px-6 text-center">
+                      {row.chatroulette ? <span className="inline-flex bg-green-500/10 text-green-400/70 px-3 py-1 rounded-full text-xs font-bold">✓</span> : <span className="inline-flex bg-red-500/10 text-red-400/70 px-3 py-1 rounded-full text-xs font-bold">✗</span>}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </section>
+
+        {/* ══════════════════════════════════════════
             SECTION 5.5 — FAQ (SEO)
         ══════════════════════════════════════════ */}
         <section className="px-6 pb-28 max-w-3xl mx-auto w-full">
@@ -564,6 +683,72 @@ export default function Home() {
               <FAQItem key={idx} question={faq.question} answer={faq.answer} isLast={idx === faqs.length - 1} />
             ))}
           </div>
+        </section>
+
+        {/* ══════════════════════════════════════════
+            SECTION 5.75 — BLOG PREVIEW (SEO)
+        ══════════════════════════════════════════ */}
+        <section className="px-6 pb-28 max-w-6xl mx-auto w-full">
+          <div className="flex flex-col md:flex-row items-end justify-between gap-6 mb-12">
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+            >
+              <p className="text-[11px] tracking-[0.2em] text-zinc-500 font-semibold uppercase mb-4">
+                From the blog
+              </p>
+              <h2
+                className="text-3xl md:text-4xl font-semibold mb-4"
+                style={{ fontFamily: 'Georgia, serif' }}
+              >
+                Tips &amp; Guides for Chatting Online
+              </h2>
+            </motion.div>
+            <button 
+              onClick={() => navigate('/blog')}
+              className="hidden md:flex items-center gap-2 bg-white/5 border border-white/10 text-white px-6 py-2.5 rounded-full font-medium hover:bg-white/10 transition-colors"
+            >
+              View all posts <ArrowRight size={16} />
+            </button>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            {blogPosts.map((post, i) => (
+              <motion.div
+                key={post.title}
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: i * 0.1 }}
+                className="group flex flex-col bg-[#1A1C20] border border-white/5 rounded-2xl overflow-hidden hover:border-white/20 transition-colors cursor-pointer"
+                onClick={() => navigate(post.link)}
+              >
+                <div className="aspect-[16/9] w-full overflow-hidden">
+                  <img src={post.image} alt={post.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+                </div>
+                <div className="p-6 flex flex-col flex-1">
+                  <div className="text-xs font-bold text-white bg-white/10 px-3 py-1 rounded-full self-start mb-4">
+                    {post.category}
+                  </div>
+                  <h3 className="text-lg font-semibold text-white mb-3 group-hover:text-zinc-300 transition-colors leading-snug">
+                    {post.title}
+                  </h3>
+                  <div className="mt-auto pt-4 border-t border-white/10 flex items-center justify-between text-zinc-500 text-xs">
+                    <span>{post.date}</span>
+                    <span className="text-white font-medium group-hover:underline">Read article →</span>
+                  </div>
+                </div>
+              </motion.div>
+            ))}
+          </div>
+          
+          <button 
+            onClick={() => navigate('/blog')}
+            className="w-full mt-8 md:hidden flex justify-center items-center gap-2 bg-white/5 border border-white/10 text-white px-6 py-3 rounded-xl font-medium hover:bg-white/10 transition-colors"
+          >
+            View all posts <ArrowRight size={16} />
+          </button>
         </section>
 
         {/* ══════════════════════════════════════════
