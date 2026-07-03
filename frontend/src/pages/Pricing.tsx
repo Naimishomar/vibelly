@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef } from 'react';
 import { motion } from 'framer-motion';
 import { Check, Download } from 'lucide-react';
 import Navbar from '../components/Navbar';
@@ -32,39 +32,9 @@ export default function Pricing() {
     plan: string;
   } | null>(null);
   const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
-  const [isRedirecting, setIsRedirecting] = useState(false);
   const receiptRef = useRef<HTMLDivElement>(null);
   const { user, isAuthenticated, checkAuth } = useAuthStore();
   const navigate = useNavigate();
-
-  // Handle URL params for cross-domain payment routing
-  useEffect(() => {
-    const params = new URLSearchParams(window.location.search);
-    const token = params.get('token');
-    const refreshToken = params.get('refreshToken');
-    const plan = params.get('plan');
-    const isRedirectBack = params.get('redirectBack') === 'true';
-    const isPaymentSuccess = params.get('payment') === 'success';
-
-    if (isPaymentSuccess) {
-      checkAuth();
-      // Optionally show a generic success message or modal, though checking auth updates UI to premium.
-    }
-
-    if (token && refreshToken && plan && isRedirectBack) {
-      setIsRedirecting(true);
-      // Temporarily set auth so the request works
-      useAuthStore.setState({ accessToken: token, refreshToken: refreshToken, isAuthenticated: true });
-      
-      // We still need user data for Razorpay prefill, let's fetch it quickly using checkAuth
-      checkAuth().then(() => {
-        handlePayment(plan, true);
-      });
-      
-      // Clean up URL to hide tokens
-      window.history.replaceState({}, document.title, window.location.pathname);
-    }
-  }, []);
 
   const downloadReceiptPDF = async () => {
     if (!receiptRef.current) return;
@@ -92,22 +62,10 @@ export default function Pricing() {
     }
   };
 
-  const handlePayment = async (planPriceStr: string, fromRedirect = false) => {
-    if (!isAuthenticated && !fromRedirect) {
+  const handlePayment = async (planPriceStr: string) => {
+    if (!isAuthenticated) {
       setIsLoginModalOpen(true);
       return;
-    }
-
-    // Cross-Domain Bridging Logic
-    const hostname = window.location.hostname;
-    // If we are on vibelly.fun (restricted), bounce them to vercel.app
-    if (!fromRedirect && (hostname === 'vibelly.fun' || hostname === 'www.vibelly.fun' || hostname === 'test-vibelly.fun')) {
-      const accessToken = useAuthStore.getState().accessToken;
-      const refreshToken = useAuthStore.getState().refreshToken;
-      if (accessToken && refreshToken) {
-        window.location.href = `https://vibelly.vercel.app/pricing?token=${encodeURIComponent(accessToken)}&refreshToken=${encodeURIComponent(refreshToken)}&plan=${encodeURIComponent(planPriceStr)}&redirectBack=true`;
-        return;
-      }
     }
 
     // Extract raw number, e.g., '₹1199' -> 1199
@@ -196,13 +154,6 @@ export default function Pricing() {
 
           if (verifyRes.success) {
             await checkAuth(); // Refresh user state to show premium status
-            
-            // If this was a cross-domain redirect, bounce back to vibelly.fun immediately
-            if (fromRedirect || window.location.search.includes('redirectBack=true')) {
-               window.location.href = 'https://vibelly.fun/pricing?payment=success';
-               return;
-            }
-
             setReceiptData({
               amount: planPriceStr,
               paymentId: response.razorpay_payment_id,
@@ -229,7 +180,6 @@ export default function Pricing() {
     } catch (err: any) {
       console.error('Payment Error:', err);
       alert('Failed to initiate payment: ' + (err.message || 'Unknown error'));
-      setIsRedirecting(false);
     }
   };
 
@@ -292,20 +242,12 @@ export default function Pricing() {
       {/* ─── Dot Grid ─── */}
       <BlinkingDotsGrid />
 
-      {isRedirecting ? (
-        <div className="relative z-10 w-full flex-1 flex flex-col items-center justify-center pt-20">
-          <div className="w-16 h-16 border-4 border-white/10 border-t-white rounded-full animate-spin mb-6"></div>
-          <h2 className="text-2xl font-bold text-white mb-2">Connecting to Secure Gateway</h2>
-          <p className="text-zinc-400">Please wait while we prepare your checkout...</p>
-        </div>
-      ) : (
-        <>
-          <div className="relative z-10 w-full flex flex-col items-center">
-            <Navbar />
-          </div>
+      <div className="relative z-10 w-full flex flex-col items-center">
+        <Navbar />
+      </div>
 
-          <main className="flex-1 flex flex-col items-center pt-20 px-6 max-w-7xl mx-auto w-full relative z-10">
-            {/* Header */}
+      <main className="flex-1 flex flex-col items-center pt-20 px-6 max-w-7xl mx-auto w-full relative z-10">
+        {/* Header */}
         <motion.div 
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -424,8 +366,6 @@ export default function Pricing() {
           ))}
         </div>
       </main>
-      </>
-      )}
 
       {/* Active Subscription Modal */}
       {selectedPlanPrice && user?.premiumExpiryDate && (
