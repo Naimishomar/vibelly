@@ -63,10 +63,10 @@ export default function Navbar() {
         {/* Nav Links */}
         <div className="hidden md:flex items-center gap-2">
           <Link to="/" className="px-3 py-1.5 rounded-lg hover:bg-zinc-800 hover:text-white transition-colors">Home</Link>
-          <button onClick={() => handleProtectedAction('/chat')} className="px-3 py-1.5 rounded-lg hover:bg-zinc-800 hover:text-white transition-colors text-left cursor-pointer">Chat</button>
-          <button onClick={() => handleProtectedAction('/groups')} className="px-3 py-1.5 rounded-lg hover:bg-zinc-800 hover:text-white transition-colors text-left cursor-pointer">Groups</button>
           <button onClick={() => handleProtectedAction('/setup/video')} className="px-3 py-1.5 rounded-lg hover:bg-zinc-800 hover:text-white transition-colors text-left cursor-pointer">Video Call</button>
           <button onClick={() => handleProtectedAction('/setup/audio')} className="px-3 py-1.5 rounded-lg hover:bg-zinc-800 hover:text-white transition-colors text-left cursor-pointer">Audio Call</button>
+          <button onClick={() => handleProtectedAction('/chat')} className="px-3 py-1.5 rounded-lg hover:bg-zinc-800 hover:text-white transition-colors text-left cursor-pointer">Chat</button>
+          <button onClick={() => handleProtectedAction('/groups')} className="px-3 py-1.5 rounded-lg hover:bg-zinc-800 hover:text-white transition-colors text-left cursor-pointer">Groups</button>
           <Link to="/pricing" className="px-3 py-1.5 rounded-lg hover:bg-zinc-800 hover:text-white transition-colors">Pricing</Link>
         </div>
 
