@@ -7,6 +7,7 @@ interface SEOProps {
   type?: 'website' | 'article';
   imageUrl?: string;
   faqs?: { question: string; answer: string }[];
+  schema?: string;
 }
 
 export default function SEO({ 
@@ -15,7 +16,8 @@ export default function SEO({
   canonicalUrl,
   type = 'website',
   imageUrl = 'https://i.pinimg.com/736x/bf/f9/90/bff990bfc21bdc142b69c6ed28b53b6d.jpg',
-  faqs
+  faqs,
+  schema
 }: SEOProps) {
   const siteUrl = 'https://vibelly.fun';
   const url = canonicalUrl ? `${siteUrl}${canonicalUrl}` : siteUrl;
@@ -120,6 +122,13 @@ export default function SEO({
               }))
             ]
           })}
+        </script>
+      )}
+
+      {/* Custom Arbitrary Schema */}
+      {schema && (
+        <script type="application/ld+json">
+          {schema}
         </script>
       )}
     </Helmet>

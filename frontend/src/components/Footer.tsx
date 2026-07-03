@@ -6,7 +6,7 @@ export default function Footer() {
   return (
     <div className="w-full px-4 md:px-6 pb-8 mt-12">
       <footer className="w-full max-w-7xl mx-auto bg-[#15171B] border border-white/10 rounded-[2rem] py-12 px-8 lg:px-12 text-sm relative z-10 shadow-[0_20px_60px_rgba(0,0,0,0.5)]">
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-10">
+        <div className="grid grid-cols-1 md:grid-cols-5 gap-10">
         
         {/* Brand */}
         <div className="flex flex-col gap-4">
@@ -43,6 +43,16 @@ export default function Footer() {
           <Link to="/ometv-alternative" className="text-zinc-400 hover:text-white transition-colors">OmeTV Alternative</Link>
           <Link to="/chatroulette-alternative" className="text-zinc-400 hover:text-white transition-colors">Chatroulette Alternative</Link>
           <Link to="/omegle-unbanned" className="text-zinc-400 hover:text-white transition-colors">Omegle Unban Guide</Link>
+        </div>
+
+        {/* Global Chat (SEO Silo) */}
+        <div className="flex flex-col gap-4">
+          <h4 className="text-white font-semibold mb-2">Global Chat</h4>
+          <Link to="/chat/usa" className="text-zinc-400 hover:text-white transition-colors">Chat in USA</Link>
+          <Link to="/chat/uk" className="text-zinc-400 hover:text-white transition-colors">Chat in UK</Link>
+          <Link to="/chat/india" className="text-zinc-400 hover:text-white transition-colors">Chat in India</Link>
+          <Link to="/chat/canada" className="text-zinc-400 hover:text-white transition-colors">Chat in Canada</Link>
+          <Link to="/chat/australia" className="text-zinc-400 hover:text-white transition-colors">Chat in Australia</Link>
         </div>
 
         {/* Contact info */}
