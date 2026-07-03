@@ -36,9 +36,9 @@ export const addToQueue = async (socketId: string, userId: string, baseQueueName
   } else {
     // Free users or unspecified gender
     if (userGender !== 'unspecified') {
-      // 80% of the time, free users won't even check the opposite gender queue.
+      // 90% of the time, free users won't even check the opposite gender queue.
       // If they do check it, we put same gender first to minimize opposite gender matches.
-      const shouldCheckOpposite = Math.random() < 0.2; 
+      const shouldCheckOpposite = Math.random() < 0.1; 
       
       if (shouldCheckOpposite) {
         queuesToCheck = [`${baseQueueName}:${userGender}`, `${baseQueueName}:unspecified`, `${baseQueueName}:${oppositeGender}`];

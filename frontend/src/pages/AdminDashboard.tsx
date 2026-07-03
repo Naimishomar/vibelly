@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { Shield, Users, ArrowLeft, Search, Loader2, AlertTriangle, Ban, CheckCircle, ChevronDown, ChevronUp, Video, Phone, MessageSquare } from 'lucide-react';
+import { Shield, Users, ArrowLeft, Search, Loader2, AlertTriangle, Ban, CheckCircle, ChevronDown, ChevronUp, Video, Phone, MessageSquare, Crown } from 'lucide-react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuthStore } from '../store/useAuthStore';
 
@@ -238,7 +238,7 @@ export default function AdminDashboard() {
         </div>
 
         {/* Stats */}
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-12">
+        <div className="grid grid-cols-1 md:grid-cols-5 gap-6 mb-12">
           <motion.div 
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -249,6 +249,19 @@ export default function AdminDashboard() {
               <span className="text-sm font-medium uppercase tracking-wider">Total Users</span>
             </div>
             <p className="text-4xl font-light text-white">{isLoading ? '-' : users.length}</p>
+          </motion.div>
+
+          <motion.div 
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.05 }}
+            className="bg-zinc-900/40 border border-white/5 rounded-3xl p-6"
+          >
+            <div className="flex items-center gap-3 mb-4 text-zinc-400">
+              <Crown size={18} className="text-yellow-500" />
+              <span className="text-sm font-medium uppercase tracking-wider">Premium Users</span>
+            </div>
+            <p className="text-4xl font-light text-white">{isLoading ? '-' : users.filter(u => u.premiumStatus).length}</p>
           </motion.div>
 
           <motion.div 
