@@ -235,21 +235,6 @@ export default function Lobby() {
               </div>
             </div>
 
-            <label className="flex items-center gap-3 mb-8 cursor-pointer group">
-              <div className={`w-5 h-5 rounded flex items-center justify-center border transition-colors ${agreed ? 'bg-white border-white' : 'bg-transparent border-zinc-600 group-hover:border-zinc-400'}`}>
-                {agreed && <CheckCircle2 size={14} className="text-black" />}
-              </div>
-              <span className="text-sm text-zinc-300 select-none group-hover:text-white transition-colors">
-                I agree to be respectful and follow the rules
-              </span>
-              <input 
-                type="checkbox" 
-                className="hidden" 
-                checked={agreed} 
-                onChange={(e) => setAgreed(e.target.checked)} 
-              />
-            </label>
-
             <div className="mb-8 relative">
               {(!isAuthenticated || !user?.premiumStatus) && (
                 <div className="absolute inset-0 z-50 bg-zinc-900/40 backdrop-blur-[1px] rounded-2xl flex flex-col items-center justify-center border border-white/10 shadow-xl">
@@ -346,6 +331,22 @@ export default function Lobby() {
                 </div>
               </div>
             </div>
+
+            <label className="flex items-center gap-3 mb-8 cursor-pointer group">
+              <div className={`w-5 h-5 rounded flex items-center justify-center border transition-colors ${agreed ? 'bg-white border-white' : 'bg-transparent border-zinc-600 group-hover:border-zinc-400'}`}>
+                {agreed && <CheckCircle2 size={14} className="text-black" />}
+              </div>
+              <span className="text-sm text-zinc-300 select-none group-hover:text-white transition-colors">
+                I agree to be respectful and follow the rules
+              </span>
+              <input 
+                type="checkbox" 
+                className="hidden" 
+                checked={agreed} 
+                onChange={(e) => setAgreed(e.target.checked)} 
+              />
+            </label>
+
 
             {isAudioOnly && (!isAuthenticated || !user?.premiumStatus) ? (
               <div className="bg-red-500/10 border border-red-500/20 rounded-xl p-4 mb-6">
