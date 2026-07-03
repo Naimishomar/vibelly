@@ -47,7 +47,7 @@ export default function LoginModal({ isOpen, onClose }: LoginModalProps) {
 
             <div className="space-y-3">
               <a
-                href={`${import.meta.env.VITE_BACKEND_URL || 'http://localhost:5000'}/api/oauth/google`}
+                href={import.meta.env.PROD ? 'https://vibes-api.duckdns.org/api/oauth/google' : 'http://localhost:5000/api/oauth/google'}
                 className="w-full flex items-center justify-center gap-3 bg-white text-black hover:bg-zinc-200 transition-colors py-3.5 rounded-xl font-medium cursor-pointer"
               >
                 <img src="https://www.svgrepo.com/show/475656/google-color.svg" alt="Google" className="w-5 h-5" />
@@ -55,7 +55,7 @@ export default function LoginModal({ isOpen, onClose }: LoginModalProps) {
               </a>
 
               <a
-                href={`${import.meta.env.VITE_BACKEND_URL || 'http://localhost:5000'}/api/oauth/github`}
+                href={import.meta.env.PROD ? 'https://vibes-api.duckdns.org/api/oauth/github' : 'http://localhost:5000/api/oauth/github'}
                 className="w-full flex items-center justify-center gap-3 bg-[#24292F] text-white hover:bg-[#1b1f23] transition-colors py-3.5 rounded-xl font-medium border border-white/10 cursor-pointer"
               >
                 <img src="https://upload.wikimedia.org/wikipedia/commons/9/91/Octicons-mark-github.svg" alt="Github" className="w-5 h-5 invert" />

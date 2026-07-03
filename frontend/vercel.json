@@ -1,21 +1,12 @@
 {
-  "redirects": [
-    {
-      "source": "/(.*)",
-      "has": [
-        {
-          "type": "host",
-          "value": "vibelly.vercel.app"
-        }
-      ],
-      "destination": "https://vibelly.fun/$1",
-      "permanent": true
-    }
-  ],
   "rewrites": [
     {
-      "source": "/(.*)",
-      "destination": "/index.html"
+      "source": "/api/:path*",
+      "destination": "https://vibes-api.duckdns.org/api/:path*"
+    },
+    {
+      "source": "/socket.io/:path*",
+      "destination": "https://vibes-api.duckdns.org/socket.io/:path*"
     }
   ]
 }
