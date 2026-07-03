@@ -252,7 +252,7 @@ export default function Lobby() {
 
             <div className="mb-8 relative">
               {(!isAuthenticated || !user?.premiumStatus) && (
-                <div className="absolute inset-0 z-50 bg-zinc-900/60 backdrop-blur-[2px] rounded-2xl flex flex-col items-center justify-center border border-white/10 shadow-xl">
+                <div className="absolute inset-0 z-50 bg-zinc-900/40 backdrop-blur-[1px] rounded-2xl flex flex-col items-center justify-center border border-white/10 shadow-xl">
                   <div className="bg-zinc-800 p-2.5 rounded-full mb-3 shadow-lg border border-white/5">
                     <Shield size={20} className="text-white/80" />
                   </div>
@@ -266,7 +266,7 @@ export default function Lobby() {
                 </div>
               )}
               
-              <div className={`p-4 rounded-2xl border border-white/5 bg-black/20 ${(!isAuthenticated || !user?.premiumStatus) ? 'opacity-40 pointer-events-none filter blur-[1px]' : ''}`}>
+              <div className={`p-4 rounded-2xl border border-white/5 bg-black/20 ${(!isAuthenticated || !user?.premiumStatus) ? 'opacity-60 pointer-events-none' : ''}`}>
                 <label className="text-sm text-zinc-300 font-medium mb-3 block">Matchmaking Preference</label>
                 
                 <div 
