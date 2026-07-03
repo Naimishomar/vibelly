@@ -3,7 +3,6 @@ import { Strategy as GoogleStrategy } from 'passport-google-oauth20';
 import { Strategy as GitHubStrategy } from 'passport-github2';
 import AppleStrategy from 'passport-apple';
 import User, { IUser } from '../models/User';
-import { ENV } from './env';
 
 const generateUniqueUsername = (name: string) => {
   const base = name.toLowerCase().replace(/[^a-z0-9]/g, '') || 'user';
@@ -58,7 +57,7 @@ if (process.env.GOOGLE_CLIENT_ID && process.env.GOOGLE_CLIENT_ID !== 'your_googl
         clientID: process.env.GOOGLE_CLIENT_ID,
         clientSecret: process.env.GOOGLE_CLIENT_SECRET as string,
         callbackURL: process.env.NODE_ENV === 'production' ? 'https://api.vibelly.fun/api/oauth/google/callback' : `${process.env.BACKEND_URL || 'http://localhost:5000'}/api/oauth/google/callback`
-    }, (accessToken, refreshToken, profile, done) => {
+    }, (_accessToken, _refreshToken, profile, done) => {
         handleOAuthUser('googleId', profile, done);
     }));
 }
@@ -70,7 +69,7 @@ if (process.env.GITHUB_CLIENT_ID && process.env.GITHUB_CLIENT_ID !== 'your_githu
         clientSecret: process.env.GITHUB_CLIENT_SECRET as string,
         callbackURL: process.env.NODE_ENV === 'production' ? 'https://api.vibelly.fun/api/oauth/github/callback' : `${process.env.BACKEND_URL || 'http://localhost:5000'}/api/oauth/github/callback`,
         scope: ['user:email']
-    }, (accessToken: string, refreshToken: string, profile: any, done: any) => {
+    }, (_accessToken: string, _refreshToken: string, profile: any, done: any) => {
         handleOAuthUser('githubId', profile, done);
     }));
 }
@@ -83,7 +82,7 @@ if (process.env.APPLE_CLIENT_ID && process.env.APPLE_CLIENT_ID !== 'your_apple_c
         keyID: process.env.APPLE_KEY_ID as string,
         privateKeyString: process.env.APPLE_PRIVATE_KEY as string,
         callbackURL: '/api/oauth/apple/callback'
-    }, (accessToken, refreshToken, idToken, profile, done) => {
+    }, (_accessToken, _refreshToken, _idToken, profile, done) => {
         // Apple profile is minimal, usually we rely on idToken decoded payload
         // But for mock/structure we pass it
         handleOAuthUser('appleId', profile, done);
