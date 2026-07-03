@@ -226,9 +226,9 @@ export default function Pricing() {
 
       const paymentObject = new (window as any).Razorpay(options);
       paymentObject.open();
-    } catch (err) {
-      console.error(err);
-      alert('Failed to initiate payment.');
+    } catch (err: any) {
+      console.error('Payment Error:', err);
+      alert('Failed to initiate payment: ' + (err.message || 'Unknown error'));
       setIsRedirecting(false);
     }
   };
