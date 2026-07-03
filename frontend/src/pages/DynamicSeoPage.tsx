@@ -59,10 +59,22 @@ export default function DynamicSeoPage() {
       .map(word => word.charAt(0).toUpperCase() + word.slice(1))
       .join(' ');
 
+    const isCompetitor = ['omegle', 'ometv', 'chatroulette', 'monkey', 'bazoocam', 'emerald', 'chatrandom', 'opentalk', 'whoapp', 'azar', 'chatspin'].some(c => slugStr.includes(c));
+
+    if (isCompetitor) {
+      return {
+        title: `${formattedTopic} | Vibelly - The Best Alternative`,
+        h1: `The #1 ${formattedTopic}`,
+        desc: `Searching for a ${formattedTopic}? Vibelly is the fastest, safest, and most beautiful alternative. Start an anonymous HD video chat instantly with zero registration.`,
+        tagline: 'Top Rated Alternative',
+        subH1: `Omegle is gone, and other apps are full of bots. Experience the ultimate ${formattedTopic} with our modern, moderated platform.`
+      };
+    }
+
     return {
       title: `${formattedTopic} | Free Random Video Call App & Stranger Chat`,
       h1: `Connect Instantly via ${formattedTopic}`,
-      desc: `Looking for ${formattedTopic}? Join Vibelly, the ultimate free alternative for random video chatting. Instantly connect with strangers worldwide with zero registration.`,
+      desc: `Looking for ${formattedTopic}? Join Vibelly, the ultimate free platform for random video chatting. Instantly connect with strangers worldwide with zero registration.`,
       tagline: 'Instant Connection',
       subH1: `Experience the best of ${formattedTopic} with our high-quality video chat.`
     };
