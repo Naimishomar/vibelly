@@ -1,4 +1,4 @@
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Check, Download } from 'lucide-react';
 import Navbar from '../components/Navbar';
@@ -36,6 +36,37 @@ export default function Pricing() {
   const { user, isAuthenticated, checkAuth } = useAuthStore();
   const navigate = useNavigate();
 
+  // Handle URL params for cross-domain payment routing
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const token = params.get('token');
+    const refreshToken = params.get('refreshToken');
+    const plan = params.get('plan');
+    const isRedirectBack = params.get('redirectBack') === 'true';
+    const isPaymentSuccess = params.get('payment') === 'success';
+
+    if (isPaymentSuccess) {
+      checkAuth();
+      // Optionally show a generic success message or modal, though checking auth updates UI to premium.
+    }
+
+    if (token && refreshToken && plan && isRedirectBack) {
+      // Temporarily set auth so the request works
+      // We don't have user object easily, so we just set tokens in local storage manually,
+      // or we can just patch useAuthStore state directly, but setAuth expects user.
+      // Easiest hack for immediate Razorpay popup without full user fetch:
+      useAuthStore.setState({ accessToken: token, refreshToken: refreshToken, isAuthenticated: true });
+      
+      // We still need user data for Razorpay prefill, let's fetch it quickly using checkAuth
+      checkAuth().then(() => {
+        handlePayment(plan, true);
+      });
+      
+      // Clean up URL to hide tokens
+      window.history.replaceState({}, document.title, window.location.pathname);
+    }
+  }, []);
+
   const downloadReceiptPDF = async () => {
     if (!receiptRef.current) return;
     try {
@@ -62,10 +93,22 @@ export default function Pricing() {
     }
   };
 
-  const handlePayment = async (planPriceStr: string) => {
-    if (!isAuthenticated) {
+  const handlePayment = async (planPriceStr: string, fromRedirect = false) => {
+    if (!isAuthenticated && !fromRedirect) {
       setIsLoginModalOpen(true);
       return;
+    }
+
+    // Cross-Domain Bridging Logic
+    const hostname = window.location.hostname;
+    // If we are on vibelly.fun (restricted), bounce them to vercel.app
+    if (!fromRedirect && (hostname === 'vibelly.fun' || hostname === 'www.vibelly.fun' || hostname === 'test-vibelly.fun')) {
+      const accessToken = useAuthStore.getState().accessToken;
+      const refreshToken = useAuthStore.getState().refreshToken;
+      if (accessToken && refreshToken) {
+        window.location.href = `https://vibelly.vercel.app/pricing?token=${encodeURIComponent(accessToken)}&refreshToken=${encodeURIComponent(refreshToken)}&plan=${encodeURIComponent(planPriceStr)}&redirectBack=true`;
+        return;
+      }
     }
 
     // Extract raw number, e.g., '₹1199' -> 1199
@@ -154,6 +197,13 @@ export default function Pricing() {
 
           if (verifyRes.success) {
             await checkAuth(); // Refresh user state to show premium status
+            
+            // If this was a cross-domain redirect, bounce back to vibelly.fun immediately
+            if (fromRedirect || window.location.search.includes('redirectBack=true')) {
+               window.location.href = 'https://vibelly.fun/pricing?payment=success';
+               return;
+            }
+
             setReceiptData({
               amount: planPriceStr,
               paymentId: response.razorpay_payment_id,
