@@ -4,7 +4,6 @@ import { Strategy as GitHubStrategy } from 'passport-github2';
 import AppleStrategy from 'passport-apple';
 import User, { IUser } from '../models/User';
 import { ENV } from './env';
-import { v4 as uuidv4 } from 'uuid';
 
 const generateUniqueUsername = (name: string) => {
   const base = name.toLowerCase().replace(/[^a-z0-9]/g, '') || 'user';
