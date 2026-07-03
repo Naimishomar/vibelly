@@ -241,19 +241,18 @@ export default function Home() {
           </p>
 
           <h1
-            className="text-5xl md:text-7xl font-normal tracking-tight leading-[1.1] mb-8"
+            className="text-5xl md:text-6xl font-normal tracking-tight leading-[1.1] mb-8"
             style={{ fontFamily: '"Playfair Display", "Merriweather", "Lora", ui-serif, Georgia, Cambria, "Times New Roman", Times, serif' }}
           >
-            Meet someone new.
+            The Best Free Omegle Alternative
             <br />
-            Right now.
+            &amp; Random Video Chat
           </h1>
 
           <p
-            className="text-lg md:text-xl text-zinc-400 mb-10 max-w-xl leading-relaxed"
+            className="text-lg md:text-xl text-zinc-400 mb-10 max-w-2xl leading-relaxed"
           >
-            Anonymous real-time video and voice calls with strangers from around the world.
-            No sign-up. No profile. Just press start.
+            Talk to strangers online instantly with our free random video call app. Enjoy 100% anonymous voice chat and HD video with people from around the world. No sign-up required.
           </p>
 
           <motion.div
@@ -308,10 +307,10 @@ export default function Home() {
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            className="text-4xl md:text-6xl font-normal text-center max-w-3xl leading-tight mb-12 md:mb-20 z-20 relative"
+            className="text-4xl md:text-6xl font-normal text-center max-w-4xl leading-tight mb-12 md:mb-20 z-20 relative"
             style={{ fontFamily: '"Playfair Display", "Merriweather", "Lora", ui-serif, Georgia, Cambria, "Times New Roman", Times, serif' }}
           >
-            One platform for all your spontaneous connections
+            The Ultimate Random Video Chat Platform
           </motion.h2>
 
           <InteractiveHeroCards />
@@ -343,9 +342,7 @@ export default function Home() {
               In a world of curated feeds and filtered connections, a random encounter with a stranger is not a distraction. It's a reminder that the world is bigger than your algorithm.
             </p>
             <p className="text-sm text-zinc-500 leading-relaxed max-w-xl mx-auto">
-              We built Vibelly for the unscripted moment. The unexpected laugh.
-              The conversation you didn't plan and couldn't forget.
-              That's who we build for.
+              We built Vibelly to be the fastest <a href="/omegle-alternative" className="text-zinc-400 underline hover:text-black transition-colors">Omegle alternative</a> on the internet. Whether you want to talk to strangers, meet new friends, or just enjoy an anonymous random chat app, you've found your new home.
             </p>
           </motion.div>
         </section>
@@ -364,11 +361,10 @@ export default function Home() {
               className="text-3xl md:text-4xl font-semibold mb-3"
               style={{ fontFamily: 'Georgia, serif' }}
             >
-              Connections that happen in real time
+              Talk to Strangers Instantly with HD Video Calling
             </h2>
-            <p className="text-zinc-500 text-sm max-w-xl mx-auto leading-relaxed">
-              Everything is built for the moment — anonymous, instant, and ephemeral.
-              No friction between you and the next conversation.
+            <p className="text-zinc-500 text-sm max-w-2xl mx-auto leading-relaxed">
+              Everything is built for speed and security. Meet new people without login, enjoy anonymous voice chat, and skip to the next stranger in milliseconds.
             </p>
           </motion.div>
 
@@ -420,10 +416,10 @@ export default function Home() {
                 className="text-4xl md:text-5xl font-normal mb-5"
                 style={{ fontFamily: '"Playfair Display", "Merriweather", "Lora", ui-serif, Georgia, Cambria, "Times New Roman", Times, serif' }}
               >
-                From zero to connected
+                How Our Free Stranger Chat Works
               </h2>
               <p className="text-zinc-400 text-base max-w-lg mx-auto leading-relaxed">
-                No setup. No registration. No friction built into every step from the first click to the last goodbye.
+                Talk to strangers online in three simple steps. No setup, no registration, and no friction. Just an instant connection to a random person anywhere in the world.
               </p>
             </motion.div>
 
@@ -501,11 +497,10 @@ export default function Home() {
               className="text-3xl md:text-4xl font-semibold mb-4"
               style={{ fontFamily: 'Georgia, serif' }}
             >
-              What we measure
+              Why Vibelly is the Safest Chatroulette Alternative
             </h2>
             <p className="text-zinc-500 text-sm max-w-lg mx-auto leading-relaxed">
-              Every call starts with speed and ends with privacy. Reduced wait times,
-              eliminated data retention, and a consistent experience for everyone.
+              Unlike other free video call apps, every conversation on Vibelly starts with speed and ends with complete privacy. We never store your data or chat history.
             </p>
           </motion.div>
 
@@ -764,10 +759,10 @@ export default function Home() {
               className="text-4xl md:text-5xl font-semibold mb-5"
               style={{ fontFamily: 'Georgia, serif' }}
             >
-              The next conversation is<br />one click away.
+              Ready to talk to strangers online?
             </h2>
             <p className="text-zinc-500 text-sm mb-8">
-              No account needed. Works in any modern browser.
+              Join the best OmeTV alternative. No account needed. Works in any modern browser.
             </p>
             <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
               <button
