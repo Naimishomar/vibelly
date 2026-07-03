@@ -58,7 +58,7 @@ if (process.env.GOOGLE_CLIENT_ID && process.env.GOOGLE_CLIENT_ID !== 'your_googl
     passport.use(new GoogleStrategy({
         clientID: process.env.GOOGLE_CLIENT_ID,
         clientSecret: process.env.GOOGLE_CLIENT_SECRET as string,
-        callbackURL: process.env.NODE_ENV === 'production' ? 'https://vibes-api.duckdns.org/api/oauth/google/callback' : `${process.env.BACKEND_URL || 'http://localhost:5000'}/api/oauth/google/callback`
+        callbackURL: process.env.NODE_ENV === 'production' ? 'https://api.vibelly.fun/api/oauth/google/callback' : `${process.env.BACKEND_URL || 'http://localhost:5000'}/api/oauth/google/callback`
     }, (accessToken, refreshToken, profile, done) => {
         handleOAuthUser('googleId', profile, done);
     }));
@@ -69,7 +69,7 @@ if (process.env.GITHUB_CLIENT_ID && process.env.GITHUB_CLIENT_ID !== 'your_githu
     passport.use(new GitHubStrategy({
         clientID: process.env.GITHUB_CLIENT_ID,
         clientSecret: process.env.GITHUB_CLIENT_SECRET as string,
-        callbackURL: process.env.NODE_ENV === 'production' ? 'https://vibes-api.duckdns.org/api/oauth/github/callback' : `${process.env.BACKEND_URL || 'http://localhost:5000'}/api/oauth/github/callback`,
+        callbackURL: process.env.NODE_ENV === 'production' ? 'https://api.vibelly.fun/api/oauth/github/callback' : `${process.env.BACKEND_URL || 'http://localhost:5000'}/api/oauth/github/callback`,
         scope: ['user:email']
     }, (accessToken: string, refreshToken: string, profile: any, done: any) => {
         handleOAuthUser('githubId', profile, done);
