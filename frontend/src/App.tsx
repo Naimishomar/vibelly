@@ -11,6 +11,7 @@ const Home = lazy(() => import('./pages/Home'));
 const Pricing = lazy(() => import('./pages/Pricing'));
 const Registry = lazy(() => import('./pages/Registry'));
 const VideoCall = lazy(() => import('./pages/VideoCall'));
+const TextChat = lazy(() => import('./pages/TextChat'));
 const GlobalChat = lazy(() => import('./pages/GlobalChat'));
 const OAuthCallback = lazy(() => import('./pages/OAuthCallback'));
 const Lobby = lazy(() => import('./pages/Lobby'));
@@ -101,6 +102,7 @@ function App() {
             <Route path="/call" element={<VideoCall />} />
             <Route path="/call/video" element={<VideoCall />} />
             <Route path="/call/audio" element={<VideoCall />} />
+            <Route path="/call/text" element={<TextChat />} />
             <Route path="/oauth-callback" element={<OAuthCallback />} />
             <Route path="/terms" element={<Terms />} />
             <Route path="/contact" element={<Contact />} />

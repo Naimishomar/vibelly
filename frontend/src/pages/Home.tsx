@@ -3,7 +3,7 @@ import { motion } from 'framer-motion';
 import { useState } from 'react';
 import {
   Video, Headphones, ArrowRight, Shield,
-  Zap, SkipForward, Globe, Check, ChevronDown, Crown, User
+  Zap, SkipForward, Globe, Check, ChevronDown, Crown, User, MessageSquare
 } from 'lucide-react';
 import Navbar from '../components/Navbar';
 import { SeoMarkup } from '../components/SeoMarkup';
@@ -242,6 +242,13 @@ export default function Home() {
             >
               <Headphones size={16} />
               Voice Only
+            </button>
+            <button
+              onClick={() => handleProtectedNavigation('/setup/text')}
+              className="flex items-center gap-2 bg-zinc-800/60 text-white border border-zinc-700 px-6 py-2.5 rounded-md font-medium hover:bg-zinc-800 transition-colors"
+            >
+              <MessageSquare size={16} />
+              Text Chat
             </button>
           </motion.div>
         </section>

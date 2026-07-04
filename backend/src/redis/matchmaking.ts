@@ -136,7 +136,7 @@ export const addToQueue = async (socketId: string, userId: string, baseQueueName
     // Match found!
     console.log(`Match found between ${userId} and ${peerData.userId}!`);
     const roomId = uuidv4();
-    const callType = baseQueueName.includes('audio') ? 'audio' : 'video';
+    const callType = baseQueueName.includes('text') ? 'text' : (baseQueueName.includes('audio') ? 'audio' : 'video');
 
     // Create session in DB
     try {

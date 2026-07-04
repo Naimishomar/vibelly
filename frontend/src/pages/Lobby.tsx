@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Video, Headphones, Mic, Shield, ArrowRight, CheckCircle2, AlertCircle, ChevronDown, Globe } from 'lucide-react';
+import { Video, Headphones, Mic, Shield, ArrowRight, CheckCircle2, AlertCircle, ChevronDown, Globe, MessageSquare } from 'lucide-react';
 import Navbar from '../components/Navbar';
 import { useAuthStore } from '@/store/useAuthStore';
 
@@ -9,6 +9,7 @@ export default function Lobby() {
   const navigate = useNavigate();
   const { type } = useParams<{ type: string }>();
   const isAudioOnly = type === 'audio';
+  const isTextOnly = type === 'text';
 
   const videoRef = useRef<HTMLVideoElement>(null);
   const [stream, setStream] = useState<MediaStream | null>(null);
@@ -40,6 +41,7 @@ export default function Lobby() {
     let animationFrame: number;
 
     const initMedia = async () => {
+      if (isTextOnly) return; // Skip media for text chat
       try {
         const mediaStream = await navigator.mediaDevices.getUserMedia({
           video: isAudioOnly ? false : { width: { ideal: 640 }, height: { ideal: 480 }, facingMode: 'user' },
@@ -90,7 +92,7 @@ export default function Lobby() {
       void audioContext?.close().catch(() => {});
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isAudioOnly]);
+  }, [isAudioOnly, isTextOnly]);
 
   // Persist matchmaking preferences
   useEffect(() => {
@@ -108,7 +110,7 @@ export default function Lobby() {
       stream.getTracks().forEach(track => track.stop());
     }
     
-    navigate(`/call/${isAudioOnly ? 'audio' : 'video'}`, { 
+    navigate(`/call/${isTextOnly ? 'text' : (isAudioOnly ? 'audio' : 'video')}`, { 
       state: { 
         targetCountry: targetCountry !== 'Global' ? targetCountry : undefined,
         targetGender: (isAuthenticated && user?.premiumStatus) ? targetGender : undefined 
@@ -144,6 +146,12 @@ export default function Lobby() {
                   <AlertCircle size={48} className="text-red-500" />
                   <p className="font-medium text-lg">{error}</p>
                 </div>
+              ) : isTextOnly ? (
+                <div className="relative flex items-center justify-center w-full h-full bg-gradient-to-br from-zinc-900 to-black">
+                  <div className="relative z-10 w-32 h-32 rounded-full bg-zinc-800 flex items-center justify-center shadow-[0_0_50px_rgba(39,39,42,0.8)] border border-white/10 backdrop-blur-sm">
+                    <MessageSquare size={48} className="text-white" />
+                  </div>
+                </div>
               ) : isAudioOnly ? (
                 <div className="relative flex items-center justify-center w-full h-full bg-gradient-to-br from-zinc-900 to-black">
                   {/* Audio Wave Animation */}
@@ -178,7 +186,7 @@ export default function Lobby() {
             </div>
 
             {/* Mic Level Indicator */}
-            {!error && (
+            {!error && !isTextOnly && (
               <div className="mt-6 w-full max-w-sm flex items-center gap-4 bg-zinc-900/80 p-4 rounded-2xl border border-white/5">
                 <div className="w-10 h-10 rounded-full bg-zinc-800 flex items-center justify-center shrink-0">
                   <Mic size={20} className={audioLevel > 0.05 ? "text-white" : "text-zinc-500"} />
@@ -210,7 +218,7 @@ export default function Lobby() {
               Ready to vibe?
             </h1>
             <p className="text-zinc-400 text-sm mb-8">
-              You are entering the {isAudioOnly ? 'Voice Only' : 'Video'} matchmaking queue. 
+              You are entering the {isTextOnly ? 'Text Chat' : (isAudioOnly ? 'Voice Only' : 'Video')} matchmaking queue. 
               Before we connect you, please review our community rules.
             </p>
 
@@ -361,7 +369,7 @@ export default function Lobby() {
                   {isAuthenticated ? 'Upgrade to Premium' : 'Sign In to Upgrade'}
                 </button>
               </div>
-            ) : (!isAudioOnly && !isAuthenticated && !guestAccessEnabled) ? (
+            ) : (!isAudioOnly && !isTextOnly && !isAuthenticated && !guestAccessEnabled) ? (
               <div className="bg-red-500/10 border border-red-500/20 rounded-xl p-4 mb-6">
                 <p className="text-sm text-red-400 font-medium flex items-center justify-center gap-2">
                   <AlertCircle size={16} />
