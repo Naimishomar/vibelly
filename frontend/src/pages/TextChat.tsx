@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
-  MessageSquare, SkipForward, AlertTriangle, Send, X
+  MessageSquare, SkipForward, AlertTriangle, Send, X, PhoneOff
 } from 'lucide-react';
 import { useCallStore } from '../store/callStore';
 import { socketService } from '../services/socketService';
@@ -185,21 +185,7 @@ export default function TextChat() {
         </div>
 
         <div className="flex items-center gap-2 sm:gap-4">
-          <button onClick={handleReport} className="text-zinc-500 hover:text-red-400 p-2 rounded-full transition-colors group relative">
-            <AlertTriangle size={20} />
-            <span className="absolute top-10 right-0 bg-zinc-800 text-xs px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">Report User</span>
-          </button>
-          
-          <button
-            onClick={() => handleSkip(false)}
-            disabled={isSearching}
-            className="flex items-center gap-2 bg-zinc-800 hover:bg-zinc-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors"
-          >
-            <SkipForward size={16} />
-            <span className="hidden sm:inline">Skip</span>
-          </button>
-
-          <button onClick={handleEndChat} className="bg-red-500/10 text-red-500 hover:bg-red-500/20 p-2 rounded-lg transition-colors">
+          <button onClick={handleEndChat} className="text-zinc-400 hover:text-white p-2 rounded-lg transition-colors hidden sm:block">
             <X size={20} />
           </button>
         </div>
@@ -255,17 +241,71 @@ export default function TextChat() {
               exit={{ opacity: 0 }}
               className="absolute inset-0 bg-[#15171B]/80 backdrop-blur-sm z-30 flex flex-col items-center justify-center p-6 text-center"
             >
-              <div className="relative mb-6">
-                <div className="absolute inset-0 bg-blue-500 blur-2xl opacity-20 rounded-full animate-pulse" />
-                <div className="relative w-20 h-20 rounded-full bg-zinc-900 border border-white/10 flex items-center justify-center shadow-[0_0_30px_rgba(59,130,246,0.15)]">
-                  <MessageSquare size={32} className="text-white animate-pulse" />
-                </div>
+              <div className="relative mb-8 flex items-center justify-center">
+                <div className="absolute inset-0 bg-blue-500 blur-[50px] opacity-20 rounded-full animate-pulse" />
+                
+                <motion.div
+                  animate={{ 
+                    x: [-20, 0, -20],
+                    scale: [1, 1.1, 1],
+                  }}
+                  transition={{ repeat: Infinity, duration: 2, ease: "easeInOut" }}
+                  className="relative z-10 w-16 h-16 rounded-full bg-blue-600 flex items-center justify-center shadow-lg -mr-4 border-2 border-[#15171B]"
+                >
+                  <MessageSquare size={24} className="text-white" />
+                </motion.div>
+
+                <motion.div
+                  animate={{ 
+                    x: [20, 0, 20],
+                    scale: [1, 1.1, 1],
+                  }}
+                  transition={{ repeat: Infinity, duration: 2, ease: "easeInOut", delay: 0.2 }}
+                  className="relative z-0 w-16 h-16 rounded-full bg-zinc-800 flex items-center justify-center shadow-lg border-2 border-[#15171B]"
+                >
+                  <MessageSquare size={24} className="text-zinc-400" />
+                </motion.div>
               </div>
-              <h3 className="text-xl font-medium text-white mb-2">Finding a match...</h3>
-              <p className="text-zinc-400 text-sm">Waiting for someone to connect</p>
+              <h3 className="text-2xl font-semibold text-white mb-2 tracking-tight">Finding a match...</h3>
+              <p className="text-zinc-400 text-sm">Searching globally for someone to connect</p>
             </motion.div>
           )}
         </AnimatePresence>
+
+        {/* Action Bar (Floating exactly like VideoCall) */}
+        {!isSearching && (
+          <div className="absolute bottom-20 md:bottom-24 left-1/2 -translate-x-1/2 z-20 flex items-center gap-2 md:gap-3 bg-zinc-900/80 backdrop-blur-xl p-2 md:p-3 rounded-full border border-white/10 shadow-[0_0_30px_rgba(0,0,0,0.8)] w-[95%] md:w-auto justify-center md:justify-start">
+            <motion.button
+              whileTap={{ scale: 0.9 }}
+              onClick={handleEndChat}
+              className="cursor-pointer p-3 md:p-3.5 rounded-full bg-red-500 hover:bg-red-600 transition-colors text-white shadow-lg shadow-red-500/30"
+              title="End call"
+            >
+              <PhoneOff size={20} className="md:w-[22px] md:h-[22px]" />
+            </motion.button>
+
+            <div className="w-px h-8 bg-white/20 mx-1 hidden sm:block" />
+
+            <motion.button
+              whileTap={{ scale: 0.9 }}
+              onClick={() => handleSkip(false)}
+              className="cursor-pointer px-4 md:px-5 py-2.5 md:py-3 rounded-full bg-white hover:bg-zinc-200 transition-colors text-black font-semibold text-sm flex items-center gap-2 shadow-lg shadow-white/10"
+              title="Skip to next person"
+            >
+              Next
+              <SkipForward size={16} className="md:w-[18px] md:h-[18px]" />
+            </motion.button>
+
+            <motion.button
+              whileTap={{ scale: 0.9 }}
+              onClick={handleReport}
+              className="cursor-pointer p-3 md:p-3.5 rounded-full bg-zinc-800 hover:bg-zinc-700 transition-colors text-zinc-500 hover:text-orange-400 hidden sm:block"
+              title="Report user"
+            >
+              <AlertTriangle size={20} className="md:w-[22px] md:h-[22px]" />
+            </motion.button>
+          </div>
+        )}
 
         {/* Input Area */}
         <div className="absolute bottom-0 left-0 right-0 p-4 bg-gradient-to-t from-[#15171B] via-[#15171B]/95 to-transparent pt-10">
