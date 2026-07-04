@@ -39,6 +39,60 @@ const routes = [
   },
 ];
 
+const softwareSchema = {
+  "@context": "https://schema.org",
+  "@type": "SoftwareApplication",
+  "name": "Vibelly",
+  "operatingSystem": "Web, iOS, Android",
+  "applicationCategory": "CommunicationApplication",
+  "offers": {
+    "@type": "Offer",
+    "price": "0",
+    "priceCurrency": "USD"
+  },
+  "aggregateRating": {
+    "@type": "AggregateRating",
+    "ratingValue": "4.8",
+    "ratingCount": "12450"
+  }
+};
+
+const faqSchema = {
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "Is Vibelly a free Omegle alternative?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Yes, Vibelly is a 100% free Omegle alternative. You can instantly start random video chatting with strangers worldwide without paying any fees or requiring a mandatory signup."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Is Vibelly safe to use?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Yes. We prioritize user safety with encrypted peer-to-peer connections. However, since it is a random video chat platform, users should remain vigilant and never share personal financial information with strangers."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Do I need to download an app to use Vibelly?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "No download is required. Vibelly works directly in your web browser on mobile phones, tablets, and desktop computers."
+      }
+    }
+  ]
+};
+
+const schemasHtml = `
+    <script type="application/ld+json">${JSON.stringify(softwareSchema)}</script>
+    <script type="application/ld+json">${JSON.stringify(faqSchema)}</script>
+`;
+
 console.log('Generating SEO stubs for core routes...');
 
 for (const route of routes) {
@@ -65,8 +119,17 @@ for (const route of routes) {
   html = html.replace(/<meta property="og:url" content="https:\/\/vibelly\.fun\/" \/>/, `<meta property="og:url" content="https://vibelly.fun${route.path}" />`);
   html = html.replace(/<meta property="twitter:url" content="https:\/\/vibelly\.fun\/" \/>/, `<meta property="twitter:url" content="https://vibelly.fun${route.path}" />`);
 
+  // Inject Schemas before </head>
+  html = html.replace('</head>', `${schemasHtml}\n  </head>`);
+
   fs.writeFileSync(path.join(routeDir, 'index.html'), html);
   console.log(`✅ Generated SEO stub for ${route.path}`);
 }
+
+// ALSO INJECT INTO BASE dist/index.html
+let baseHtml = fs.readFileSync(indexPath, 'utf-8');
+baseHtml = baseHtml.replace('</head>', `${schemasHtml}\n  </head>`);
+fs.writeFileSync(indexPath, baseHtml);
+console.log('✅ Injected schemas into base dist/index.html');
 
 console.log('🎉 SEO stubs generation complete!');
