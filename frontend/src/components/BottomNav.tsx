@@ -24,7 +24,7 @@ export default function BottomNav({ onRequiresAuth }: BottomNavProps) {
         <HomeIcon size={20} />
         <span className="text-[10px] font-medium">Home</span>
       </Link>
-      <button onClick={() => handleProtectedAction('/chat')} className="flex flex-col items-center gap-1 text-zinc-400 hover:text-white transition-colors cursor-pointer">
+      <button onClick={() => handleProtectedAction('/setup/text')} className="flex flex-col items-center gap-1 text-zinc-400 hover:text-white transition-colors cursor-pointer">
         <MessageSquare size={20} />
         <span className="text-[10px] font-medium">Chat</span>
       </button>
