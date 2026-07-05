@@ -35,7 +35,7 @@ export default function TextChat() {
       addMessage({ from: 'system', text: 'Partner disconnected.', timestamp: new Date() });
       setTimeout(() => {
         handleSkip(true);
-      }, 1500);
+      }, 600);
     };
 
     const onReceiveMessage = (data: { peerSocketId: string, message: string, timestamp: Date }) => {
@@ -167,12 +167,12 @@ export default function TextChat() {
   };
 
   return (
-    <div className="min-h-screen h-[100dvh] bg-[#15171B] text-white flex flex-col font-sans overflow-hidden">
+    <div className="flex flex-col h-[100dvh] bg-[#15171B] text-white font-sans overflow-hidden">
       <SEO title="Random Text Chat | Talk to Strangers" description="Instant text chat with random strangers online." />
       <BlinkingDotsGrid />
       
       {/* Header */}
-      <header className="h-16 flex items-center justify-between px-4 sm:px-6 bg-black/40 backdrop-blur-md border-b border-white/5 z-20">
+      <header className="flex-none h-16 flex items-center justify-between px-4 sm:px-6 bg-black/40 backdrop-blur-md border-b border-white/5 z-20">
         <div className="flex items-center gap-4">
           <div className="text-xl sm:text-2xl font-bold cursor-pointer hover:opacity-80 transition-opacity" onClick={handleEndChat} style={{ fontFamily: '"Playfair Display", serif' }}>
             Vibelly
@@ -191,10 +191,11 @@ export default function TextChat() {
         </div>
       </header>
 
-      {/* Main Content */}
-      <div className="flex-1 relative flex flex-col z-10 w-full max-w-4xl mx-auto">
-        {/* Chat Area */}
-        <div className="flex-1 overflow-y-auto p-4 space-y-4 scrollbar-thin scrollbar-thumb-zinc-700 pb-20">
+      {/* Main Content Area */}
+      <div className="flex-1 relative flex flex-col w-full max-w-4xl mx-auto z-10 min-h-0">
+        
+        {/* Chat Messages */}
+        <div className="flex-1 overflow-y-auto p-4 space-y-4 scrollbar-thin scrollbar-thumb-zinc-700">
           <AnimatePresence initial={false}>
             {messages.map((msg, i) => (
               <motion.div
@@ -272,43 +273,45 @@ export default function TextChat() {
           )}
         </AnimatePresence>
 
-        {/* Action Bar (Floating exactly like VideoCall) */}
-        {!isSearching && (
-          <div className="absolute bottom-20 md:bottom-24 left-1/2 -translate-x-1/2 z-20 flex items-center gap-2 md:gap-3 bg-zinc-900/80 backdrop-blur-xl p-2 md:p-3 rounded-full border border-white/10 shadow-[0_0_30px_rgba(0,0,0,0.8)] w-[95%] md:w-auto justify-center md:justify-start">
-            <motion.button
-              whileTap={{ scale: 0.9 }}
-              onClick={handleEndChat}
-              className="cursor-pointer p-3 md:p-3.5 rounded-full bg-red-500 hover:bg-red-600 transition-colors text-white shadow-lg shadow-red-500/30"
-              title="End call"
-            >
-              <PhoneOff size={20} className="md:w-[22px] md:h-[22px]" />
-            </motion.button>
+        {/* Action Bar & Input Container (Flex, non-absolute) */}
+        <div className="flex-none flex flex-col bg-gradient-to-t from-[#15171B] via-[#15171B] to-transparent pt-4 pb-4 px-4 gap-4 z-20">
+          
+          {/* Action Bar */}
+          {!isSearching && (
+            <div className="flex items-center justify-center sm:justify-start gap-3 bg-zinc-900/80 backdrop-blur-xl p-2 rounded-full border border-white/10 shadow-lg mx-auto sm:mx-0 w-max max-w-full">
+              <motion.button
+                whileTap={{ scale: 0.9 }}
+                onClick={handleEndChat}
+                className="cursor-pointer p-3 rounded-full bg-red-500 hover:bg-red-600 transition-colors text-white shadow-lg shadow-red-500/30 shrink-0"
+                title="End call"
+              >
+                <PhoneOff size={20} />
+              </motion.button>
+  
+              <div className="w-px h-8 bg-white/20 hidden sm:block shrink-0" />
+  
+              <motion.button
+                whileTap={{ scale: 0.9 }}
+                onClick={() => handleSkip(false)}
+                className="cursor-pointer px-6 py-2.5 rounded-full bg-white hover:bg-zinc-200 transition-colors text-black font-semibold text-sm flex items-center gap-2 shadow-lg shadow-white/10 shrink-0"
+                title="Skip to next person"
+              >
+                Next
+                <SkipForward size={16} />
+              </motion.button>
+  
+              <motion.button
+                whileTap={{ scale: 0.9 }}
+                onClick={handleReport}
+                className="cursor-pointer p-3 rounded-full bg-zinc-800 hover:bg-zinc-700 transition-colors text-zinc-500 hover:text-orange-400 hidden sm:block shrink-0"
+                title="Report user"
+              >
+                <AlertTriangle size={20} />
+              </motion.button>
+            </div>
+          )}
 
-            <div className="w-px h-8 bg-white/20 mx-1 hidden sm:block" />
-
-            <motion.button
-              whileTap={{ scale: 0.9 }}
-              onClick={() => handleSkip(false)}
-              className="cursor-pointer px-4 md:px-5 py-2.5 md:py-3 rounded-full bg-white hover:bg-zinc-200 transition-colors text-black font-semibold text-sm flex items-center gap-2 shadow-lg shadow-white/10"
-              title="Skip to next person"
-            >
-              Next
-              <SkipForward size={16} className="md:w-[18px] md:h-[18px]" />
-            </motion.button>
-
-            <motion.button
-              whileTap={{ scale: 0.9 }}
-              onClick={handleReport}
-              className="cursor-pointer p-3 md:p-3.5 rounded-full bg-zinc-800 hover:bg-zinc-700 transition-colors text-zinc-500 hover:text-orange-400 hidden sm:block"
-              title="Report user"
-            >
-              <AlertTriangle size={20} className="md:w-[22px] md:h-[22px]" />
-            </motion.button>
-          </div>
-        )}
-
-        {/* Input Area */}
-        <div className="absolute bottom-0 left-0 right-0 p-4 bg-gradient-to-t from-[#15171B] via-[#15171B]/95 to-transparent pt-10">
+          {/* Input Area */}
           <form
             onSubmit={(e) => { e.preventDefault(); handleSendMessage(); }}
             className="flex items-center gap-3 w-full bg-zinc-800/90 backdrop-blur-md p-2 rounded-xl border border-white/10 shadow-2xl focus-within:border-white/20 transition-all focus-within:shadow-[0_0_20px_rgba(255,255,255,0.05)]"

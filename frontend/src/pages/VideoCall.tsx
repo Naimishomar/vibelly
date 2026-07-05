@@ -136,7 +136,9 @@ export default function VideoCall() {
     };
 
     const onPartnerDisconnected = () => {
-      handleSkip(true);
+      // Small 600ms delay to prevent the matchmaking race condition 
+      // where both users enter an empty queue at the exact same millisecond.
+      setTimeout(() => handleSkip(true), 600);
     };
 
     const onReceiveMessage = (data: { message: string; timestamp: Date }) => {
