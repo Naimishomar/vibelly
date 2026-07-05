@@ -32,6 +32,7 @@ export default function VideoCall() {
   const localVideoRef = useRef<HTMLVideoElement>(null);
   const remoteVideoRef = useRef<HTMLVideoElement>(null);
   const chatEndRef = useRef<HTMLDivElement>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -401,7 +402,7 @@ export default function VideoCall() {
   const showLocalPreview = !isAudioOnly && (webrtcService.localStream || isCameraLoading);
 
   return (
-    <div className="h-screen w-full bg-black flex flex-col relative overflow-hidden select-none">
+    <div ref={containerRef} className="h-screen w-full bg-black flex flex-col relative overflow-hidden select-none">
       <SEO 
         title="Random Video Call | Meet Strangers Instantly - Vibelly" 
         description="Start a random video call or voice chat instantly on Vibelly. Talk to strangers safely and anonymously in high quality."
@@ -540,8 +541,8 @@ export default function VideoCall() {
       {showLocalPreview && (
         <motion.div
           drag
-          dragConstraints={{ left: 0, right: 0, top: 0, bottom: 0 }}
-          className="absolute top-6 right-6 w-44 h-64 bg-zinc-800 rounded-2xl overflow-hidden shadow-2xl border border-white/10 cursor-move z-10"
+          dragConstraints={containerRef}
+          className="absolute top-6 right-6 w-28 h-40 bg-zinc-800 rounded-2xl overflow-hidden shadow-2xl border border-white/10 cursor-move z-10"
         >
           {isCameraLoading ? (
             <div className="w-full h-full flex flex-col items-center justify-center gap-2 bg-zinc-800">

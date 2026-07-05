@@ -19,7 +19,29 @@ export default function TextChat() {
   const [messageInput, setMessageInput] = useState('');
   const [peerTyping, setPeerTyping] = useState(false);
   const [isTyping, setIsTyping] = useState(false);
+  const [peerFlag, setPeerFlag] = useState<string | null>(null);
+  const [countryCodeMap, setCountryCodeMap] = useState<Record<string, string>>({});
   const typingTimeoutRef = useRef<number | null>(null);
+
+  useEffect(() => {
+    fetch('https://flagcdn.com/en/codes.json')
+      .then(res => res.json())
+      .then(data => setCountryCodeMap(data))
+      .catch(() => {});
+  }, []);
+
+  useEffect(() => {
+    if (peerData?.country && peerData.country !== 'unspecified' && Object.keys(countryCodeMap).length > 0) {
+      const code = Object.keys(countryCodeMap).find(k => countryCodeMap[k].toLowerCase() === peerData.country!.toLowerCase());
+      if (code) {
+        setPeerFlag(`https://flagcdn.com/w40/${code}.png`);
+      } else {
+        setPeerFlag(null);
+      }
+    } else {
+      setPeerFlag(null);
+    }
+  }, [peerData, countryCodeMap]);
 
   useEffect(() => {
     // Component Mount
@@ -174,12 +196,40 @@ export default function TextChat() {
       {/* Header */}
       <header className="flex-none h-16 flex items-center justify-between px-4 sm:px-6 bg-black/40 backdrop-blur-md border-b border-white/5 z-20">
         <div className="flex items-center gap-4">
-          <div className="text-xl sm:text-2xl font-bold cursor-pointer hover:opacity-80 transition-opacity" onClick={handleEndChat} style={{ fontFamily: '"Playfair Display", serif' }}>
+          <div className="text-xl sm:text-2xl font-bold cursor-pointer hover:opacity-80 transition-opacity hidden sm:block" onClick={handleEndChat} style={{ fontFamily: '"Playfair Display", serif' }}>
             Vibelly
           </div>
-          {peerData?.country && peerData.country !== 'unspecified' && (
-            <div className="hidden sm:flex items-center gap-2 bg-white/10 px-3 py-1 rounded-full text-xs text-zinc-300 border border-white/10">
-              Matched in {peerData.country}
+          
+          {isMatched && peerData ? (
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 rounded-full bg-zinc-800 overflow-hidden shrink-0 shadow-inner border border-white/10">
+                {peerData.profileImage ? (
+                  <img src={peerData.profileImage} alt={peerData.name} className="w-full h-full object-cover" />
+                ) : (
+                  <div className="w-full h-full flex items-center justify-center font-bold text-lg bg-gradient-to-br from-zinc-700 to-zinc-800">
+                    {peerData.name?.[0]?.toUpperCase() ?? '?'}
+                  </div>
+                )}
+              </div>
+              <div className="flex flex-col">
+                <div className="flex items-center gap-2">
+                  <span className="font-semibold text-white truncate max-w-[150px] sm:max-w-[200px]">
+                    {peerData.name || 'Stranger'}
+                  </span>
+                  {peerFlag && (
+                    <img src={peerFlag} alt="flag" className="w-4 h-3 rounded-[2px] object-cover shrink-0 shadow-sm" />
+                  )}
+                </div>
+                {peerData.country && peerData.country !== 'unspecified' && (
+                  <span className="text-xs text-zinc-400 capitalize">
+                    {peerData.country}
+                  </span>
+                )}
+              </div>
+            </div>
+          ) : (
+            <div className="flex sm:hidden text-xl font-bold" style={{ fontFamily: '"Playfair Display", serif' }}>
+              Vibelly
             </div>
           )}
         </div>
