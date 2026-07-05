@@ -231,21 +231,21 @@ export default function Home() {
           >
             <button
               onClick={() => handleProtectedNavigation('/setup/video')}
-              className="flex items-center gap-2 bg-white text-black px-6 py-2.5 rounded-md font-medium hover:bg-zinc-100 transition-colors"
+              className="flex items-center justify-center w-full sm:w-48 gap-2 bg-white text-black px-6 py-2.5 rounded-md font-medium hover:bg-zinc-100 transition-colors"
             >
               Start Video Call
               <ArrowRight size={16} />
             </button>
             <button
               onClick={() => handleProtectedNavigation('/setup/audio')}
-              className="flex items-center gap-2 bg-zinc-800/60 text-white border border-zinc-700 px-6 py-2.5 rounded-md font-medium hover:bg-zinc-800 transition-colors"
+              className="flex items-center justify-center w-full sm:w-48 gap-2 bg-zinc-800/60 text-white border border-zinc-700 px-6 py-2.5 rounded-md font-medium hover:bg-zinc-800 transition-colors"
             >
               <Headphones size={16} />
               Voice Only
             </button>
             <button
               onClick={() => handleProtectedNavigation('/setup/text')}
-              className="flex items-center gap-2 bg-zinc-800/60 text-white border border-zinc-700 px-6 py-2.5 rounded-md font-medium hover:bg-zinc-800 transition-colors"
+              className="flex items-center justify-center w-full sm:w-48 gap-2 bg-zinc-800/60 text-white border border-zinc-700 px-6 py-2.5 rounded-md font-medium hover:bg-zinc-800 transition-colors"
             >
               <MessageSquare size={16} />
               Text Chat
