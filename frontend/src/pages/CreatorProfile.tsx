@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
-import { Users, Loader2, ArrowLeft, ImageIcon, UserPlus, UserCheck, Flag, IndianRupee, Crown, Lock, Play, X, CheckCircle2, CreditCard, RefreshCw, Wallet, QrCode, Heart, MessageCircle, Send, Trash2, ChevronLeft, ChevronRight, Plus, LayoutGrid } from 'lucide-react';
+import { Users, Loader2, ArrowLeft, ImageIcon, UserPlus, UserCheck, Flag, Crown, Lock, Play, X, CheckCircle2, CreditCard, RefreshCw, Wallet, QrCode, Heart, MessageCircle, Send, Trash2, ChevronLeft, ChevronRight, Plus, LayoutGrid } from 'lucide-react';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
 import SEO from '../components/SEO';
@@ -557,7 +557,7 @@ export default function CreatorProfile() {
                       <div className="flex justify-between">
                         <span className="text-zinc-500">Expires</span>
                         <span className="text-zinc-300">
-                          {user?.role === 'admin' ? 'Never' : creatorSubscription.expiresAt ? new Date(creatorSubscription.expiresAt).toLocaleDateString() : 'N/A'}
+                          {user?.role === 'admin' ? 'Never' : creatorSubscription?.expiresAt ? new Date(creatorSubscription.expiresAt).toLocaleDateString() : 'N/A'}
                         </span>
                       </div>
                     )}
