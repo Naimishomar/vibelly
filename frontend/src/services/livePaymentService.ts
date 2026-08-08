@@ -279,13 +279,62 @@ export interface CreatorPaymentDetails {
   bankAccount: string | null;
 }
 
-export async function getCreatorPaymentDetails(): Promise<CreatorPaymentDetails | null> {
+export async function getCreatorPaymentDetails(creatorId?: string): Promise<CreatorPaymentDetails | null> {
   try {
-    const res = await fetchWithTokenRefresh(`${getBackendUrl()}/api/payment/creator/payment-details`, { method: 'GET' });
+    const url = creatorId 
+      ? `${getBackendUrl()}/api/payment/creator/payment-details/${encodeURIComponent(creatorId)}`
+      : `${getBackendUrl()}/api/payment/creator/payment-details`;
+    const res = await fetchWithTokenRefresh(url, { method: 'GET' });
     if (!res.ok) return null;
     return await res.json();
   } catch {
     return null;
+  }
+}
+
+export async function submitUpiPaymentProof(roomCode: string, utr: string): Promise<{ success: boolean; token?: string; error?: string; message?: string }> {
+  try {
+    const res = await fetchWithTokenRefresh(`${getBackendUrl()}/api/payment/live/submit-upi`, {
+      method: 'POST',
+      body: JSON.stringify({ roomCode, utr }),
+    });
+    return await res.json();
+  } catch {
+    return { success: false, error: 'Failed to submit payment proof' };
+  }
+}
+
+export async function fetchPendingPayments(): Promise<{ success: boolean; payments?: any[]; error?: string }> {
+  try {
+    const res = await fetchWithTokenRefresh(`${getBackendUrl()}/api/payment/creator/pending-payments`, { method: 'GET' });
+    if (!res.ok) return { success: false, error: 'Failed to fetch pending payments' };
+    return await res.json();
+  } catch {
+    return { success: false, error: 'Failed to fetch pending payments' };
+  }
+}
+
+export async function approveUpiPayment(paymentId: string): Promise<{ success: boolean; message?: string; error?: string }> {
+  try {
+    const res = await fetchWithTokenRefresh(`${getBackendUrl()}/api/payment/creator/approve-upi`, {
+      method: 'POST',
+      body: JSON.stringify({ paymentId }),
+    });
+    return await res.json();
+  } catch {
+    return { success: false, error: 'Failed to approve payment' };
+  }
+}
+
+export async function declineUpiPayment(paymentId: string): Promise<{ success: boolean; message?: string; error?: string }> {
+  try {
+    const res = await fetchWithTokenRefresh(`${getBackendUrl()}/api/payment/creator/decline-upi`, {
+      method: 'POST',
+      body: JSON.stringify({ paymentId }),
+    });
+    return await res.json();
+  } catch {
+    return { success: false, error: 'Failed to decline payment' };
   }
 }
 

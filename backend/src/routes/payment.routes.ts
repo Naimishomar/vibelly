@@ -137,7 +137,7 @@ router.get('/live/access/:roomCode', requireAuth, async (req, res) => {
       return res.json({ access: true, price: room.price, token: signLiveAccessToken(viewerId, roomCode) });
     }
     
-    // Check if user paid via platform (legacy)
+    // Check if user paid via platform (legacy or UPI)
     const paid = await LivePayment.findOne({
       viewer: viewerId,
       roomCode,
@@ -146,6 +146,17 @@ router.get('/live/access/:roomCode', requireAuth, async (req, res) => {
     if (paid) {
       return res.json({ access: true, price: room.price, token: signLiveAccessToken(viewerId, roomCode) });
     }
+
+    // Check if there is a pending payment
+    const pending = await LivePayment.findOne({
+      viewer: viewerId,
+      roomCode,
+      status: 'pending',
+    }).lean();
+    if (pending) {
+      return res.json({ access: false, price: room.price, token: null, isPendingApproval: true, utr: pending.utr });
+    }
+
     res.json({ access: false, price: room.price, token: null });
   } catch (error) {
     console.error('Error checking live access:', error);
@@ -260,6 +271,161 @@ router.post('/live/verify', requireAuth, async (req, res) => {
   } catch (error) {
     console.error('Error verifying live payment:', error);
     res.status(500).json({ error: 'Failed to verify payment' });
+  }
+});
+
+// Submit UPI payment proof (UTR) for a paid live stream
+router.post('/live/submit-upi', requireAuth, async (req, res) => {
+  try {
+    const { roomCode, utr } = req.body;
+    const viewerId = (req as any).user.id;
+
+    if (!roomCode || !utr) {
+      return res.status(400).json({ error: 'Room code and UTR are required' });
+    }
+
+    const cleanRoomCode = String(roomCode).trim().toUpperCase();
+    const cleanUtr = String(utr).trim();
+
+    // Validate UTR is 12 digits
+    if (!/^\d{12}$/.test(cleanUtr)) {
+      return res.status(400).json({ error: 'UTR must be exactly 12 numeric digits' });
+    }
+
+    const room = getLiveRoom(cleanRoomCode);
+    if (!room) {
+      return res.status(404).json({ error: 'Stream not found' });
+    }
+
+    if (!room.creatorUserId) {
+      return res.status(400).json({ error: 'Creator is not registered' });
+    }
+
+    // Check if this UTR has already been submitted to prevent double-claiming
+    const duplicateUtr = await LivePayment.findOne({ utr: cleanUtr });
+    if (duplicateUtr) {
+      return res.status(400).json({ error: 'This transaction UTR has already been submitted' });
+    }
+
+    // Check if user already has a pending/paid payment for this room
+    const existing = await LivePayment.findOne({
+      viewer: viewerId,
+      roomCode: cleanRoomCode,
+      status: { $in: ['pending', 'paid'] },
+    });
+
+    if (existing) {
+      if (existing.status === 'paid') {
+        return res.json({ success: true, message: 'You already have access to this stream', token: signLiveAccessToken(viewerId, cleanRoomCode) });
+      }
+      return res.status(400).json({ error: 'You have already submitted a payment request for this stream' });
+    }
+
+    // Create a pending LivePayment. Split: P2P gets 100% direct to creator.
+    await LivePayment.create({
+      viewer: viewerId,
+      creator: room.creatorUserId,
+      roomCode: cleanRoomCode,
+      amount: room.price,
+      currency: 'INR',
+      creatorShare: room.price,
+      platformShare: 0,
+      paymentMethod: 'upi',
+      utr: cleanUtr,
+      status: 'pending',
+    });
+
+    res.json({ success: true, message: 'Payment submitted successfully. Waiting for creator approval.' });
+  } catch (error) {
+    console.error('Error submitting UPI payment:', error);
+    res.status(500).json({ error: 'Failed to submit payment proof' });
+  }
+});
+
+// Get pending payments for the creator's live streams
+router.get('/creator/pending-payments', requireAuth, async (req, res) => {
+  try {
+    const creatorId = (req as any).user.id;
+    const payments = await LivePayment.find({
+      creator: creatorId,
+      status: 'pending',
+      paymentMethod: 'upi',
+    })
+      .sort({ createdAt: -1 })
+      .populate('viewer', 'name username profileImage')
+      .lean();
+
+    res.json({ success: true, payments });
+  } catch (error) {
+    console.error('Error fetching pending payments:', error);
+    res.status(500).json({ error: 'Failed to fetch pending payments' });
+  }
+});
+
+// Approve a pending UPI payment
+router.post('/creator/approve-upi', requireAuth, async (req, res) => {
+  try {
+    const creatorId = (req as any).user.id;
+    const { paymentId } = req.body;
+
+    if (!paymentId) {
+      return res.status(400).json({ error: 'Payment ID is required' });
+    }
+
+    const payment = await LivePayment.findOne({
+      _id: paymentId,
+      creator: creatorId,
+      status: 'pending',
+    });
+
+    if (!payment) {
+      return res.status(404).json({ error: 'Pending payment request not found' });
+    }
+
+    payment.status = 'paid';
+    await payment.save();
+
+    // Automatically add as a Prime Member for this roomCode to grant permanent access
+    await PrimeMember.findOneAndUpdate(
+      { creator: creatorId, user: payment.viewer, roomCode: payment.roomCode },
+      { creator: creatorId, user: payment.viewer, roomCode: payment.roomCode, addedBy: creatorId },
+      { upsert: true, new: true }
+    );
+
+    res.json({ success: true, message: 'Payment approved. Access granted to viewer.' });
+  } catch (error) {
+    console.error('Error approving payment:', error);
+    res.status(500).json({ error: 'Failed to approve payment' });
+  }
+});
+
+// Decline a pending UPI payment
+router.post('/creator/decline-upi', requireAuth, async (req, res) => {
+  try {
+    const creatorId = (req as any).user.id;
+    const { paymentId } = req.body;
+
+    if (!paymentId) {
+      return res.status(400).json({ error: 'Payment ID is required' });
+    }
+
+    const payment = await LivePayment.findOne({
+      _id: paymentId,
+      creator: creatorId,
+      status: 'pending',
+    });
+
+    if (!payment) {
+      return res.status(404).json({ error: 'Pending payment request not found' });
+    }
+
+    payment.status = 'failed';
+    await payment.save();
+
+    res.json({ success: true, message: 'Payment request declined.' });
+  } catch (error) {
+    console.error('Error declining payment:', error);
+    res.status(500).json({ error: 'Failed to decline payment' });
   }
 });
 
@@ -435,6 +601,29 @@ router.get('/creator/payment-details', requireAuth, async (req, res) => {
   } catch (error) {
     console.error('Error fetching payment details:', error);
     res.status(500).json({ error: 'Failed to fetch payment details' });
+  }
+});
+
+// Get a specific creator's payment details (UPI/Bank) for a viewer to pay them
+router.get('/creator/payment-details/:creatorId', requireAuth, async (req, res) => {
+  try {
+    const creatorId = String(req.params.creatorId);
+    let profile = await CreatorProfile.findOne({ user: creatorId }).lean();
+    if (!profile) {
+      // Auto-create to avoid 404
+      await CreatorProfile.create({ user: creatorId });
+      return res.json({
+        upiId: null,
+        bankAccount: null,
+      });
+    }
+    res.json({
+      upiId: profile.upiId || null,
+      bankAccount: profile.bankAccount || null,
+    });
+  } catch (error) {
+    console.error('Error fetching creator payment details:', error);
+    res.status(500).json({ error: 'Failed to fetch creator payment details' });
   }
 });
 

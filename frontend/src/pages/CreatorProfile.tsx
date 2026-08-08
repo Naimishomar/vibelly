@@ -512,7 +512,7 @@ export default function CreatorProfile() {
                   <Wallet size={32} className="mx-auto text-zinc-600 mb-3" />
                   <p className="text-zinc-400 mb-4">Activate your creator profile for ₹500/month to go live and monetize your streams.</p>
                   <button onClick={handleCreateSubOrder} disabled={creatingSubOrder} className="inline-flex items-center gap-2 bg-amber-500 text-black px-4 py-2 rounded-xl font-medium hover:bg-amber-400 transition-colors disabled:opacity-50 cursor-pointer">
-                    {creatingSubOrder ? <RefreshCw className="animate-spin mx-auto" size={18} /> : <>Activate Profile <IndianRupee size={14} /> 500/month</>}
+                    {creatingSubOrder ? <RefreshCw className="animate-spin mx-auto" size={18} /> : <>Activate Profile<IndianRupee size={14} />500/month</>}
                   </button>
                 </div>
               )}

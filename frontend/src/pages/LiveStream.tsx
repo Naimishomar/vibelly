@@ -7,7 +7,7 @@ import SEO from '../components/SEO';
 import BlinkingDotsGrid from '../components/BlinkingDotsGrid';
 import { socketService } from '../services/socketService';
 import { liveService, attachStreamToVideo } from '../services/liveService';
-import { checkLiveAccess, fetchLiveEarnings, reportUser, getCreatorPaymentDetails, checkCreatorSubscription, type CreatorPaymentDetails } from '../services/livePaymentService';
+import { checkLiveAccess, fetchLiveEarnings, reportUser, getCreatorPaymentDetails, checkCreatorSubscription, type CreatorPaymentDetails, submitUpiPaymentProof, fetchPendingPayments, approveUpiPayment, declineUpiPayment } from '../services/livePaymentService';
 import { uploadImage } from '../services/uploadService';
 import { useAuthStore } from '../store/useAuthStore';
 
@@ -81,6 +81,19 @@ export default function LiveStream() {
   const [paymentModalDetails, setPaymentModalDetails] = useState<CreatorPaymentDetails | null>(null);
   const [paymentModalPrice, setPaymentModalPrice] = useState(0);
   const [loadingPaymentDetails, setLoadingPaymentDetails] = useState(false);
+
+  // UPI Payment Proof States
+  const [utrInput, setUtrInput] = useState('');
+  const [submittingUpi, setSubmittingUpi] = useState(false);
+  const [upiSubmitError, setUpiSubmitError] = useState('');
+  const [isPendingApproval, setIsPendingApproval] = useState(false);
+  const [pendingUtr, setPendingUtr] = useState('');
+
+  // Creator approvals states
+  const [pendingPayments, setPendingPayments] = useState<any[]>([]);
+  const [loadingPendingPayments, setLoadingPendingPayments] = useState(false);
+  const [approvingPaymentId, setApprovingPaymentId] = useState<string | null>(null);
+  const [activeCreatorTab, setActiveCreatorTab] = useState<'chat' | 'approvals'>('chat');
 
   const remoteVideoRef = useRef<HTMLVideoElement>(null);
   const chatScrollRef = useRef<HTMLDivElement>(null);
@@ -265,8 +278,10 @@ export default function LiveStream() {
       return;
     }
     
+    setUtrInput('');
+    setUpiSubmitError('');
     setLoadingPaymentDetails(true);
-    const details = await getCreatorPaymentDetails();
+    const details = await getCreatorPaymentDetails(stream.creatorUserId);
     setLoadingPaymentDetails(false);
     
     setPaymentModalDetails(details);
@@ -274,10 +289,61 @@ export default function LiveStream() {
     setShowPaymentModal(true);
   };
 
+  const handleSubmitUpi = async () => {
+    if (!utrInput.trim()) {
+      setUpiSubmitError('Please enter the 12-digit UTR/Ref No');
+      return;
+    }
+    if (!/^\d{12}$/.test(utrInput.trim())) {
+      setUpiSubmitError('UTR must be exactly 12 numeric digits');
+      return;
+    }
+    const targetRoom = activeRoomRef.current || joinCode.toUpperCase();
+    if (!targetRoom) return;
+
+    setSubmittingUpi(true);
+    setUpiSubmitError('');
+    try {
+      const res = await submitUpiPaymentProof(targetRoom, utrInput.trim());
+      if (res.success) {
+        setIsPendingApproval(true);
+        setPendingUtr(utrInput.trim());
+        setUtrInput('');
+      } else {
+        setUpiSubmitError(res.error || 'Failed to submit payment proof');
+      }
+    } catch {
+      setUpiSubmitError('Failed to submit payment proof');
+    } finally {
+      setSubmittingUpi(false);
+    }
+  };
+
+  const handleCheckAccessAfterUpi = async () => {
+    const targetRoom = activeRoomRef.current || joinCode.toUpperCase();
+    if (!targetRoom) return;
+    const access = await checkLiveAccess(targetRoom);
+    if (access?.access) {
+      accessTokenRef.current = access.token || null;
+      setShowPaymentModal(false);
+      setIsPendingApproval(false);
+      setPendingUtr('');
+      await attemptJoin(targetRoom);
+    } else if (access && !access.access) {
+      if (!(access as any).isPendingApproval) {
+        setIsPendingApproval(false);
+        setPendingUtr('');
+        alert('Your payment request was declined by the creator.');
+      }
+    }
+  };
+
   const joinByCode = async (code?: string) => {
     const room = (code || joinCode).trim().toUpperCase();
     if (!room) return;
     setJoinError('');
+
+    activeRoomRef.current = room;
 
     const stream = streams.find((s) => s.roomCode === room);
     if (stream && stream.price > 0) {
@@ -286,6 +352,13 @@ export default function LiveStream() {
         accessTokenRef.current = access.token || null;
         await attemptJoin(room);
       } else if (access && !access.access) {
+        if ((access as any).isPendingApproval) {
+          setIsPendingApproval(true);
+          setPendingUtr((access as any).utr || '');
+        } else {
+          setIsPendingApproval(false);
+          setPendingUtr('');
+        }
         await promptPay(room, access.price);
       } else {
         await attemptJoin(room);
@@ -342,6 +415,60 @@ export default function LiveStream() {
     setReportSent(true);
     setTimeout(() => setReportSent(false), 3000);
   };
+
+  const loadPendingPayments = async () => {
+    if (!isLive) return;
+    setLoadingPendingPayments(true);
+    const res = await fetchPendingPayments();
+    setLoadingPendingPayments(false);
+    if (res.success && res.payments) {
+      setPendingPayments(res.payments.filter((p: any) => p.roomCode === roomCode));
+    }
+  };
+
+  const handleApproveUpi = async (paymentId: string) => {
+    setApprovingPaymentId(paymentId);
+    try {
+      const res = await approveUpiPayment(paymentId);
+      if (res.success) {
+        await loadPendingPayments();
+      } else {
+        alert(res.error || 'Failed to approve payment');
+      }
+    } catch {
+      alert('Failed to approve payment');
+    } finally {
+      setApprovingPaymentId(null);
+    }
+  };
+
+  const handleDeclineUpi = async (paymentId: string) => {
+    if (!confirm('Are you sure you want to decline this payment request?')) return;
+    setApprovingPaymentId(paymentId);
+    try {
+      const res = await declineUpiPayment(paymentId);
+      if (res.success) {
+        await loadPendingPayments();
+      } else {
+        alert(res.error || 'Failed to decline payment');
+      }
+    } catch {
+      alert('Failed to decline payment');
+    } finally {
+      setApprovingPaymentId(null);
+    }
+  };
+
+  useEffect(() => {
+    let interval: NodeJS.Timeout;
+    if (isLive) {
+      loadPendingPayments();
+      interval = setInterval(loadPendingPayments, 5000);
+    }
+    return () => {
+      if (interval) clearInterval(interval);
+    };
+  }, [isLive, roomCode]);
 
   useEffect(() => {
     return () => {
@@ -677,43 +804,157 @@ export default function LiveStream() {
                   </div>
                 </div>
               ) : (
-                <div className="p-4 md:p-6 space-y-4">
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-2 flex-wrap">
-                      <span className="flex items-center gap-1.5 bg-red-500 px-2.5 py-1 rounded-full text-xs font-bold">
-                        <span className="w-1.5 h-1.5 rounded-full bg-white animate-pulse" /> LIVE
-                      </span>
-                      {livePrice > 0 && (
-                        <span className="flex items-center gap-1 bg-amber-500/20 text-amber-300 px-2 py-1 rounded-full text-xs font-semibold">
-                          <Lock size={11} /> ₹{livePrice} per subscription
+                <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 p-4 md:p-6">
+                  {/* Left Column: Stream Video */}
+                  <div className="lg:col-span-2 space-y-4">
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-2 flex-wrap">
+                        <span className="flex items-center gap-1.5 bg-red-500 px-2.5 py-1 rounded-full text-xs font-bold">
+                          <span className="w-1.5 h-1.5 rounded-full bg-white animate-pulse" /> LIVE
                         </span>
-                      )}
-                      {livePrivate && (
-                        <span className="flex items-center gap-1 bg-zinc-700 text-zinc-300 px-2 py-1 rounded-full text-xs font-semibold">
-                          <EyeOff size={11} /> Private
+                        {livePrice > 0 && (
+                          <span className="flex items-center gap-1 bg-amber-500/20 text-amber-300 px-2 py-1 rounded-full text-xs font-semibold">
+                            <Lock size={11} /> ₹{livePrice} per subscription
+                          </span>
+                        )}
+                        {livePrivate && (
+                          <span className="flex items-center gap-1 bg-zinc-700 text-zinc-300 px-2 py-1 rounded-full text-xs font-semibold">
+                            <EyeOff size={11} /> Private
+                          </span>
+                        )}
+                        <span className="text-sm text-zinc-300 flex items-center gap-1.5">
+                          <Users size={14} /> {viewerCount} / 10 watching
                         </span>
-                      )}
-                      <span className="text-sm text-zinc-300 flex items-center gap-1.5">
-                        <Users size={14} /> {viewerCount} / 10 watching
-                      </span>
+                      </div>
+                      <button
+                        onClick={endLive}
+                        className="flex items-center gap-2 bg-white text-black px-4 py-2 rounded-xl text-xs md:text-sm font-medium hover:opacity-90 transition-opacity cursor-pointer"
+                      >
+                        <Square size={14} /> End Stream
+                      </button>
                     </div>
-                    <button
-                      onClick={endLive}
-                      className="flex items-center gap-2 bg-white text-black px-4 py-2 rounded-xl font-medium hover:opacity-90 transition-opacity cursor-pointer"
-                    >
-                      <Square size={14} /> End Stream
-                    </button>
+                    <div className="rounded-2xl overflow-hidden bg-black aspect-video relative border border-white/10">
+                      <video ref={localVideoRef} autoPlay playsInline muted className="w-full h-full object-contain" />
+                      {thumbnailUrl && <img src={thumbnailUrl} alt="" className="absolute inset-0 w-full h-full object-cover opacity-0 pointer-events-none" />}
+                    </div>
+                    <div className="flex items-center gap-2 text-sm text-zinc-400">
+                      <span>Share this code:</span>
+                      <span className="font-mono font-bold tracking-widest text-white bg-zinc-800 px-3 py-1 rounded-lg">{roomCode}</span>
+                      <button onClick={copyCode} className="text-zinc-400 hover:text-white transition-colors cursor-pointer">
+                        {copied ? <Check size={16} className="text-emerald-400" /> : <Copy size={16} />}
+                      </button>
+                    </div>
                   </div>
-                  <div className="rounded-2xl overflow-hidden bg-black aspect-video relative border border-white/10">
-                    <video ref={localVideoRef} autoPlay playsInline muted className="w-full h-full object-contain" />
-                    {thumbnailUrl && <img src={thumbnailUrl} alt="" className="absolute inset-0 w-full h-full object-cover opacity-0 pointer-events-none" />}
-                  </div>
-                  <div className="flex items-center gap-2 text-sm text-zinc-400">
-                    <span>Share this code:</span>
-                    <span className="font-mono font-bold tracking-widest text-white bg-zinc-800 px-3 py-1 rounded-lg">{roomCode}</span>
-                    <button onClick={copyCode} className="text-zinc-400 hover:text-white transition-colors cursor-pointer">
-                      {copied ? <Check size={16} className="text-emerald-400" /> : <Copy size={16} />}
-                    </button>
+
+                  {/* Right Column: Live Chat & Payment Approvals */}
+                  <div className="bg-zinc-900/60 border border-white/10 rounded-2xl flex flex-col h-[450px] lg:h-auto overflow-hidden">
+                    {/* Tabs header */}
+                    <div className="flex border-b border-white/10">
+                      <button
+                        onClick={() => setActiveCreatorTab('chat')}
+                        className={`flex-1 py-3 text-center text-xs font-semibold uppercase tracking-wider border-b-2 transition-colors cursor-pointer ${activeCreatorTab === 'chat' ? 'border-red-500 text-white bg-white/5 font-bold' : 'border-transparent text-zinc-400 hover:text-zinc-200'}`}
+                      >
+                        Live Chat
+                      </button>
+                      {livePrice > 0 && (
+                        <button
+                          onClick={() => setActiveCreatorTab('approvals')}
+                          className={`flex-1 py-3 text-center text-xs font-semibold uppercase tracking-wider border-b-2 transition-colors relative cursor-pointer ${activeCreatorTab === 'approvals' ? 'border-red-500 text-white bg-white/5 font-bold' : 'border-transparent text-zinc-400 hover:text-zinc-200'}`}
+                        >
+                          Approvals
+                          {pendingPayments.length > 0 && (
+                            <span className="absolute top-2.5 right-4 w-4 h-4 bg-amber-500 text-black rounded-full flex items-center justify-center text-[9px] font-bold animate-pulse">
+                              {pendingPayments.length}
+                            </span>
+                          )}
+                        </button>
+                      )}
+                    </div>
+
+                    {/* Content area */}
+                    <div className="flex-1 relative overflow-hidden flex flex-col">
+                      {activeCreatorTab === 'chat' ? (
+                        <div className="flex-1 flex flex-col overflow-hidden">
+                          <div ref={chatScrollRef} className="flex-1 overflow-y-auto p-4 space-y-2">
+                            {comments.length === 0 ? (
+                              <p className="text-zinc-600 text-xs text-center mt-8 font-medium">No messages yet.</p>
+                            ) : (
+                              comments.map((c) => (
+                                <div key={c.id} className="flex items-start gap-2">
+                                  <div className="w-6 h-6 rounded-full bg-zinc-700 flex-shrink-0 overflow-hidden">
+                                    {c.user.profileImage ? <img src={c.user.profileImage} alt="" className="w-full h-full object-cover" /> : <span className="w-full h-full flex items-center justify-center text-[9px] font-bold">{c.user.name[0]?.toUpperCase()}</span>}
+                                  </div>
+                                  <div className="text-xs">
+                                    <span className="text-zinc-400 font-medium mr-1.5">{c.user.name}</span>
+                                    <span className="text-zinc-100 break-words">{c.text}</span>
+                                  </div>
+                                </div>
+                              ))
+                            )}
+                          </div>
+                          <div className="border-t border-white/10 p-3 flex gap-2">
+                            <input
+                              value={commentText}
+                              onChange={(e) => setCommentText(e.target.value)}
+                              onKeyDown={(e) => { if (e.key === 'Enter') sendComment(); }}
+                              placeholder="Say something to your viewers…"
+                              className="flex-1 bg-zinc-800/60 border border-white/10 rounded-xl px-3 py-2 text-xs text-white outline-none focus:border-white/30 transition-colors placeholder:text-zinc-600"
+                            />
+                            <button onClick={sendComment} className="p-2 bg-white text-black rounded-lg hover:opacity-90 transition-opacity cursor-pointer">
+                              <Send size={14} />
+                            </button>
+                          </div>
+                        </div>
+                      ) : (
+                        <div className="flex-1 overflow-y-auto p-4 space-y-3">
+                          {loadingPendingPayments && pendingPayments.length === 0 ? (
+                            <div className="flex items-center justify-center py-8">
+                              <Loader2 className="animate-spin text-zinc-400 w-5 h-5" />
+                            </div>
+                          ) : pendingPayments.length === 0 ? (
+                            <div className="text-center py-10 text-zinc-500">
+                              <ShieldCheck size={28} className="mx-auto mb-2 opacity-25" />
+                              <p className="text-xs font-medium">No pending approvals</p>
+                              <p className="text-[10px] text-zinc-600 mt-1">Payments submitted by viewers will appear here.</p>
+                            </div>
+                          ) : (
+                            pendingPayments.map((p) => (
+                              <div key={p._id} className="bg-zinc-800/40 border border-white/5 rounded-xl p-3.5 space-y-2">
+                                <div className="flex items-center gap-2">
+                                  <div className="w-7 h-7 rounded-full bg-zinc-700 overflow-hidden flex-shrink-0">
+                                    {p.viewer?.profileImage ? <img src={p.viewer.profileImage} alt="" className="w-full h-full object-cover" /> : <span className="w-full h-full flex items-center justify-center text-[10px] font-bold">{p.viewer?.name?.[0]?.toUpperCase()}</span>}
+                                  </div>
+                                  <div className="min-w-0">
+                                    <div className="text-xs font-semibold text-white truncate">{p.viewer?.name}</div>
+                                    <div className="text-[10px] text-zinc-500 truncate">@{p.viewer?.username}</div>
+                                  </div>
+                                </div>
+                                <div className="bg-black/35 rounded-lg p-2 flex items-center justify-between text-[11px] font-mono">
+                                  <span className="text-zinc-500">UTR (12-Digit):</span>
+                                  <span className="text-sky-400 font-bold">{p.utr}</span>
+                                </div>
+                                <div className="flex gap-2 pt-1 text-[11px]">
+                                  <button
+                                    onClick={() => handleDeclineUpi(p._id)}
+                                    disabled={approvingPaymentId !== null}
+                                    className="flex-1 bg-red-500/10 hover:bg-red-500/20 text-red-400 py-1.5 rounded-lg font-medium transition-colors disabled:opacity-50 cursor-pointer"
+                                  >
+                                    Decline
+                                  </button>
+                                  <button
+                                    onClick={() => handleApproveUpi(p._id)}
+                                    disabled={approvingPaymentId !== null}
+                                    className="flex-1 bg-emerald-500 text-black py-1.5 rounded-lg font-bold hover:bg-emerald-400 transition-colors disabled:opacity-50 cursor-pointer"
+                                  >
+                                    {approvingPaymentId === p._id ? <Loader2 className="animate-spin mx-auto w-3.5 h-3.5" /> : 'Approve'}
+                                  </button>
+                                </div>
+                              </div>
+                            ))
+                          )}
+                        </div>
+                      )}
+                    </div>
                   </div>
                 </div>
               )}
@@ -726,73 +967,149 @@ export default function LiveStream() {
 
       {/* Payment Details Modal (UPI/Bank) */}
       {showPaymentModal && (
-        <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/70 backdrop-blur-sm" onClick={() => { setShowPaymentModal(false); setPaymentModalDetails(null); }}>
-          <div className="bg-zinc-900 border border-white/10 rounded-2xl p-6 max-w-md w-full mx-4" onClick={(e) => e.stopPropagation()}>
+        <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/70 backdrop-blur-sm" onClick={() => { setShowPaymentModal(false); setPaymentModalDetails(null); setIsPendingApproval(false); }}>
+          <div className="bg-zinc-900 border border-white/10 rounded-2xl p-6 max-w-md w-full mx-4 max-h-[90vh] overflow-y-auto" onClick={(e) => e.stopPropagation()}>
             <div className="flex items-center justify-between mb-4">
               <h3 className="text-lg font-semibold">Access Paid Stream</h3>
-              <button onClick={() => { setShowPaymentModal(false); setPaymentModalDetails(null); }} className="text-zinc-400 hover:text-white">
+              <button onClick={() => { setShowPaymentModal(false); setPaymentModalDetails(null); setIsPendingApproval(false); }} className="text-zinc-400 hover:text-white">
                 <X size={20} />
               </button>
             </div>
-            <div className="space-y-4">
-              <div className="bg-zinc-800/50 rounded-xl p-4 border border-white/5">
-                <div className="flex items-center gap-2 mb-2">
-                  <Lock size={16} className="text-amber-400" />
-                  <span className="font-medium">₹{paymentModalPrice} to join</span>
+            
+            {isPendingApproval ? (
+              <div className="space-y-5 text-center py-6">
+                <div className="w-16 h-16 bg-amber-500/10 border border-amber-500/20 text-amber-400 rounded-full flex items-center justify-center mx-auto animate-pulse">
+                  <RefreshCw className="animate-spin w-8 h-8" />
                 </div>
-                <p className="text-xs text-zinc-400">Pay the creator directly via UPI or Bank Transfer. After payment, share the transaction screenshot with the creator so they can add you as a Prime Member.</p>
+                <div>
+                  <h4 className="text-base font-semibold text-white">Payment Verification Pending</h4>
+                  <p className="text-xs text-zinc-400 mt-2 px-2">
+                    Your payment request with UTR <strong className="font-mono text-amber-300 font-semibold">{pendingUtr}</strong> is waiting for approval by the creator.
+                  </p>
+                </div>
+                <div className="bg-zinc-800/40 border border-white/5 rounded-xl p-3 text-left">
+                  <p className="text-[11px] text-zinc-500 leading-relaxed">
+                    Once the creator verifies the payment in their account, they will approve it and you'll be automatically let into the stream.
+                  </p>
+                </div>
+                <div className="space-y-2 pt-2">
+                  <button
+                    onClick={handleCheckAccessAfterUpi}
+                    className="w-full bg-white text-black py-2.5 rounded-xl text-sm font-semibold hover:opacity-90 transition-opacity cursor-pointer"
+                  >
+                    Check Access Status
+                  </button>
+                  <button
+                    onClick={() => { setShowPaymentModal(false); setPaymentModalDetails(null); setIsPendingApproval(false); }}
+                    className="w-full bg-zinc-800 text-zinc-300 py-2.5 rounded-xl text-sm hover:bg-zinc-700 transition-colors cursor-pointer"
+                  >
+                    Close & Check Later
+                  </button>
+                </div>
               </div>
+            ) : (
+              <div className="space-y-4">
+                <div className="bg-zinc-800/50 rounded-xl p-4 border border-white/5">
+                  <div className="flex items-center gap-2 mb-1">
+                    <Lock size={16} className="text-amber-400" />
+                    <span className="font-semibold text-white">₹{paymentModalPrice} to join</span>
+                  </div>
+                  <p className="text-[11px] text-zinc-400">Pay the creator directly via UPI or Bank Transfer. The money goes 100% directly to their account.</p>
+                </div>
 
-              {loadingPaymentDetails ? (
-                <div className="flex items-center justify-center py-4">
-                  <Loader2 className="animate-spin w-6 h-6 text-zinc-400" />
-                </div>
-              ) : paymentModalDetails ? (
-                <div className="space-y-3">
-                  {paymentModalDetails.upiId && (
-                    <div className="bg-zinc-800/50 rounded-xl p-4 border border-sky-500/20">
-                      <div className="flex items-center justify-between mb-2">
-                        <span className="text-xs text-zinc-500">UPI ID</span>
-                        <button onClick={() => { navigator.clipboard.writeText(paymentModalDetails.upiId || ''); }} className="text-xs text-sky-400 hover:text-sky-300">Copy</button>
+                {loadingPaymentDetails ? (
+                  <div className="flex items-center justify-center py-6">
+                    <Loader2 className="animate-spin w-7 h-7 text-zinc-400" />
+                  </div>
+                ) : paymentModalDetails ? (
+                  <div className="space-y-4">
+                    {/* QR Code and UPI ID */}
+                    {paymentModalDetails.upiId && (
+                      <div className="bg-zinc-800/50 rounded-xl p-4 border border-sky-500/20 flex flex-col items-center text-center">
+                        <span className="text-[10px] text-zinc-500 font-semibold uppercase tracking-wider mb-2">Scan QR code to pay</span>
+                        <div className="bg-white p-2 rounded-xl mb-3">
+                          <img 
+                            src={`https://api.qrserver.com/v1/create-qr-code/?size=180x180&color=0-0-0&data=${encodeURIComponent(`upi://pay?pa=${paymentModalDetails.upiId}&pn=${watchedCreator || 'Creator'}&am=${paymentModalPrice}&cu=INR&tn=Vibelly%20Live`)}`} 
+                            alt="Scan to pay" 
+                            className="w-40 h-40" 
+                          />
+                        </div>
+                        <div className="flex items-center justify-between w-full mb-1 bg-black/30 px-3 py-2 rounded-lg">
+                          <span className="font-mono text-xs text-sky-400 truncate pr-2 select-all">{paymentModalDetails.upiId}</span>
+                          <button onClick={() => { navigator.clipboard.writeText(paymentModalDetails.upiId || ''); alert('UPI ID copied!'); }} className="text-xs text-sky-400 hover:text-sky-300 font-medium shrink-0">Copy</button>
+                        </div>
+                        <a 
+                          href={`upi://pay?pa=${paymentModalDetails.upiId}&pn=${encodeURIComponent(watchedCreator || 'Creator')}&am=${paymentModalPrice}&cu=INR&tn=Vibelly%20Live`}
+                          className="mt-2 w-full bg-sky-500 text-white text-center py-2 rounded-xl text-xs font-semibold hover:bg-sky-400 transition-colors block"
+                        >
+                          Pay via UPI App (Mobile Only)
+                        </a>
                       </div>
-                      <div className="font-mono text-sky-400 break-all">{paymentModalDetails.upiId}</div>
-                      <p className="text-xs text-zinc-500 mt-2">Open your UPI app (GPay, PhonePe, Paytm) and send ₹{paymentModalPrice} to this ID</p>
-                    </div>
-                  )}
-                  {paymentModalDetails.bankAccount && (
-                    <div className="bg-zinc-800/50 rounded-xl p-4 border border-emerald-500/20">
-                      <div className="flex items-center justify-between mb-2">
-                        <span className="text-xs text-zinc-500">Bank Account</span>
-                        <button onClick={() => { navigator.clipboard.writeText(paymentModalDetails.bankAccount || ''); }} className="text-xs text-emerald-400 hover:text-emerald-300">Copy</button>
-                      </div>
-                      <div className="font-mono text-emerald-400 whitespace-pre-wrap break-all">{paymentModalDetails.bankAccount}</div>
-                      <p className="text-xs text-zinc-500 mt-2">Transfer ₹{paymentModalPrice} via IMPS/NEFT/UPI to this account</p>
-                    </div>
-                  )}
-                  {!paymentModalDetails.upiId && !paymentModalDetails.bankAccount && (
-                    <div className="bg-zinc-800/50 rounded-xl p-4 border border-red-500/20 text-center">
-                      <p className="text-red-400 text-sm">This creator hasn't set up payment details yet.</p>
-                      <p className="text-xs text-zinc-500 mt-1">Please contact them directly to arrange payment.</p>
-                    </div>
-                  )}
-                </div>
-              ) : (
-                <div className="bg-zinc-800/50 rounded-xl p-4 border border-red-500/20 text-center">
-                  <p className="text-red-400 text-sm">Could not load payment details.</p>
-                  <p className="text-xs text-zinc-500 mt-1">Please contact the creator directly.</p>
-                </div>
-              )}
+                    )}
 
-              <div className="bg-zinc-800/30 rounded-xl p-3 border border-white/5 text-center">
-                <p className="text-xs text-zinc-400 mb-2">After paying, tell the creator your username. They will add you as a Prime Member and you'll get instant access.</p>
+                    {/* Bank Details */}
+                    {paymentModalDetails.bankAccount && (
+                      <div className="bg-zinc-800/50 rounded-xl p-4 border border-emerald-500/20">
+                        <div className="flex items-center justify-between mb-2">
+                          <span className="text-xs text-zinc-500 font-medium">Bank Account details</span>
+                          <button onClick={() => { navigator.clipboard.writeText(paymentModalDetails.bankAccount || ''); alert('Bank details copied!'); }} className="text-xs text-emerald-400 hover:text-emerald-300 font-medium">Copy</button>
+                        </div>
+                        <div className="font-mono text-xs text-emerald-400 whitespace-pre-wrap break-all leading-relaxed">{paymentModalDetails.bankAccount}</div>
+                      </div>
+                    )}
+
+                    {!paymentModalDetails.upiId && !paymentModalDetails.bankAccount && (
+                      <div className="bg-zinc-800/50 rounded-xl p-4 border border-red-500/20 text-center">
+                        <p className="text-red-400 text-sm">This creator hasn't set up payment details yet.</p>
+                        <p className="text-xs text-zinc-500 mt-1">Please contact them directly to arrange payment.</p>
+                      </div>
+                    )}
+
+                    {/* UTR Input Form */}
+                    {(paymentModalDetails.upiId || paymentModalDetails.bankAccount) && (
+                      <div className="border-t border-white/10 pt-4 space-y-3">
+                        <label className="block text-xs text-zinc-400 font-medium uppercase tracking-wider">
+                          Submit Payment Proof
+                        </label>
+                        {upiSubmitError && <p className="text-red-400 text-xs">{upiSubmitError}</p>}
+                        <div className="flex gap-2">
+                          <input
+                            type="text"
+                            maxLength={12}
+                            value={utrInput}
+                            onChange={(e) => setUtrInput(e.target.value.replace(/\D/g, ''))}
+                            placeholder="Enter 12-digit UPI UTR / Ref No"
+                            className="flex-1 bg-zinc-950 border border-white/10 rounded-xl px-4 py-2.5 text-sm text-white font-mono outline-none focus:border-white/30 transition-colors placeholder:text-zinc-700"
+                          />
+                          <button
+                            onClick={handleSubmitUpi}
+                            disabled={submittingUpi || utrInput.length !== 12}
+                            className="bg-white text-black text-xs font-semibold px-4 rounded-xl disabled:opacity-40 hover:opacity-90 transition-opacity cursor-pointer flex items-center justify-center gap-1.5"
+                          >
+                            {submittingUpi ? <Loader2 className="animate-spin w-4 h-4" /> : 'Submit'}
+                          </button>
+                        </div>
+                        <p className="text-[10px] text-zinc-500 leading-normal">
+                          After transferring ₹{paymentModalPrice}, enter the 12-digit UTR/UPI transaction ref number from your app receipt.
+                        </p>
+                      </div>
+                    )}
+                  </div>
+                ) : (
+                  <div className="bg-zinc-800/50 rounded-xl p-4 border border-red-500/20 text-center">
+                    <p className="text-red-400 text-sm">Could not load payment details.</p>
+                    <p className="text-xs text-zinc-500 mt-1">Please contact the creator directly.</p>
+                  </div>
+                )}
+
                 <button 
-                  onClick={() => { setShowPaymentModal(false); setPaymentModalDetails(null); }}
-                  className="w-full bg-zinc-700 text-white py-2 rounded-xl text-sm hover:bg-zinc-600 transition-colors"
+                  onClick={() => { setShowPaymentModal(false); setPaymentModalDetails(null); setIsPendingApproval(false); }}
+                  className="w-full bg-zinc-800 text-zinc-300 py-2.5 rounded-xl text-sm hover:bg-zinc-750 transition-colors cursor-pointer"
                 >
                   Close - I'll Pay Later
                 </button>
               </div>
-            </div>
+            )}
           </div>
         </div>
       )}

@@ -8,10 +8,13 @@ export interface ILivePayment extends Document {
   currency: string;
   creatorShare: number;
   platformShare: number;
-  razorpayOrderId: string;
-  razorpayPaymentId: string;
-  status: 'paid' | 'refunded';
+  razorpayOrderId?: string;
+  razorpayPaymentId?: string;
+  paymentMethod: 'razorpay' | 'upi';
+  utr?: string;
+  status: 'pending' | 'paid' | 'refunded' | 'failed';
   createdAt: Date;
+  updatedAt: Date;
 }
 
 const LivePaymentSchema: Schema = new Schema({
@@ -22,9 +25,11 @@ const LivePaymentSchema: Schema = new Schema({
   currency: { type: String, default: 'INR' },
   creatorShare: { type: Number, required: true },
   platformShare: { type: Number, required: true },
-  razorpayOrderId: { type: String, required: true },
-  razorpayPaymentId: { type: String, required: true },
-  status: { type: String, enum: ['paid', 'refunded'], default: 'paid' },
+  razorpayOrderId: { type: String },
+  razorpayPaymentId: { type: String },
+  paymentMethod: { type: String, enum: ['razorpay', 'upi'], default: 'razorpay' },
+  utr: { type: String },
+  status: { type: String, enum: ['pending', 'paid', 'refunded', 'failed'], default: 'pending' },
 }, {
   timestamps: true,
 });
