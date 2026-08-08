@@ -6,7 +6,8 @@ import { ENV } from '../config/env';
 import User from '../models/User';
 import LivePayment from '../models/LivePayment';
 import CreatorProfile from '../models/CreatorProfile';
-import ProfileSubscription from '../models/ProfileSubscription';
+import CreatorSubscription from '../models/CreatorSubscription';
+import PrimeMember from '../models/PrimeMember';
 import { requireAuth } from '../middlewares/auth.middleware';
 import { getLiveRoom } from '../socket/liveRooms';
 
@@ -111,7 +112,7 @@ const signLiveAccessToken = (viewerId: string, roomCode: string) => {
   );
 };
 
-// Check access for a room (already paid?) without charging again.
+// Check access for a room (prime member or paid)
 router.get('/live/access/:roomCode', requireAuth, async (req, res) => {
   try {
     const roomCode = String(req.params.roomCode || '').trim().toUpperCase();
@@ -124,13 +125,26 @@ router.get('/live/access/:roomCode', requireAuth, async (req, res) => {
     if (room.creatorUserId && room.creatorUserId === (req as any).user.id) {
       return res.json({ access: true, price: room.price, token: null });
     }
+    const viewerId = (req as any).user.id;
+    
+    // Check if user is a prime member of this creator (for this room or all rooms)
+    const primeMember = await PrimeMember.findOne({
+      creator: room.creatorUserId,
+      user: viewerId,
+      $or: [{ roomCode }, { roomCode: { $exists: false } }, { roomCode: null }],
+    }).lean();
+    if (primeMember) {
+      return res.json({ access: true, price: room.price, token: signLiveAccessToken(viewerId, roomCode) });
+    }
+    
+    // Check if user paid via platform (legacy)
     const paid = await LivePayment.findOne({
-      viewer: (req as any).user.id,
+      viewer: viewerId,
       roomCode,
       status: 'paid',
     }).lean();
     if (paid) {
-      return res.json({ access: true, price: room.price, token: signLiveAccessToken((req as any).user.id, roomCode) });
+      return res.json({ access: true, price: room.price, token: signLiveAccessToken(viewerId, roomCode) });
     }
     res.json({ access: false, price: room.price, token: null });
   } catch (error) {
@@ -228,29 +242,20 @@ router.post('/live/verify', requireAuth, async (req, res) => {
       return res.json({ success: true, token: signLiveAccessToken(viewerId, roomCode) });
     }
 
-    const creatorShare = Math.round(amountPaid * 0.7);
-    const platformShare = Math.round(amountPaid * 0.3);
-
     await LivePayment.create({
       viewer: viewerId,
       creator: creatorId,
       roomCode,
       amount: amountPaid,
       currency: 'INR',
-      creatorShare,
-      platformShare,
       razorpayOrderId: razorpay_order_id,
       razorpayPaymentId: razorpay_payment_id,
       status: 'paid',
     });
 
-    await User.findByIdAndUpdate(creatorId, { $inc: { liveEarnings: creatorShare } });
-
     res.json({
       success: true,
       token: signLiveAccessToken(viewerId, roomCode),
-      creatorShare,
-      platformShare,
     });
   } catch (error) {
     console.error('Error verifying live payment:', error);
@@ -273,64 +278,53 @@ router.get('/live/earnings', requireAuth, async (req, res) => {
   }
 });
 
-// ─── Profile Subscriptions (OnlyFans-style monthly) ───
+// ─── Creator Monthly Subscription (₹500/month) ───
 
-const signProfileAccessToken = (subscriberId: string, creatorId: string) => {
+const CREATOR_MONTHLY_PRICE = 500; // ₹500/month for creator live streaming access
+
+const signCreatorAccessToken = (creatorId: string) => {
   return jwt.sign(
-    { type: 'profile-access', subscriberId, creatorId },
+    { type: 'creator-access', creatorId },
     ENV.JWT_SECRET,
     { expiresIn: '32d' }
   );
 };
 
-// Check if current user has an active subscription to a creator.
-router.get('/profile/access/:creatorId', requireAuth, async (req, res) => {
+// Check if creator has active subscription
+router.get('/creator/subscription/status', requireAuth, async (req, res) => {
   try {
-    const creatorId = String(req.params.creatorId || '');
-    const sub = await ProfileSubscription.findOne({
-      subscriber: (req as any).user.id,
+    const creatorId = (req as any).user.id;
+    const sub = await CreatorSubscription.findOne({
       creator: creatorId,
       status: 'active',
       expiresAt: { $gt: new Date() },
     }).lean();
+    
     if (sub) {
       return res.json({
-        access: true,
-        token: signProfileAccessToken((req as any).user.id, creatorId),
+        active: true,
         expiresAt: sub.expiresAt,
+        token: signCreatorAccessToken(creatorId),
       });
     }
-    const creator = await CreatorProfile.findOne({ user: creatorId }).lean();
+    
     res.json({
-      access: false,
-      price: creator?.subscriptionPrice || 0,
+      active: false,
+      price: CREATOR_MONTHLY_PRICE,
       token: null,
     });
   } catch (error) {
-    console.error('Error checking profile access:', error);
-    res.status(500).json({ error: 'Failed to check access' });
+    console.error('Error checking creator subscription:', error);
+    res.status(500).json({ error: 'Failed to check subscription' });
   }
 });
 
-// Create a Razorpay order for a monthly profile subscription.
-router.post('/profile/create-order', requireAuth, async (req, res) => {
+// Create order for creator monthly subscription
+router.post('/creator/subscription/create-order', requireAuth, async (req, res) => {
   try {
-    const creatorId = ((req.body || {}).creatorId || '').trim();
-    if (!creatorId) return res.status(400).json({ error: 'Creator is required' });
-
-    const profile = await CreatorProfile.findOne({ user: creatorId }).lean();
-    if (!profile) return res.status(404).json({ error: 'Creator profile not found' });
-    if (profile.verification.status !== 'approved') {
-      return res.status(400).json({ error: 'This creator is not verified yet' });
-    }
-    const price = profile.subscriptionPrice || 0;
-    if (price <= 0) return res.status(400).json({ error: 'This creator does not offer a subscription' });
-    if (creatorId === (req as any).user.id) {
-      return res.status(400).json({ error: 'You cannot subscribe to yourself' });
-    }
-
-    const existing = await ProfileSubscription.findOne({
-      subscriber: (req as any).user.id,
+    const creatorId = (req as any).user.id;
+    
+    const existing = await CreatorSubscription.findOne({
       creator: creatorId,
       status: 'active',
       expiresAt: { $gt: new Date() },
@@ -338,32 +332,32 @@ router.post('/profile/create-order', requireAuth, async (req, res) => {
     if (existing) {
       return res.json({
         alreadySubscribed: true,
-        token: signProfileAccessToken((req as any).user.id, creatorId),
+        token: signCreatorAccessToken(creatorId),
       });
     }
 
     const options = {
-      amount: price * 100,
+      amount: CREATOR_MONTHLY_PRICE * 100,
       currency: 'INR',
-      receipt: `profile_${creatorId}_${Date.now()}`,
+      receipt: `creator_sub_${creatorId}_${Date.now()}`,
       notes: {
-        type: 'profile-subscription',
-        subscriberId: (req as any).user.id,
+        type: 'creator-subscription',
         creatorId,
       },
     };
     const order = await razorpay.orders.create(options);
     res.json(order);
   } catch (error) {
-    console.error('Error creating profile order:', error);
+    console.error('Error creating creator subscription order:', error);
     res.status(500).json({ error: 'Failed to create order' });
   }
 });
 
-// Verify a profile subscription payment; credit creator 70% / platform 30%, valid 30 days.
-router.post('/profile/verify', requireAuth, async (req, res) => {
+// Verify creator subscription payment
+router.post('/creator/subscription/verify', requireAuth, async (req, res) => {
   try {
     const { razorpay_order_id, razorpay_payment_id, razorpay_signature } = req.body;
+    const creatorId = (req as any).user.id;
 
     const sign = razorpay_order_id + '|' + razorpay_payment_id;
     const expectedSign = crypto
@@ -372,65 +366,169 @@ router.post('/profile/verify', requireAuth, async (req, res) => {
       .digest('hex');
 
     if (razorpay_signature !== expectedSign) {
-      return res.status(400).json({ success: false, message: 'Invalid signature sent!' });
+      return res.status(400).json({ success: false, message: 'Invalid signature' });
     }
 
     const order = await razorpay.orders.fetch(razorpay_order_id);
     const notes = (order as any).notes || {};
-    const subscriberId = notes.subscriberId;
-    const creatorId = notes.creatorId;
-    if (!subscriberId || !creatorId) {
+    if (notes.type !== 'creator-subscription' || notes.creatorId !== creatorId) {
       return res.status(400).json({ success: false, message: 'Invalid order metadata' });
     }
-    if (subscriberId !== (req as any).user.id) {
+    if (creatorId !== (req as any).user.id) {
       return res.status(400).json({ success: false, message: 'Payment does not belong to this user' });
     }
 
     const amountPaid = (order as any).amount / 100;
-    const profile = await CreatorProfile.findOne({ user: creatorId }).lean();
-    if (profile && amountPaid !== profile.subscriptionPrice) {
+    if (amountPaid !== CREATOR_MONTHLY_PRICE) {
       return res.status(400).json({ success: false, message: 'Amount mismatch' });
     }
 
-    const existing = await ProfileSubscription.findOne({
-      subscriber: subscriberId,
+    const existing = await CreatorSubscription.findOne({
       creator: creatorId,
       status: 'active',
       expiresAt: { $gt: new Date() },
     }).lean();
     if (existing) {
-      return res.json({ success: true, token: signProfileAccessToken(subscriberId, creatorId) });
+      return res.json({ success: true, token: signCreatorAccessToken(creatorId) });
     }
 
-    const creatorShare = Math.round(amountPaid * 0.7);
-    const platformShare = Math.round(amountPaid * 0.3);
     const expiresAt = new Date(Date.now() + 30 * 24 * 60 * 60 * 1000);
 
-    await ProfileSubscription.create({
-      subscriber: subscriberId,
+    await CreatorSubscription.create({
       creator: creatorId,
       price: amountPaid,
       currency: 'INR',
-      creatorShare,
-      platformShare,
       razorpayOrderId: razorpay_order_id,
       razorpayPaymentId: razorpay_payment_id,
       status: 'active',
       expiresAt,
     });
 
-    await User.findByIdAndUpdate(creatorId, { $inc: { liveEarnings: creatorShare } });
-
     res.json({
       success: true,
-      token: signProfileAccessToken(subscriberId, creatorId),
-      creatorShare,
-      platformShare,
+      token: signCreatorAccessToken(creatorId),
       expiresAt,
     });
   } catch (error) {
-    console.error('Error verifying profile payment:', error);
+    console.error('Error verifying creator subscription:', error);
     res.status(500).json({ error: 'Failed to verify payment' });
+  }
+});
+
+// Get creator payment details (UPI/Bank) for receiving user payments
+router.get('/creator/payment-details', requireAuth, async (req, res) => {
+  try {
+    const creatorId = (req as any).user.id;
+    const profile = await CreatorProfile.findOne({ user: creatorId }).lean();
+    if (!profile) {
+      return res.status(404).json({ error: 'Creator profile not found' });
+    }
+    res.json({
+      upiId: profile.upiId || null,
+      bankAccount: profile.bankAccount || null,
+    });
+  } catch (error) {
+    console.error('Error fetching payment details:', error);
+    res.status(500).json({ error: 'Failed to fetch payment details' });
+  }
+});
+
+// Save creator payment details (UPI/Bank)
+router.post('/creator/payment-details', requireAuth, async (req, res) => {
+  try {
+    const creatorId = (req as any).user.id;
+    const { upiId, bankAccount } = req.body;
+    
+    const profile = await CreatorProfile.findOneAndUpdate(
+      { user: creatorId },
+      { 
+        upiId: upiId?.trim() || undefined,
+        bankAccount: bankAccount?.trim() || undefined,
+      },
+      { upsert: true, new: true }
+    ).lean();
+    
+    if (!profile) {
+      return res.status(404).json({ error: 'Creator profile not found' });
+    }
+    
+    res.json({ success: true, upiId: profile.upiId, bankAccount: profile.bankAccount });
+  } catch (error) {
+    console.error('Error saving payment details:', error);
+    res.status(500).json({ error: 'Failed to save payment details' });
+  }
+});
+
+// ─── Prime Member Management (Creator adds users who paid via UPI/Bank) ───
+
+// List prime members for a creator
+router.get('/creator/prime-members', requireAuth, async (req, res) => {
+  try {
+    const creatorId = (req as any).user.id;
+    const members = await PrimeMember.find({ creator: creatorId })
+      .populate('user', 'name username profileImage')
+      .sort({ createdAt: -1 })
+      .lean();
+    res.json({ members });
+  } catch (error) {
+    console.error('Error fetching prime members:', error);
+    res.status(500).json({ error: 'Failed to fetch prime members' });
+  }
+});
+
+// Add a prime member (creator manually adds user who paid via UPI/Bank)
+router.post('/creator/prime-members', requireAuth, async (req, res) => {
+  try {
+    const creatorId = (req as any).user.id;
+    const { userId, roomCode } = req.body;
+    
+    if (!userId) {
+      return res.status(400).json({ error: 'User ID is required' });
+    }
+    
+    // Verify creator has active subscription
+    const sub = await CreatorSubscription.findOne({
+      creator: creatorId,
+      status: 'active',
+      expiresAt: { $gt: new Date() },
+    }).lean();
+    if (!sub) {
+      return res.status(403).json({ error: 'Creator subscription required to manage prime members' });
+    }
+    
+    const member = await PrimeMember.findOneAndUpdate(
+      { creator: creatorId, user: userId, roomCode: roomCode || null },
+      { creator: creatorId, user: userId, roomCode: roomCode || null, addedBy: creatorId },
+      { upsert: true, new: true }
+    ).populate('user', 'name username profileImage');
+    
+    res.json({ success: true, member });
+  } catch (error: any) {
+    if (error.code === 11000) {
+      return res.status(400).json({ error: 'User is already a prime member' });
+    }
+    console.error('Error adding prime member:', error);
+    res.status(500).json({ error: 'Failed to add prime member' });
+  }
+});
+
+// Remove a prime member
+router.delete('/creator/prime-members/:userId', requireAuth, async (req, res) => {
+  try {
+    const creatorId = (req as any).user.id;
+    const userId = req.params.userId;
+    const roomCode = req.query.roomCode as string | undefined;
+    
+    await PrimeMember.findOneAndDelete({
+      creator: creatorId,
+      user: userId,
+      roomCode: roomCode || null,
+    });
+    
+    res.json({ success: true });
+  } catch (error) {
+    console.error('Error removing prime member:', error);
+    res.status(500).json({ error: 'Failed to remove prime member' });
   }
 });
 

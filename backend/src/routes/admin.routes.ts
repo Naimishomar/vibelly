@@ -85,48 +85,6 @@ router.get('/analytics', requireAuth, requireAdmin, async (req, res) => {
   }
 });
 
-// GET /api/admin/verifications
-router.get('/verifications', requireAuth, requireAdmin, async (req, res) => {
-  try {
-    const verifications = await CreatorProfile.find({ 'verification.status': 'pending' })
-      .populate('user', 'name username email profileImage isBanned role')
-      .sort({ 'verification.submittedAt': -1 })
-      .lean();
-    res.json(verifications);
-  } catch (error) {
-    console.error('Error fetching verifications:', error);
-    res.status(500).json({ error: 'Internal server error' });
-  }
-});
-
-// POST /api/admin/verifications/:id/:action  (approve | reject)
-router.post('/verifications/:id/:action', requireAuth, requireAdmin, async (req, res) => {
-  try {
-    const { id, action } = req.params;
-    const profile = await CreatorProfile.findById(id);
-    if (!profile) return res.status(404).json({ error: 'Verification not found' });
-
-    if (action === 'approve') {
-      profile.verification.status = 'approved';
-      profile.verification.reviewedAt = new Date();
-      profile.verification.rejectReason = '';
-      await profile.save();
-      res.json({ success: true, status: 'approved' });
-    } else if (action === 'reject') {
-      profile.verification.status = 'rejected';
-      profile.verification.reviewedAt = new Date();
-      profile.verification.rejectReason = (req.body?.reason || 'Photos did not pass manual review.').slice(0, 300);
-      await profile.save();
-      res.json({ success: true, status: 'rejected' });
-    } else {
-      res.status(400).json({ error: 'Invalid action' });
-    }
-  } catch (error) {
-    console.error('Error updating verification:', error);
-    res.status(500).json({ error: 'Internal server error' });
-  }
-});
-
 // GET /api/admin/settings
 router.get('/settings', requireAuth, requireAdmin, async (req, res) => {
   try {

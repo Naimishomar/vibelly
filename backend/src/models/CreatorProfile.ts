@@ -6,6 +6,8 @@ export interface ICreatorProfile extends Document {
   coverImage: string;
   galleryPhotos: string[];
   subscriptionPrice: number;
+  upiId?: string;
+  bankAccount?: string;
   verification: {
     status: 'none' | 'pending' | 'approved' | 'rejected';
     selfieUrl: string;
@@ -24,6 +26,8 @@ const CreatorProfileSchema: Schema = new Schema({
   coverImage: { type: String, default: '' },
   galleryPhotos: [{ type: String }],
   subscriptionPrice: { type: Number, default: 0 },
+  upiId: { type: String, default: '' },
+  bankAccount: { type: String, default: '' },
   verification: {
     status: { type: String, enum: ['none', 'pending', 'approved', 'rejected'], default: 'none' },
     selfieUrl: { type: String, default: '' },

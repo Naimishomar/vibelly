@@ -1,6 +1,6 @@
 import { useAuthStore } from '../store/useAuthStore';
 
-const loadScript = (src: string) => {
+export const loadScript = (src: string) => {
   return new Promise((resolve) => {
     const script = document.createElement('script');
     script.src = src;
@@ -229,5 +229,125 @@ export async function reportUser(payload: {
     return res.ok ? { success: true } : { success: false, error: 'Failed to submit report' };
   } catch {
     return { success: false, error: 'Failed to submit report' };
+  }
+}
+
+// ─── Creator Monthly Subscription (₹500/month) ───
+
+export interface CreatorSubscriptionStatus {
+  active: boolean;
+  expiresAt?: string;
+  token?: string;
+  price: number;
+}
+
+export async function checkCreatorSubscription(): Promise<CreatorSubscriptionStatus | null> {
+  try {
+    const res = await fetchWithTokenRefresh(`${getBackendUrl()}/api/payment/creator/subscription/status`, { method: 'GET' });
+    if (!res.ok) return null;
+    return await res.json();
+  } catch {
+    return null;
+  }
+}
+
+export async function createCreatorSubscriptionOrder(): Promise<{ id?: string; alreadySubscribed?: boolean; token?: string; error?: string }> {
+  try {
+    const res = await fetchWithTokenRefresh(`${getBackendUrl()}/api/payment/creator/subscription/create-order`, { method: 'POST' });
+    return await res.json();
+  } catch {
+    return { error: 'Something went wrong' };
+  }
+}
+
+export async function verifyCreatorSubscription(data: { razorpay_order_id: string; razorpay_payment_id: string; razorpay_signature: string }): Promise<{ success: boolean; token?: string; expiresAt?: string; error?: string }> {
+  try {
+    const res = await fetchWithTokenRefresh(`${getBackendUrl()}/api/payment/creator/subscription/verify`, {
+      method: 'POST',
+      body: JSON.stringify(data),
+    });
+    return await res.json();
+  } catch {
+    return { success: false, error: 'Something went wrong' };
+  }
+}
+
+// ─── Creator Payment Details (UPI/Bank for receiving user payments) ───
+
+export interface CreatorPaymentDetails {
+  upiId: string | null;
+  bankAccount: string | null;
+}
+
+export async function getCreatorPaymentDetails(): Promise<CreatorPaymentDetails | null> {
+  try {
+    const res = await fetchWithTokenRefresh(`${getBackendUrl()}/api/payment/creator/payment-details`, { method: 'GET' });
+    if (!res.ok) return null;
+    return await res.json();
+  } catch {
+    return null;
+  }
+}
+
+export async function saveCreatorPaymentDetails(details: { upiId?: string; bankAccount?: string }): Promise<{ success: boolean; upiId?: string; bankAccount?: string; error?: string }> {
+  try {
+    const res = await fetchWithTokenRefresh(`${getBackendUrl()}/api/payment/creator/payment-details`, {
+      method: 'POST',
+      body: JSON.stringify(details),
+    });
+    return await res.json();
+  } catch (err) {
+    console.error('Save creator payment details failed:', err);
+    return { success: false, error: 'Something went wrong' };
+  }
+}
+
+// ─── Prime Member Management ───
+
+export interface PrimeMember {
+  _id: string;
+  creator: string;
+  user: { _id: string; name: string; username: string; profileImage: string };
+  roomCode?: string;
+  createdAt: string;
+}
+
+export interface PrimeMembersResponse {
+  members: PrimeMember[];
+}
+
+export async function getPrimeMembers(): Promise<PrimeMembersResponse | null> {
+  try {
+    const res = await fetchWithTokenRefresh(`${getBackendUrl()}/api/payment/creator/prime-members`, { method: 'GET' });
+    if (!res.ok) return null;
+    return await res.json();
+  } catch {
+    return null;
+  }
+}
+
+export async function addPrimeMember(userId: string, roomCode?: string): Promise<{ success: boolean; member?: PrimeMember; error?: string }> {
+  try {
+    const res = await fetchWithTokenRefresh(`${getBackendUrl()}/api/payment/creator/prime-members`, {
+      method: 'POST',
+      body: JSON.stringify({ userId, roomCode }),
+    });
+    return await res.json();
+  } catch (err) {
+    console.error('Add prime member failed:', err);
+    return { success: false, error: 'Something went wrong' };
+  }
+}
+
+export async function removePrimeMember(userId: string, roomCode?: string): Promise<{ success: boolean; error?: string }> {
+  try {
+    const url = roomCode 
+      ? `${getBackendUrl()}/api/payment/creator/prime-members/${userId}?roomCode=${encodeURIComponent(roomCode)}`
+      : `${getBackendUrl()}/api/payment/creator/prime-members/${userId}`;
+    const res = await fetchWithTokenRefresh(url, { method: 'DELETE' });
+    return await res.json();
+  } catch (err) {
+    console.error('Remove prime member failed:', err);
+    return { success: false, error: 'Something went wrong' };
   }
 }

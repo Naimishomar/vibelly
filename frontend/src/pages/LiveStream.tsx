@@ -1,13 +1,13 @@
 import { useEffect, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { Radio, Users, Copy, Check, Video, Square, Play, Loader2, RefreshCw, Lock, IndianRupee, ShieldCheck, Loader, Image as ImageIcon, EyeOff, Send, Smile, Flag, BadgeCheck } from 'lucide-react';
+import { Radio, Users, Copy, Check, Video, Square, Play, Loader2, RefreshCw, Lock, ShieldCheck, Image as ImageIcon, EyeOff, Send, Smile, Flag, X } from 'lucide-react';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
 import SEO from '../components/SEO';
 import BlinkingDotsGrid from '../components/BlinkingDotsGrid';
 import { socketService } from '../services/socketService';
 import { liveService, attachStreamToVideo } from '../services/liveService';
-import { checkLiveAccess, payForLiveStream, fetchLiveEarnings, reportUser } from '../services/livePaymentService';
+import { checkLiveAccess, fetchLiveEarnings, reportUser, getCreatorPaymentDetails, checkCreatorSubscription, type CreatorPaymentDetails } from '../services/livePaymentService';
 import { uploadImage } from '../services/uploadService';
 import { useAuthStore } from '../store/useAuthStore';
 
@@ -17,8 +17,8 @@ interface LiveStream {
   roomCode: string;
   title: string;
   creatorName: string;
-  creatorProfileImage: string;
-  creatorUserId: string;
+  creatorProfileImage?: string;
+  creatorUserId?: string;
   thumbnail: string;
   price: number;
   isPrivate: boolean;
@@ -68,7 +68,6 @@ export default function LiveStream() {
   const [watchedTitle, setWatchedTitle] = useState('');
   const [watchedCreator, setWatchedCreator] = useState('');
   const [joinError, setJoinError] = useState('');
-  const [isPaying, setIsPaying] = useState(false);
   const [comments, setComments] = useState<ChatComment[]>([]);
   const [commentText, setCommentText] = useState('');
   const [reactions, setReactions] = useState<{ id: number; emoji: string }[]>([]);
@@ -76,6 +75,13 @@ export default function LiveStream() {
   const [showReport, setShowReport] = useState(false);
   const [reportReason, setReportReason] = useState('');
   const [reportSent, setReportSent] = useState(false);
+  
+  // Payment details modal state
+  const [showPaymentModal, setShowPaymentModal] = useState(false);
+  const [paymentModalDetails, setPaymentModalDetails] = useState<CreatorPaymentDetails | null>(null);
+  const [paymentModalPrice, setPaymentModalPrice] = useState(0);
+  const [loadingPaymentDetails, setLoadingPaymentDetails] = useState(false);
+
   const remoteVideoRef = useRef<HTMLVideoElement>(null);
   const chatScrollRef = useRef<HTMLDivElement>(null);
   const accessTokenRef = useRef<string | null>(null);
@@ -143,6 +149,13 @@ export default function LiveStream() {
     const parsedPrice = Math.floor(Number(price));
     if (parsedPrice > 0 && !isAuthenticated) {
       alert('Please sign in to start a paid stream.');
+      return;
+    }
+
+    // Check if creator has active subscription (₹500/month) to enable live streaming
+    const subStatus = await checkCreatorSubscription();
+    if (!subStatus?.active) {
+      alert('You need an active creator subscription (₹500/month) to go live. Please activate it from your profile.');
       return;
     }
 
@@ -244,15 +257,21 @@ export default function LiveStream() {
       setJoinError('Please sign in to subscribe to this stream.');
       return;
     }
-    setIsPaying(true);
-    const result = await payForLiveStream(room);
-    setIsPaying(false);
-    if (result.success && result.token) {
-      accessTokenRef.current = result.token;
-      await attemptJoin(room);
-    } else {
-      setJoinError(result.error || 'Payment was not completed');
+    
+    // Find the stream to get creator info
+    const stream = streams.find((s) => s.roomCode === room);
+    if (!stream || !stream.creatorUserId) {
+      setJoinError('Stream not found');
+      return;
     }
+    
+    setLoadingPaymentDetails(true);
+    const details = await getCreatorPaymentDetails();
+    setLoadingPaymentDetails(false);
+    
+    setPaymentModalDetails(details);
+    setPaymentModalPrice(price);
+    setShowPaymentModal(true);
   };
 
   const joinByCode = async (code?: string) => {
@@ -310,7 +329,7 @@ export default function LiveStream() {
     const creatorId = stream?.creatorUserId;
     const reason = reportReason.trim();
     if (!creatorId || !reason) return;
-    const res = await reportUser({
+    await reportUser({
       reportedUserId: creatorId,
       reason,
       type: 'paid-no-show',
@@ -687,13 +706,75 @@ export default function LiveStream() {
         <Footer />
       </div>
 
-      {/* Payment overlay */}
-      {isPaying && (
-        <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/70 backdrop-blur-sm">
-          <div className="bg-zinc-900 border border-white/10 rounded-2xl p-8 flex flex-col items-center gap-4 max-w-sm w-full mx-4">
-            <Loader className="animate-spin text-amber-400 w-8 h-8" />
-            <p className="text-white font-medium">Processing your subscription…</p>
-            <p className="text-xs text-zinc-400 text-center">Complete the Razorpay checkout in the popup. You can join the stream as soon as it's done.</p>
+      {/* Payment Details Modal (UPI/Bank) */}
+      {showPaymentModal && (
+        <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/70 backdrop-blur-sm" onClick={() => { setShowPaymentModal(false); setPaymentModalDetails(null); }}>
+          <div className="bg-zinc-900 border border-white/10 rounded-2xl p-6 max-w-md w-full mx-4" onClick={(e) => e.stopPropagation()}>
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="text-lg font-semibold">Access Paid Stream</h3>
+              <button onClick={() => { setShowPaymentModal(false); setPaymentModalDetails(null); }} className="text-zinc-400 hover:text-white">
+                <X size={20} />
+              </button>
+            </div>
+            <div className="space-y-4">
+              <div className="bg-zinc-800/50 rounded-xl p-4 border border-white/5">
+                <div className="flex items-center gap-2 mb-2">
+                  <Lock size={16} className="text-amber-400" />
+                  <span className="font-medium">₹{paymentModalPrice} to join</span>
+                </div>
+                <p className="text-xs text-zinc-400">Pay the creator directly via UPI or Bank Transfer. After payment, share the transaction screenshot with the creator so they can add you as a Prime Member.</p>
+              </div>
+
+              {loadingPaymentDetails ? (
+                <div className="flex items-center justify-center py-4">
+                  <Loader2 className="animate-spin w-6 h-6 text-zinc-400" />
+                </div>
+              ) : paymentModalDetails ? (
+                <div className="space-y-3">
+                  {paymentModalDetails.upiId && (
+                    <div className="bg-zinc-800/50 rounded-xl p-4 border border-sky-500/20">
+                      <div className="flex items-center justify-between mb-2">
+                        <span className="text-xs text-zinc-500">UPI ID</span>
+                        <button onClick={() => { navigator.clipboard.writeText(paymentModalDetails.upiId || ''); }} className="text-xs text-sky-400 hover:text-sky-300">Copy</button>
+                      </div>
+                      <div className="font-mono text-sky-400 break-all">{paymentModalDetails.upiId}</div>
+                      <p className="text-xs text-zinc-500 mt-2">Open your UPI app (GPay, PhonePe, Paytm) and send ₹{paymentModalPrice} to this ID</p>
+                    </div>
+                  )}
+                  {paymentModalDetails.bankAccount && (
+                    <div className="bg-zinc-800/50 rounded-xl p-4 border border-emerald-500/20">
+                      <div className="flex items-center justify-between mb-2">
+                        <span className="text-xs text-zinc-500">Bank Account</span>
+                        <button onClick={() => { navigator.clipboard.writeText(paymentModalDetails.bankAccount || ''); }} className="text-xs text-emerald-400 hover:text-emerald-300">Copy</button>
+                      </div>
+                      <div className="font-mono text-emerald-400 whitespace-pre-wrap break-all">{paymentModalDetails.bankAccount}</div>
+                      <p className="text-xs text-zinc-500 mt-2">Transfer ₹{paymentModalPrice} via IMPS/NEFT/UPI to this account</p>
+                    </div>
+                  )}
+                  {!paymentModalDetails.upiId && !paymentModalDetails.bankAccount && (
+                    <div className="bg-zinc-800/50 rounded-xl p-4 border border-red-500/20 text-center">
+                      <p className="text-red-400 text-sm">This creator hasn't set up payment details yet.</p>
+                      <p className="text-xs text-zinc-500 mt-1">Please contact them directly to arrange payment.</p>
+                    </div>
+                  )}
+                </div>
+              ) : (
+                <div className="bg-zinc-800/50 rounded-xl p-4 border border-red-500/20 text-center">
+                  <p className="text-red-400 text-sm">Could not load payment details.</p>
+                  <p className="text-xs text-zinc-500 mt-1">Please contact the creator directly.</p>
+                </div>
+              )}
+
+              <div className="bg-zinc-800/30 rounded-xl p-3 border border-white/5 text-center">
+                <p className="text-xs text-zinc-400 mb-2">After paying, tell the creator your username. They will add you as a Prime Member and you'll get instant access.</p>
+                <button 
+                  onClick={() => { setShowPaymentModal(false); setPaymentModalDetails(null); }}
+                  className="w-full bg-zinc-700 text-white py-2 rounded-xl text-sm hover:bg-zinc-600 transition-colors"
+                >
+                  Close - I'll Pay Later
+                </button>
+              </div>
+            </div>
           </div>
         </div>
       )}

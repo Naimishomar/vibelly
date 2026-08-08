@@ -1,12 +1,12 @@
 import { useEffect, useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
-import { Users, BadgeCheck, Loader2, ArrowLeft, ImageIcon, UserPlus, UserCheck, Flag, IndianRupee, Crown, Lock, Play, X, ShieldCheck, CheckCircle2, Clock } from 'lucide-react';
+import { Users, Loader2, ArrowLeft, ImageIcon, UserPlus, UserCheck, Flag, IndianRupee, Crown, Lock, Play, X, CheckCircle2, CreditCard, RefreshCw, Wallet, QrCode } from 'lucide-react';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
 import SEO from '../components/SEO';
 import BlinkingDotsGrid from '../components/BlinkingDotsGrid';
 import { useAuthStore } from '../store/useAuthStore';
-import { checkProfileAccess, subscribeToCreator, reportUser } from '../services/livePaymentService';
+import { reportUser, checkCreatorSubscription, createCreatorSubscriptionOrder, verifyCreatorSubscription, getCreatorPaymentDetails, saveCreatorPaymentDetails, loadScript, type CreatorSubscriptionStatus, type CreatorPaymentDetails } from '../services/livePaymentService';
 import { uploadImage } from '../services/uploadService';
 
 interface CreatorProfileData {
@@ -16,8 +16,6 @@ interface CreatorProfileData {
   coverImage: string;
   galleryPhotos: string[];
   subscriptionPrice: number;
-  isVerified: boolean;
-  verificationStatus: string;
   followerCount: number;
   followingCount: number;
   isFollowing: boolean;
@@ -43,16 +41,23 @@ export default function CreatorProfile() {
   const [error, setError] = useState('');
   const [isFollowing, setIsFollowing] = useState(false);
   const [followerCount, setFollowerCount] = useState(0);
-  const [subscribed, setSubscribed] = useState(false);
-  const [isSubscribing, setIsSubscribing] = useState(false);
   const [isUploading, setIsUploading] = useState(false);
   const [showReport, setShowReport] = useState(false);
   const [reportReason, setReportReason] = useState('');
   const [reportSent, setReportSent] = useState(false);
-  const [showVerify, setShowVerify] = useState(false);
-  const [selfie, setSelfie] = useState<File | null>(null);
-  const [idPhoto, setIdPhoto] = useState<File | null>(null);
-  const [verifying, setVerifying] = useState(false);
+
+  // Creator subscription state
+  const [creatorSubscription, setCreatorSubscription] = useState<CreatorSubscriptionStatus | null>(null);
+  const [creatingSubOrder, setCreatingSubOrder] = useState(false);
+
+  // Creator payment details state (for receiving user payments)
+  const [paymentDetails, setPaymentDetails] = useState<CreatorPaymentDetails | null>(null);
+  const [showPaymentForm, setShowPaymentForm] = useState(false);
+  const [paymentForm, setPaymentForm] = useState({ upiId: '', bankAccount: '' });
+  const [savingPayment, setSavingPayment] = useState(false);
+  const [paymentError, setPaymentError] = useState('');
+
+  // Profile settings state
   const [subscriptionPriceInput, setSubscriptionPriceInput] = useState('');
   const [bioInput, setBioInput] = useState('');
   const [coverFile, setCoverFile] = useState<File | null>(null);
@@ -80,14 +85,6 @@ export default function CreatorProfile() {
       setIsFollowing(pData.profile.isFollowing);
       setFollowerCount(pData.profile.followerCount);
       setStreams(sData.streams || []);
-
-      // Check subscription if authenticated + not self
-      if (isAuthenticated && user?._id !== userId) {
-        const access = await checkProfileAccess(userId || '');
-        if (access) {
-          setSubscribed(!!access.access);
-        }
-      }
     } catch (err) {
       setError('Failed to load profile');
     } finally {
@@ -95,11 +92,84 @@ export default function CreatorProfile() {
     }
   };
 
+  const fetchCreatorData = async () => {
+    if (!isOwnProfile) return;
+    const [sub, details] = await Promise.all([checkCreatorSubscription(), getCreatorPaymentDetails()]);
+    if (sub) setCreatorSubscription(sub);
+    if (details) setPaymentDetails(details);
+  };
+
   useEffect(() => {
     if (userId) fetchProfile();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [userId, user?._id]);
 
+  useEffect(() => {
+    if (isOwnProfile) fetchCreatorData();
+  }, [isOwnProfile]);
+
+  const handleCreateSubOrder = async () => {
+    setCreatingSubOrder(true);
+    const result = await createCreatorSubscriptionOrder();
+    setCreatingSubOrder(false);
+    if (result.alreadySubscribed && result.token) {
+      setCreatorSubscription({ active: true, token: result.token, price: 500 });
+    } else if (result.id) {
+      // Open Razorpay checkout
+      const { user: currentUser, isAuthenticated, accessToken } = useAuthStore.getState();
+      if (!isAuthenticated || !currentUser || !accessToken) return;
+      
+      const res = await loadScript('https://checkout.razorpay.com/v1/checkout.js');
+      if (!res) return;
+      
+      return new Promise<void>((resolve) => {
+        const options = {
+          key: import.meta.env.VITE_RAZORPAY_KEY_ID,
+          amount: result.id ? 50000 : 0, // Will be set from order
+          currency: 'INR',
+          name: 'Vibelly Creator Profile',
+          description: 'Monthly creator profile access (₹500/month)',
+          order_id: result.id,
+          handler: async (response: any) => {
+            const verifyRes = await verifyCreatorSubscription({
+              razorpay_order_id: response.razorpay_order_id,
+              razorpay_payment_id: response.razorpay_payment_id,
+              razorpay_signature: response.razorpay_signature,
+            });
+            if (verifyRes.success && verifyRes.token) {
+              setCreatorSubscription({ active: true, expiresAt: verifyRes.expiresAt, token: verifyRes.token, price: 500 });
+            }
+            resolve();
+          },
+          prefill: { name: currentUser.name, email: currentUser.email, contact: '' },
+          theme: { color: '#ef4444' },
+        };
+        const paymentObject = new (window as any).Razorpay(options);
+        paymentObject.on('payment.failed', () => resolve());
+        paymentObject.open();
+      });
+    }
+  };
+
+  const handleSavePaymentDetails = async () => {
+    const { upiId, bankAccount } = paymentForm;
+    if (!upiId.trim() && !bankAccount.trim()) {
+      setPaymentError('Add at least UPI ID or Bank Account');
+      return;
+    }
+    setSavingPayment(true);
+    setPaymentError('');
+    const result = await saveCreatorPaymentDetails({ upiId: upiId.trim() || undefined, bankAccount: bankAccount.trim() || undefined });
+    setSavingPayment(false);
+    if (result.success) {
+      setPaymentDetails({ upiId: result.upiId || null, bankAccount: result.bankAccount || null });
+      setShowPaymentForm(false);
+      setPaymentForm({ upiId: '', bankAccount: '' });
+    } else {
+      setPaymentError(result.error || 'Failed to save payment details');
+    }
+  };
+  
   const toggleFollow = async () => {
     if (!isAuthenticated) {
       alert('Please sign in to follow.');
@@ -115,22 +185,6 @@ export default function CreatorProfile() {
       const data = await res.json();
       setIsFollowing(data.isFollowing);
       setFollowerCount(data.followerCount);
-    }
-  };
-
-  const handleSubscribe = async () => {
-    if (!isAuthenticated) {
-      alert('Please sign in to subscribe.');
-      return;
-    }
-    setIsSubscribing(true);
-    const result = await subscribeToCreator(userId || '');
-    setIsSubscribing(false);
-    if (result.success) {
-      setSubscribed(true);
-      alert('Subscribed! You now have access to this creator\'s paid streams.');
-    } else {
-      alert(result.error || 'Subscription failed');
     }
   };
 
@@ -157,7 +211,6 @@ export default function CreatorProfile() {
     if (res.ok) {
       const data = await res.json();
       setProfile(data.profile);
-      setSubscribed(false);
       alert('Profile updated!');
     }
   };
@@ -193,39 +246,6 @@ export default function CreatorProfile() {
     if (res.ok) {
       const data = await res.json();
       setProfile((p) => p ? { ...p, galleryPhotos: data.galleryPhotos } : p);
-    }
-  };
-
-  const submitVerification = async () => {
-    if (!selfie || !idPhoto) {
-      alert('Upload both a selfie and an ID photo.');
-      return;
-    }
-    setVerifying(true);
-    const selfieUrl = await uploadImage(selfie, 'verification');
-    const idUrl = await uploadImage(idPhoto, 'verification');
-    if (!selfieUrl || !idUrl) {
-      setVerifying(false);
-      alert('Upload failed. Please try again.');
-      return;
-    }
-    const backendUrl = getBackendUrl();
-    const token = accessToken || localStorage.getItem('vibe_token');
-    const res = await fetch(`${backendUrl}/api/creator/me/verify`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
-      body: JSON.stringify({ selfieUrl, idUrl }),
-    });
-    setVerifying(false);
-    if (res.ok) {
-      setShowVerify(false);
-      setSelfie(null);
-      setIdPhoto(null);
-      alert('Verification submitted! Our team will review it shortly.');
-      fetchProfile();
-    } else {
-      const d = await res.json();
-      alert(d.error || 'Failed to submit verification');
     }
   };
 
@@ -290,9 +310,9 @@ export default function CreatorProfile() {
               <div className="flex items-center gap-2">
                 <h1 className="text-2xl font-semibold">{p.user?.name}</h1>
                 <span className="text-zinc-500 text-sm">@{p.user?.username}</span>
-                {p.isVerified && (
-                  <span className="flex items-center gap-1 bg-sky-500/20 text-sky-300 px-2 py-0.5 rounded-full text-[10px] font-bold">
-                    <BadgeCheck size={12} /> VERIFIED
+                {creatorSubscription?.active && (
+                  <span className="flex items-center gap-1 bg-emerald-500/20 text-emerald-300 px-2 py-0.5 rounded-full text-[10px] font-bold">
+                    <CheckCircle2 size={12} /> LIVE ENABLED
                   </span>
                 )}
               </div>
@@ -306,7 +326,7 @@ export default function CreatorProfile() {
             <div className="flex items-center gap-2 flex-wrap">
               {p.subscriptionPrice > 0 && (
                 <div className="flex items-center gap-1.5 bg-amber-500/20 text-amber-300 px-3 py-2 rounded-xl text-sm font-semibold">
-                  <IndianRupee size={14} /> {p.subscriptionPrice}/month
+                  <IndianRupee size={14} /> ₹{p.subscriptionPrice}/stream
                 </div>
               )}
               {!isOwnProfile && (
@@ -315,46 +335,37 @@ export default function CreatorProfile() {
                     {isFollowing ? <UserCheck size={16} /> : <UserPlus size={16} />}
                     {isFollowing ? 'Following' : 'Follow'}
                   </button>
-                  {p.subscriptionPrice > 0 && (
-                    <button onClick={handleSubscribe} disabled={isSubscribing || subscribed} className="flex items-center gap-2 bg-red-500 text-white px-4 py-2 rounded-xl font-medium hover:bg-red-600 transition-colors disabled:opacity-50 cursor-pointer">
-                      {isSubscribing ? <Loader2 className="animate-spin w-4 h-4" /> : <Crown size={16} />}
-                      {subscribed ? 'Subscribed' : `Subscribe ₹${p.subscriptionPrice}`}
-                    </button>
-                  )}
                   <button onClick={() => setShowReport(true)} className="p-2 bg-zinc-800 rounded-xl text-red-400 hover:bg-zinc-700 transition-colors cursor-pointer" title="Report creator">
                     <Flag size={18} />
                   </button>
                 </>
               )}
               {isOwnProfile && (
-                <Link to="/live" className="flex items-center gap-2 bg-white text-black px-4 py-2 rounded-xl font-medium hover:opacity-90 transition-opacity cursor-pointer">
+                <Link to="/live" className="flex items-center gap-2 bg-white text-black px-4 py-2 rounded-xl font-medium hover:opacity-90 transition-opacity cursor-pointer" style={{opacity: creatorSubscription?.active ? 1 : 0.5, pointerEvents: creatorSubscription?.active ? 'auto' : 'none'}}>
                   <Play size={16} /> Go Live
                 </Link>
               )}
             </div>
           </div>
 
-          {/* Verification banner for own profile */}
-          {isOwnProfile && p.verificationStatus !== 'approved' && (
+          {/* Creator Subscription Status for own profile */}
+          {isOwnProfile && (
             <div className="mb-8 bg-zinc-900/60 border border-white/10 rounded-2xl p-5 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
               <div className="flex items-start gap-3">
-                <ShieldCheck size={20} className="text-amber-400 flex-shrink-0" />
+                <Wallet size={20} className={creatorSubscription?.active ? 'text-emerald-400' : 'text-amber-400'} flex-shrink-0 />
                 <div>
-                  <p className="text-sm font-medium">Creator Verification</p>
+                  <p className="text-sm font-medium">Live Streaming Access</p>
                   <p className="text-xs text-zinc-400 mt-1">
-                    {p.verificationStatus === 'pending' && 'Your verification is under review. You can start paid streams once approved.'}
-                    {p.verificationStatus === 'rejected' && 'Your verification was rejected. Submit new selfie + ID photos.'}
-                    {p.verificationStatus === 'none' && 'Verify your identity to enable paid streams and subscriptions. We manually review every submission to keep the platform safe.'}
+                    {creatorSubscription?.active 
+                      ? `Active until ${creatorSubscription.expiresAt ? new Date(creatorSubscription.expiresAt).toLocaleDateString() : 'N/A'}. You can go live and monetize streams.`
+                      : 'Pay ₹500/month to unlock live streaming. Your profile and photos are always free.'}
                   </p>
                 </div>
               </div>
-              {p.verificationStatus !== 'pending' && (
-                <button onClick={() => setShowVerify(true)} className="flex items-center gap-2 bg-amber-500 text-black px-4 py-2 rounded-xl text-sm font-medium hover:bg-amber-400 transition-colors cursor-pointer">
-                  <BadgeCheck size={16} /> Get Verified
+              {!creatorSubscription?.active && (
+                <button onClick={handleCreateSubOrder} disabled={creatingSubOrder} className="flex items-center gap-2 bg-amber-500 text-black px-4 py-2 rounded-xl text-sm font-medium hover:bg-amber-400 transition-colors disabled:opacity-50 cursor-pointer">
+                  {creatingSubOrder ? <RefreshCw className="animate-spin mx-auto" size={18} /> : <>Activate Live Streaming <IndianRupee size={14} /> 500/month</>}
                 </button>
-              )}
-              {p.verificationStatus === 'pending' && (
-                <span className="flex items-center gap-2 text-amber-300 text-sm"><Clock size={16} /> In review</span>
               )}
             </div>
           )}
@@ -425,7 +436,7 @@ export default function CreatorProfile() {
                 <div>
                   <label className="block text-xs text-zinc-400 mb-1.5 font-medium uppercase tracking-wider">Monthly Subscription Price (₹)</label>
                   <input type="number" min="0" value={subscriptionPriceInput} onChange={(e) => setSubscriptionPriceInput(e.target.value)} placeholder="e.g. 99" className="w-full bg-zinc-900 border border-white/10 rounded-xl px-4 py-3 text-white outline-none focus:border-white/30 transition-colors placeholder:text-zinc-600" />
-                  <p className="text-xs text-zinc-500 mt-1.5">Only verified creators can enable subscriptions. You earn 70%, Vibelly takes 30%.</p>
+                  <p className="text-xs text-zinc-500 mt-1.5">Set your live stream price. Users pay this to access your live streams.</p>
                 </div>
                 <div>
                   <label className="block text-xs text-zinc-400 mb-1.5 font-medium uppercase tracking-wider">Cover Photo</label>
@@ -440,43 +451,104 @@ export default function CreatorProfile() {
               </div>
             </div>
           )}
+
+          {/* Creator Profile Subscription (₹500/month) */}
+          {isOwnProfile && (
+            <div className="bg-zinc-900/60 border border-white/10 rounded-2xl p-6 mb-10">
+              <div className="flex items-center justify-between mb-4">
+                <h2 className="text-lg font-semibold flex items-center gap-2"><Wallet size={20} className="text-amber-400" /> Creator Profile Access</h2>
+                {creatorSubscription?.active && <span className="text-xs text-emerald-400 flex items-center gap-1"><CheckCircle2 size={12} /> Active</span>}
+              </div>
+
+              {creatorSubscription?.active ? (
+                <div className="bg-zinc-900/40 border border-white/5 rounded-xl p-5">
+                  <div className="space-y-2 text-sm">
+                    <div className="flex justify-between"><span className="text-zinc-500">Status</span><span className="text-emerald-400 font-medium">Active</span></div>
+                    <div className="flex justify-between"><span className="text-zinc-500">Monthly Fee</span><span className="font-medium">₹500</span></div>
+                    {creatorSubscription.expiresAt && (
+                      <div className="flex justify-between"><span className="text-zinc-500">Expires</span><span>{new Date(creatorSubscription.expiresAt).toLocaleDateString()}</span></div>
+                    )}
+                  </div>
+                  <p className="text-xs text-zinc-500 mt-3">Your creator profile is active. You can go live and receive payments from users.</p>
+                </div>
+              ) : (
+                <div className="bg-zinc-900/40 border-2 border-dashed border-white/10 rounded-xl p-6 text-center">
+                  <Wallet size={32} className="mx-auto text-zinc-600 mb-3" />
+                  <p className="text-zinc-400 mb-4">Activate your creator profile for ₹500/month to go live and monetize your streams.</p>
+                  <button onClick={handleCreateSubOrder} disabled={creatingSubOrder} className="inline-flex items-center gap-2 bg-amber-500 text-black px-4 py-2 rounded-xl font-medium hover:bg-amber-400 transition-colors disabled:opacity-50 cursor-pointer">
+                    {creatingSubOrder ? <RefreshCw className="animate-spin mx-auto" size={18} /> : <>Activate Profile <IndianRupee size={14} /> 500/month</>}
+                  </button>
+                </div>
+              )}
+            </div>
+          )}
+
+          {/* Creator Payment Details (for receiving user payments) */}
+          {isOwnProfile && (
+            <div className="bg-zinc-900/60 border border-white/10 rounded-2xl p-6 mb-10">
+              <div className="flex items-center justify-between mb-4">
+                <h2 className="text-lg font-semibold flex items-center gap-2"><QrCode size={20} className="text-sky-400" /> Receive Payments</h2>
+                {(paymentDetails?.upiId || paymentDetails?.bankAccount) && <span className="text-xs text-emerald-400 flex items-center gap-1"><CreditCard size={12} /> Payment details set</span>}
+              </div>
+
+              {/* Display current payment details */}
+              {(paymentDetails?.upiId || paymentDetails?.bankAccount) ? (
+                <div className="bg-zinc-900/40 border border-white/5 rounded-xl p-5 mb-4">
+                  <div className="flex items-center justify-between mb-3">
+                    <h3 className="font-medium flex items-center gap-2"><QrCode size={16} /> Your Payment Details</h3>
+                    <button onClick={() => setShowPaymentForm(true)} className="text-xs text-sky-400 hover:text-sky-300">Edit</button>
+                  </div>
+                  <div className="space-y-2 text-sm">
+                    {paymentDetails.upiId && (
+                      <div className="flex justify-between"><span className="text-zinc-500">UPI ID</span><span className="font-medium font-mono">{paymentDetails.upiId}</span></div>
+                    )}
+                    {paymentDetails.bankAccount && (
+                      <div className="flex justify-between"><span className="text-zinc-500">Bank Account</span><span className="font-medium">{paymentDetails.bankAccount}</span></div>
+                    )}
+                  </div>
+                  <p className="text-xs text-zinc-500 mt-3">Users will pay you directly via UPI/Bank for live stream access. Share these details with your subscribers.</p>
+                </div>
+              ) : (
+                <div className="bg-zinc-900/40 border-2 border-dashed border-white/10 rounded-xl p-6 text-center mb-4">
+                  <QrCode size={32} className="mx-auto text-zinc-600 mb-3" />
+                  <p className="text-zinc-400 mb-4">Add your UPI ID or Bank Account to receive payments from users who subscribe to your live streams.</p>
+                  <button onClick={() => setShowPaymentForm(true)} className="inline-flex items-center gap-2 bg-sky-500 text-white px-4 py-2 rounded-xl font-medium hover:bg-sky-400 transition-colors cursor-pointer">
+                    <QrCode size={16} /> Add Payment Details
+                  </button>
+                </div>
+              )}
+
+              {/* Add/Edit Payment Details Form */}
+              {showPaymentForm && (
+                <div className="mt-4 bg-zinc-900/40 border border-white/5 rounded-xl p-5 space-y-4">
+                  <h3 className="font-medium flex items-center gap-2"><QrCode size={16} /> {paymentDetails?.upiId || paymentDetails?.bankAccount ? 'Edit' : 'Add'} Payment Details</h3>
+                  {paymentError && <p className="text-red-400 text-sm">{paymentError}</p>}
+                  <div>
+                    <label className="block text-xs text-zinc-400 mb-1.5 font-medium uppercase tracking-wider">UPI ID</label>
+                    <input type="text" value={paymentForm.upiId} onChange={(e) => setPaymentForm({ ...paymentForm, upiId: e.target.value })} placeholder="yourname@upi" className="w-full bg-zinc-900 border border-white/10 rounded-xl px-4 py-3 text-white outline-none focus:border-white/30 transition-colors" />
+                    <p className="text-xs text-zinc-500 mt-1">e.g., yourname@paytm, yourname@okicici, etc.</p>
+                  </div>
+                  <div>
+                    <label className="block text-xs text-zinc-400 mb-1.5 font-medium uppercase tracking-wider">Bank Account (optional)</label>
+                    <textarea value={paymentForm.bankAccount} onChange={(e) => setPaymentForm({ ...paymentForm, bankAccount: e.target.value })} placeholder="Account Holder: John Doe\nAccount No: 1234567890\nIFSC: ABCD0123456\nBank: ABC Bank" className="w-full bg-zinc-900 border border-white/10 rounded-xl px-4 py-3 text-white outline-none focus:border-white/30 transition-colors placeholder:text-zinc-600 min-h-[80px]" />
+                    <p className="text-xs text-zinc-500 mt-1">Enter full bank details for users who prefer bank transfer.</p>
+                  </div>
+                  <div className="flex gap-3 pt-2">
+                    <button onClick={() => { setShowPaymentForm(false); setPaymentError(''); }} className="flex-1 bg-zinc-800 text-white font-medium py-3 rounded-xl hover:bg-zinc-700 transition-colors cursor-pointer">
+                      Cancel
+                    </button>
+                    <button onClick={handleSavePaymentDetails} disabled={savingPayment} className="flex-1 bg-sky-500 text-white font-medium py-3 rounded-xl hover:bg-sky-400 transition-colors disabled:opacity-50 cursor-pointer">
+                      {savingPayment ? <RefreshCw className="animate-spin mx-auto" size={18} /> : 'Save'}
+                    </button>
+                  </div>
+                </div>
+              )}
+            </div>
+          )}
         </main>
 
         <Footer />
       </div>
-
-      {/* Verification modal */}
-      {showVerify && (
-        <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/70 backdrop-blur-sm" onClick={() => setShowVerify(false)}>
-          <div className="bg-zinc-900 border border-white/10 rounded-2xl p-6 max-w-md w-full mx-4" onClick={(e) => e.stopPropagation()}>
-            <div className="flex items-center gap-2 mb-2">
-              <ShieldCheck size={20} className="text-amber-400" />
-              <h3 className="text-lg font-semibold">Creator Verification</h3>
-            </div>
-            <p className="text-xs text-zinc-400 mb-5">Upload a clear selfie and a government ID photo. Our team manually reviews them to protect creators and viewers from fraud.</p>
-            <div className="space-y-4">
-              <div>
-                <label className="block text-xs text-zinc-400 mb-1.5 font-medium">Selfie</label>
-                <label className="flex items-center justify-center gap-2 bg-zinc-800 border border-dashed border-white/20 rounded-xl px-4 py-4 cursor-pointer hover:bg-zinc-700 transition-colors text-sm">
-                  {selfie ? selfie.name : 'Upload selfie'}
-                  <input type="file" accept="image/*" className="hidden" onChange={(e) => e.target.files?.[0] && setSelfie(e.target.files[0])} />
-                </label>
-              </div>
-              <div>
-                <label className="block text-xs text-zinc-400 mb-1.5 font-medium">Government ID</label>
-                <label className="flex items-center justify-center gap-2 bg-zinc-800 border border-dashed border-white/20 rounded-xl px-4 py-4 cursor-pointer hover:bg-zinc-700 transition-colors text-sm">
-                  {idPhoto ? idPhoto.name : 'Upload ID photo'}
-                  <input type="file" accept="image/*" className="hidden" onChange={(e) => e.target.files?.[0] && setIdPhoto(e.target.files[0])} />
-                </label>
-              </div>
-              <button onClick={submitVerification} disabled={verifying} className="w-full flex items-center justify-center gap-2 bg-amber-500 text-black font-medium py-3 rounded-xl hover:bg-amber-400 transition-colors disabled:opacity-50 cursor-pointer">
-                {verifying ? <Loader2 className="animate-spin w-4 h-4" /> : <CheckCircle2 size={18} />}
-                {verifying ? 'Submitting…' : 'Submit for Review'}
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
 
       {/* Report modal */}
       {showReport && (

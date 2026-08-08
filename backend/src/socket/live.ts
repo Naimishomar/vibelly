@@ -10,6 +10,7 @@ import {
 } from './liveRooms';
 import { verifyAccessToken } from '../utils/jwt';
 import CreatorProfile from '../models/CreatorProfile';
+import CreatorSubscription from '../models/CreatorSubscription';
 
 function endStream(creatorSocketId: string) {
   const room = getRoomByCreator(creatorSocketId);
@@ -41,7 +42,7 @@ io.on('connection', (socket) => {
     const { roomCode, title, creatorName, creatorProfileImage, price, authToken, thumbnail, isPrivate } = data || {};
     if (!roomCode || getLiveRoom(roomCode)) return;
 
-    // Paid streams require an authenticated, VERIFIED creator (anti-fraud).
+    // Paid streams require an authenticated creator with ACTIVE SUBSCRIPTION (₹500/month).
     let creatorUserId: string | undefined;
     if (typeof price === 'number' && price > 0) {
       let decoded: any;
@@ -52,11 +53,15 @@ io.on('connection', (socket) => {
         socket.emit('live:start-failed', { message: 'Sign in to start a paid stream' });
         return;
       }
-      const profile = await CreatorProfile.findOne({ user: decoded.id }).lean();
-      if (!profile || profile.verification.status !== 'approved') {
+      const sub = await CreatorSubscription.findOne({
+        creator: decoded.id,
+        status: 'active',
+        expiresAt: { $gt: new Date() },
+      }).lean();
+      if (!sub) {
         socket.emit('live:start-failed', {
-          message: 'Get your creator profile verified before starting a paid stream',
-          needsVerification: true,
+          message: 'You need an active creator subscription (₹500/month) to start a paid stream. Activate it from your profile.',
+          needsSubscription: true,
         });
         return;
       }

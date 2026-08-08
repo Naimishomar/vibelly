@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { Shield, Users, ArrowLeft, Search, Loader2, AlertTriangle, Ban, CheckCircle, ChevronDown, ChevronUp, Video, Phone, MessageSquare, Crown, BadgeCheck, XCircle } from 'lucide-react';
+import { Shield, Users, ArrowLeft, Search, Loader2, AlertTriangle, Ban, ChevronDown, ChevronUp, Crown, CheckCircle, Video, Phone, MessageSquare } from 'lucide-react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuthStore } from '../store/useAuthStore';
 
@@ -35,15 +35,9 @@ interface ReportData {
   type?: string;
   roomCode?: string;
   streamTitle?: string;
-  amountPaid?: number;
+amountPaid?: number;
   createdAt: string;
   sessions: SessionData[];
-}
-
-interface VerificationData {
-  _id: string;
-  user: { _id: string; name: string; username: string; email: string; profileImage: string; isBanned: boolean };
-  verification: { status: string; selfieUrl: string; idUrl: string; submittedAt: string; rejectReason: string };
 }
 
 export default function AdminDashboard() {
@@ -51,11 +45,10 @@ export default function AdminDashboard() {
   const navigate = useNavigate();
   const [users, setUsers] = useState<AdminUser[]>([]);
   const [reports, setReports] = useState<ReportData[]>([]);
-  const [verifications, setVerifications] = useState<VerificationData[]>([]);
   const [uniqueVisitsToday, setUniqueVisitsToday] = useState<number>(0);
   const [isLoading, setIsLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');
-  const [activeTab, setActiveTab] = useState<'users' | 'reports' | 'verifications'>('users');
+  const [activeTab, setActiveTab] = useState<'users' | 'reports'>('users');
   const [expandedReportId, setExpandedReportId] = useState<string | null>(null);
 
   useEffect(() => {
@@ -70,7 +63,7 @@ export default function AdminDashboard() {
         const backendUrl = import.meta.env.VITE_BACKEND_URL || 'http://localhost:5000';
         const token = localStorage.getItem('vibe_token') || useAuthStore.getState().accessToken;
         
-        const [usersRes, reportsRes, analyticsRes, verificationsRes] = await Promise.all([
+        const [usersRes, reportsRes, analyticsRes] = await Promise.all([
           fetch(`${backendUrl}/api/admin/users`, {
             headers: { 'Authorization': `Bearer ${token}` }
           }),
@@ -78,9 +71,6 @@ export default function AdminDashboard() {
             headers: { 'Authorization': `Bearer ${token}` }
           }),
           fetch(`${backendUrl}/api/admin/analytics`, {
-            headers: { 'Authorization': `Bearer ${token}` }
-          }),
-          fetch(`${backendUrl}/api/admin/verifications`, {
             headers: { 'Authorization': `Bearer ${token}` }
           })
         ]);
@@ -100,13 +90,9 @@ export default function AdminDashboard() {
           setUniqueVisitsToday(data.uniqueVisitsToday);
         }
 
-        if (verificationsRes.ok) {
-          const data = await verificationsRes.json();
-          setVerifications(data);
-        }
+        setIsLoading(false);
       } catch (error) {
         console.error('Error fetching admin data:', error);
-      } finally {
         setIsLoading(false);
       }
     };
@@ -179,28 +165,6 @@ export default function AdminDashboard() {
     }
   };
 
-  const handleVerificationAction = async (id: string, action: 'approve' | 'reject') => {
-    try {
-      const backendUrl = import.meta.env.VITE_BACKEND_URL || 'http://localhost:5000';
-      const token = localStorage.getItem('vibe_token') || useAuthStore.getState().accessToken;
-      
-      const response = await fetch(`${backendUrl}/api/admin/verifications/${id}/${action}`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`
-        },
-        body: JSON.stringify({})
-      });
-      
-      if (response.ok) {
-        setVerifications(verifications.filter(v => v._id !== id));
-      }
-    } catch (error) {
-      console.error('Error updating verification:', error);
-    }
-  };
-
   return (
     <div className="min-h-screen bg-black text-white p-6 md:p-12 font-sans selection:bg-white/30 selection:text-white">
       <div className="max-w-7xl mx-auto">
@@ -247,12 +211,6 @@ export default function AdminDashboard() {
                 className={`flex-1 px-4 py-2 rounded-lg text-sm font-medium transition-all ${activeTab === 'reports' ? 'bg-white text-black' : 'text-zinc-400 hover:text-white'}`}
               >
                 Reports
-              </button>
-              <button 
-                onClick={() => setActiveTab('verifications')}
-                className={`flex-1 px-4 py-2 rounded-lg text-sm font-medium transition-all ${activeTab === 'verifications' ? 'bg-white text-black' : 'text-zinc-400 hover:text-white'}`}
-              >
-                Verify ({verifications.length})
               </button>
             </div>
           </div>
@@ -352,7 +310,7 @@ export default function AdminDashboard() {
         </div>
 
         {/* Main Content Area */}
-        {activeTab === 'users' ? (
+        {activeTab === 'users' && (
         <div className="bg-zinc-900/40 border border-white/10 rounded-3xl overflow-hidden shadow-2xl mb-20">
           <div className="p-6 border-b border-white/5">
             <h2 className="text-lg font-medium text-white">Registered Users</h2>
@@ -539,71 +497,6 @@ export default function AdminDashboard() {
                       )}
                     </div>
                   )}
-                </div>
-              ))
-            )}
-          </div>
-        )}
-
-        {activeTab === 'verifications' && (
-          <div className="flex flex-col gap-4 mb-20">
-            <div className="flex items-center justify-between">
-              <h2 className="text-lg font-medium text-white">Creator Verification Queue</h2>
-              <p className="text-sm text-zinc-500">{verifications.length} pending</p>
-            </div>
-            {verifications.length === 0 ? (
-              <div className="py-12 text-center text-zinc-500 bg-zinc-900/40 rounded-3xl border border-white/10">
-                <BadgeCheck size={32} className="mx-auto mb-2 opacity-30" />
-                No pending verifications.
-              </div>
-            ) : (
-              verifications.map(v => (
-                <div key={v._id} className="bg-zinc-900/40 border border-white/10 rounded-2xl p-5">
-                  <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-4">
-                    <div className="flex items-center gap-4">
-                      <div className="w-12 h-12 rounded-full bg-zinc-800 overflow-hidden">
-                        {v.user?.profileImage ? <img src={v.user.profileImage} alt="" className="w-full h-full object-cover" /> : <span className="w-full h-full flex items-center justify-center text-sm font-bold">{v.user?.name?.[0]}</span>}
-                      </div>
-                      <div>
-                        <div className="flex items-center gap-2">
-                          <span className="font-medium text-white">{v.user?.name}</span>
-                          <span className="text-zinc-500 text-xs">@{v.user?.username}</span>
-                        </div>
-                        <div className="text-zinc-500 text-xs">{v.user?.email || 'no email'}</div>
-                        <div className="text-zinc-600 text-[10px] mt-1">
-                          Submitted {v.verification?.submittedAt ? new Date(v.verification.submittedAt).toLocaleString() : 'N/A'}
-                        </div>
-                      </div>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <button
-                        onClick={() => handleVerificationAction(v._id, 'approve')}
-                        className="flex items-center gap-1.5 px-4 py-2 rounded-xl text-xs font-medium bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 hover:bg-emerald-500 hover:text-white transition-colors cursor-pointer"
-                      >
-                        <CheckCircle size={14} /> Approve
-                      </button>
-                      <button
-                        onClick={() => handleVerificationAction(v._id, 'reject')}
-                        className="flex items-center gap-1.5 px-4 py-2 rounded-xl text-xs font-medium bg-red-500/10 text-red-400 border border-red-500/20 hover:bg-red-500 hover:text-white transition-colors cursor-pointer"
-                      >
-                        <XCircle size={14} /> Reject
-                      </button>
-                    </div>
-                  </div>
-                  <div className="grid grid-cols-2 gap-3">
-                    <a href={v.verification?.selfieUrl} target="_blank" rel="noreferrer" className="block">
-                      <div className="bg-black rounded-xl overflow-hidden aspect-square border border-white/10">
-                        <img src={v.verification?.selfieUrl} alt="Selfie" className="w-full h-full object-contain" />
-                      </div>
-                      <p className="text-[10px] text-zinc-500 text-center mt-1">Selfie</p>
-                    </a>
-                    <a href={v.verification?.idUrl} target="_blank" rel="noreferrer" className="block">
-                      <div className="bg-black rounded-xl overflow-hidden aspect-square border border-white/10">
-                        <img src={v.verification?.idUrl} alt="ID" className="w-full h-full object-contain" />
-                      </div>
-                      <p className="text-[10px] text-zinc-500 text-center mt-1">Government ID</p>
-                    </a>
-                  </div>
                 </div>
               ))
             )}
