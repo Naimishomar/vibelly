@@ -9,6 +9,9 @@ import BlinkingDotsGrid from '../components/BlinkingDotsGrid';
 import { useAuthStore } from '../store/useAuthStore';
 import LoginModal from '../components/LoginModal';
 import FAQSection from '../components/FAQSection';
+import SeoArticle from '../components/SeoArticle';
+import CompareAlternatives from '../components/CompareAlternatives';
+import ShareButtons from '../components/ShareButtons';
 
 const features = [
   {
@@ -53,8 +56,8 @@ export default function VideoChatOnline() {
   return (
     <div className="min-h-screen bg-[#15171B] text-white flex flex-col font-sans">
       <SEO 
-        title="The Best Omegle Alternative 2026 | Video Chat Online" 
-        description="Looking for a working Omegle alternative 2026? Vibelly is the best video chat online platform for random connections, built for speed and safety."
+        title="Free Online Video Call | Video Chat Online with Strangers | Vibelly" 
+        description="Make a free online video call with strangers right in your browser. Vibelly is the fastest free video chat online — HD video, no sign-up, works on mobile and desktop."
         canonicalUrl="/video-chat-online"
       />
       <BlinkingDotsGrid />
@@ -69,7 +72,7 @@ export default function VideoChatOnline() {
             className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/5 border border-white/10 text-zinc-300 text-sm font-medium mb-8"
           >
             <Zap size={16} className="text-yellow-400" />
-            The Modern Era of Chat
+            Free Video Chat Online
           </motion.div>
           
           <motion.h1
@@ -79,8 +82,8 @@ export default function VideoChatOnline() {
             className="text-4xl md:text-6xl font-normal tracking-tight leading-[1.1] mb-8"
             style={{ fontFamily: '"Playfair Display", "Merriweather", "Lora", ui-serif, Georgia, Cambria, "Times New Roman", Times, serif' }}
           >
-            The Best Omegle Alternative <br />
-            in 2026
+            Free Online Video Call <br />
+            with Strangers
           </motion.h1>
 
           <motion.p
@@ -89,7 +92,7 @@ export default function VideoChatOnline() {
             transition={{ delay: 0.2 }}
             className="text-lg md:text-xl text-zinc-400 mb-10 max-w-2xl leading-relaxed"
           >
-            Experience the fastest growing video chat online. Vibelly is the safest, fastest, and most aesthetic platform on the internet.
+            Make a free online video call in one click — no app, no account, no download. Vibelly is the fastest way to video chat online with strangers.
           </motion.p>
 
           <motion.div
@@ -132,6 +135,57 @@ export default function VideoChatOnline() {
           </div>
         </section>
 
+        {/* SEO Article for Keyword Depth */}
+        <SeoArticle
+          blocks={[
+            {
+              heading: 'What is a free online video call?',
+              paragraphs: [
+                'A free online video call lets you see and talk to another person in real time using nothing more than your browser. Unlike video calling apps such as WhatsApp, Zoom, or FaceTime — which require an account, a phone number, or a download — a browser-based video chat like Vibelly starts the moment you arrive.',
+                'With Vibelly you are not calling a specific contact. You are randomly matched with a stranger from anywhere in the world, which makes every free online video call a surprise. The connection is built on WebRTC, the same open standard that powers modern video calling, so it is fast, private, and works without plugins.',
+              ],
+            },
+            {
+              heading: 'Free video chat online vs video calling apps',
+              paragraphs: ['Video calling apps are great for people you already know, but they are the wrong tool when you want to meet someone new. Here is how browser-based free video chat compares:'],
+              bullets: [
+                'No account, phone number, or app download required to start',
+                'Meet strangers instantly instead of adding contacts first',
+                'HD quality with automatic bandwidth adaptation for slow connections',
+                'Anonymous by default — you control exactly what you reveal',
+                'Works identically on mobile, tablet, and desktop browsers',
+              ],
+            },
+            {
+              heading: 'How to make a free online video call on Vibelly',
+              paragraphs: [
+                'Making a free online video call on Vibelly takes one click. Open the site, press "Video Chat", allow camera and microphone access when your browser asks, and you will be matched with a stranger in under a second.',
+                'Once matched, you can toggle your camera and mic on or off without ending the call, type in the live chat panel, or skip to the next person whenever you like. Skipping re-queues both users instantly, so you always have a fresh conversation waiting.',
+                'There is no time limit on free calls, and you never need a credit card. The only optional upgrade is Vibelly Premium, which unlocks gender and country filters for a more tailored free online video call experience.',
+              ],
+            },
+            {
+              heading: 'Tips for a smooth video chat experience',
+              paragraphs: [
+                'To get the clearest free online video call, use a wired internet connection or sit near your Wi-Fi router, close apps that stream in the background, and make sure your camera and microphone are not in use by another application.',
+                'If your connection dips, Vibelly automatically lowers video quality to keep the call alive instead of dropping it. You can also switch to voice-only or text chat at any moment, and your match stays on the same connection.',
+                'And because every call is ephemeral, nothing you say is stored. When the free video chat ends, the conversation ends with it.',
+              ],
+            },
+          ]}
+        />
+
+        <CompareAlternatives
+          alternatives={[
+            { to: '/random-video-chat', label: 'Random Video Chat', blurb: 'Free random video calls with strangers in under a second.' },
+            { to: '/omegle-alternative', label: 'Omegle Alternative', blurb: 'The free Omegle replacement for talking to strangers.' },
+            { to: '/ometv-alternative', label: 'OmeTV Alternative', blurb: 'Video chat online without forcing a Facebook login.' },
+            { to: '/talk-to-strangers', label: 'Talk to Strangers', blurb: 'Instant stranger chat with video, voice, or text.' },
+            { to: '/chatroulette-alternative', label: 'Chatroulette Alternative', blurb: 'A modern, moderated take on classic chat roulette.' },
+            { to: '/anonymous-chat', label: 'Anonymous Chat', blurb: 'Fully private chat rooms with no identity required.' },
+          ]}
+        />
+
         {/* FAQ Section */}
         <FAQSection faqs={[
           {
@@ -145,8 +199,17 @@ export default function VideoChatOnline() {
           {
             question: "Can I use it on my phone?",
             answer: "Absolutely. Our platform is fully optimized for mobile browsers, meaning you can enjoy seamless video chat on your iPhone or Android device without downloading any apps."
+          },
+          {
+            question: "Are free online video calls really free?",
+            answer: "Yes. Core random video chat on Vibelly is completely free with no time limits, no credit card, and no hidden charges. Premium filters are optional upgrades."
           }
         ]} />
+
+        <ShareButtons
+          title="Free Online Video Call | Video Chat Online with Strangers | Vibelly"
+          description="Make a free online video call right in your browser — no download, no sign-up, just instant video chat with strangers."
+        />
 
         <div className="mt-auto relative z-20">
           <Footer />

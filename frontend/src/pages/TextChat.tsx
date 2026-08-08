@@ -9,6 +9,7 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import { useAuthStore } from '../store/useAuthStore';
 import SEO from '../components/SEO';
 import BlinkingDotsGrid from '../components/BlinkingDotsGrid';
+import SharePrompt from '../components/SharePrompt';
 
 export default function TextChat() {
   const { isSearching, isMatched, peerSocketId, peerData, messages, setMatch, endCall, addMessage } = useCallStore();
@@ -21,6 +22,8 @@ export default function TextChat() {
   const [isTyping, setIsTyping] = useState(false);
   const [peerFlag, setPeerFlag] = useState<string | null>(null);
   const [countryCodeMap, setCountryCodeMap] = useState<Record<string, string>>({});
+  const [showSharePrompt, setShowSharePrompt] = useState(false);
+  const hadMatchRef = useRef(false);
   const typingTimeoutRef = useRef<number | null>(null);
 
   useEffect(() => {
@@ -50,11 +53,15 @@ export default function TextChat() {
 
     const onMatchFound = (data: any) => {
       setMatch(data);
+      hadMatchRef.current = true;
       setPeerTyping(false);
     };
 
     const onPartnerDisconnected = () => {
       addMessage({ from: 'system', text: 'Partner disconnected.', timestamp: new Date() });
+      if (hadMatchRef.current) {
+        setTimeout(() => setShowSharePrompt(true), 1200);
+      }
       setTimeout(() => {
         handleSkip(true);
       }, 600);
@@ -385,6 +392,7 @@ export default function TextChat() {
           </form>
         </div>
       </div>
+      <SharePrompt open={showSharePrompt} onClose={() => setShowSharePrompt(false)} />
     </div>
   );
 }

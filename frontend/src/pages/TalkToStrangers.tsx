@@ -9,6 +9,7 @@ import BlinkingDotsGrid from '../components/BlinkingDotsGrid';
 import { useAuthStore } from '../store/useAuthStore';
 import LoginModal from '../components/LoginModal';
 import FAQSection from '../components/FAQSection';
+import ShareButtons from '../components/ShareButtons';
 
 const features = [
   {
@@ -147,6 +148,11 @@ export default function TalkToStrangers() {
             answer: "Absolutely. Our platform is fully optimized for mobile browsers, meaning you can enjoy seamless video chat on your iPhone or Android device without downloading any apps."
           }
         ]} />
+
+        <ShareButtons
+          title="Talk to Strangers | Random Stranger Chat Online"
+          description="Talk to strangers online with free random stranger chat — HD video, voice, or text, anonymous and instant."
+        />
 
         <div className="mt-auto relative z-20">
           <Footer />

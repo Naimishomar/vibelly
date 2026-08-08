@@ -9,6 +9,9 @@ import BlinkingDotsGrid from '../components/BlinkingDotsGrid';
 import { useAuthStore } from '../store/useAuthStore';
 import LoginModal from '../components/LoginModal';
 import FAQSection from '../components/FAQSection';
+import SeoArticle from '../components/SeoArticle';
+import CompareAlternatives from '../components/CompareAlternatives';
+import ShareButtons from '../components/ShareButtons';
 
 const features = [
   {
@@ -132,6 +135,57 @@ export default function RandomVideoChat() {
           </div>
         </section>
 
+        {/* SEO Article for Keyword Depth */}
+        <SeoArticle
+          blocks={[
+            {
+              heading: 'What is random video chat?',
+              paragraphs: [
+                'Random video chat is exactly what it sounds like: you press a button and are instantly connected over video to a stranger you have never met. There is no friend list, no matchmaking algorithm curating your feed, and no profile to build. Every conversation is a genuine surprise.',
+                'The concept was made famous by Omegle and Chatroulette, and it remains one of the most exciting ways to meet people online. Random video chat platforms match two anonymous users, let them talk for as long as they like, and let either person skip to a new stranger at any moment.',
+                'Vibelly keeps that core idea but rebuilds the technology around it: modern WebRTC video, AI moderation, and an interface that starts a free video chat in under a second.',
+              ],
+            },
+            {
+              heading: 'Why try random video chat with strangers',
+              paragraphs: ['People use random video chat for all kinds of reasons, but the biggest ones are:'],
+              bullets: [
+                'Meet people you would never cross paths with in real life',
+                'Practice a new language with native speakers around the world',
+                'Fight boredom with unpredictable, genuine conversations',
+                'Stay anonymous — share only what you are comfortable sharing',
+                'Travel socially from your couch: one call can land in Tokyo, the next in London',
+              ],
+            },
+            {
+              heading: 'How to stay safe during random video chat',
+              paragraphs: [
+                'Safety is the number one concern with any random video chat platform, and it is the reason Vibelly was built with moderation as a first-class feature rather than an afterthought.',
+                'Every room is protected by AI screening and a one-tap report button, so inappropriate behavior can be removed instantly. All conversations are ephemeral: the moment you skip or end a call, the chat is gone and nothing is stored.',
+                'As with any stranger chat, the golden rules are simple: never share personal financial information, keep your location vague, and trust your instincts — if a conversation feels wrong, skip to the next person. Vibelly makes that a single click.',
+              ],
+            },
+            {
+              heading: 'Free video chat that works everywhere',
+              paragraphs: [
+                'Because Vibelly runs entirely in the browser, you can start a free random video chat from a phone, tablet, or desktop without installing a single app. There is no account and no email required — just open the page and go.',
+                'The experience is the same everywhere: HD video, voice-only mode, live text chat, and instant skipping. Whether you are at home, on the bus, or on a break at work, a new stranger is always one click away.',
+              ],
+            },
+          ]}
+        />
+
+        <CompareAlternatives
+          alternatives={[
+            { to: '/video-chat-online', label: 'Free Online Video Call', blurb: 'Make a free online video call right in your browser.' },
+            { to: '/omegle-alternative', label: 'Omegle Alternative', blurb: 'The free Omegle replacement for talking to strangers.' },
+            { to: '/ometv-alternative', label: 'OmeTV Alternative', blurb: 'Video chat online without forcing a Facebook login.' },
+            { to: '/talk-to-strangers', label: 'Talk to Strangers', blurb: 'Instant stranger chat with video, voice, or text.' },
+            { to: '/chatroulette-alternative', label: 'Chatroulette Alternative', blurb: 'A modern, moderated take on classic chat roulette.' },
+            { to: '/anonymous-chat', label: 'Anonymous Chat', blurb: 'Fully private chat rooms with no identity required.' },
+          ]}
+        />
+
         {/* FAQ Section */}
         <FAQSection faqs={[
           {
@@ -145,8 +199,17 @@ export default function RandomVideoChat() {
           {
             question: "Can I use it on my phone?",
             answer: "Absolutely. Our platform is fully optimized for mobile browsers, meaning you can enjoy seamless video chat on your iPhone or Android device without downloading any apps."
+          },
+          {
+            question: "Is random video chat really free?",
+            answer: "Yes. Core random video chat on Vibelly is completely free with no time limits, no credit card, and no hidden charges. Optional Premium filters are never required."
           }
         ]} />
+
+        <ShareButtons
+          title="Free Random Video Chat Online | Meet Strangers on Vibelly"
+          description="Free random video chat online — meet strangers instantly with HD video, no sign-up, and no downloads."
+        />
 
         <div className="mt-auto relative z-20">
           <Footer />

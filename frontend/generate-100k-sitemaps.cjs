@@ -4,6 +4,8 @@ const path = require('path');
 const publicDir = path.join(__dirname, 'public');
 const siteUrl = 'https://vibelly.fun';
 
+const today = new Date().toISOString().slice(0, 10);
+
 // 20 Base Keywords
 const keywords = [
   'omegle-alternative', 'random-video-chat', 'talk-to-strangers', 'anonymous-chat',
@@ -13,97 +15,84 @@ const keywords = [
   'cam-to-cam-chat', 'anonymous-video-chat', 'chat-random', 'omegle-app'
 ];
 
-// 5 Modifiers
-const modifiers = [
-  '', 'free', 'online', 'without-login', 'for-introverts'
-];
+// Modifiers (legit long-tail, all prerendered)
+const modifiers = ['', 'free', 'online', 'without-login', 'for-introverts'];
 
-// 1000 Cities (sampled)
+// City landing pages (each prerendered with unique geo-aware content)
 const cities = [
-  "new-york", "los-angeles", "chicago", "houston", "phoenix", "philadelphia", "san-antonio", "san-diego", "dallas", "sanjose",
-  "austin", "jacksonville", "fort-worth", "columbus", "san-francisco", "charlotte", "indianapolis", "seattle", "denver", "washington",
-  "boston", "el-paso", "nashville", "detroit", "oklahoma-city", "portland", "las-vegas", "memphis", "louisville", "baltimore",
-  "london", "birmingham", "manchester", "glasgow", "newcastle", "sheffield", "liverpool", "leeds", "bristol", "edinburgh",
-  "toronto", "montreal", "vancouver", "calgary", "edmonton", "ottawa", "winnipeg", "quebec-city", "hamilton", "kitchener",
-  "sydney", "melbourne", "brisbane", "perth", "adelaide", "gold-coast", "cranbourne", "canberra", "newcastle-au", "wollongong",
-  "tokyo", "yokohama", "osaka", "nagoya", "sapporo", "fukuoka", "kobe", "kyoto", "kawasaki", "saitama",
-  "mumbai", "delhi", "bangalore", "hyderabad", "ahmedabad", "chennai", "kolkata", "surat", "pune", "jaipur",
-  "berlin", "hamburg", "munich", "cologne", "frankfurt", "stuttgart", "dusseldorf", "leipzig", "dortmund", "essen",
-  "paris", "marseille", "lyon", "toulouse", "nice", "nantes", "strasbourg", "montpellier", "bordeaux", "lille",
-  // We repeat variations or expand slightly to hit massive numbers
+  'new-york', 'los-angeles', 'chicago', 'houston', 'miami', 'san-francisco',
+  'seattle', 'boston', 'austin', 'denver', 'las-vegas', 'atlanta',
+  'london', 'manchester', 'birmingham', 'paris', 'berlin', 'madrid',
+  'toronto', 'vancouver', 'montreal', 'sydney', 'melbourne', 'brisbane',
+  'tokyo', 'osaka', 'mumbai', 'delhi', 'bangalore', 'hyderabad',
+  'dubai', 'singapore', 'bangkok', 'kuala-lumpur', 'jakarta', 'manila',
+  'sao-paulo', 'mexico-city', 'buenos-aires', 'nairobi', 'lagos', 'cairo'
 ];
 
-// 10 Adjectives
-const adjectives = [
-  '', 'best', 'top', 'fast', 'secure', 'no-signup', 'hd', 'local', 'stranger', 'random', 'new'
+// Real app routes that exist as React pages
+const realRoutes = [
+  '/', '/pricing', '/contact', '/terms', '/blog',
+  '/omegle-alternative', '/ometv-alternative', '/chatroulette-alternative',
+  '/random-video-chat', '/talk-to-strangers', '/anonymous-chat',
+  '/chat-with-girls', '/video-chat-online', '/omegle-unbanned'
 ];
 
-// Generate 100,000+ permutations
-let allUrls = [];
+function xmlUrl(loc, changefreq = 'daily', priority = '0.8', lastmod = today) {
+  return `  <url>\n    <loc>${loc}</loc>\n    <lastmod>${lastmod}</lastmod>\n    <changefreq>${changefreq}</changefreq>\n    <priority>${priority}</priority>\n  </url>`;
+}
 
-console.log('Generating URL permutations...');
+function writeSitemap(name, urls, defaultChangefreq = 'daily', defaultPriority = '0.8') {
+  let xml = `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n`;
+  for (const u of urls) {
+    const loc = typeof u === 'string' ? u : u.url;
+    const changefreq = typeof u === 'string' ? defaultChangefreq : u.changefreq;
+    const priority = typeof u === 'string' ? defaultPriority : u.priority;
+    xml += xmlUrl(loc, changefreq, priority) + '\n';
+  }
+  xml += '</urlset>';
+  fs.writeFileSync(path.join(publicDir, name), xml);
+  console.log(`Saved ${name} with ${urls.length} URLs.`);
+}
 
+// ─── Core sitemap: real routes + base keywords + modifiers ───
+const coreUrls = [];
+for (const route of realRoutes) {
+  const priority = route === '/' ? '1.0' : '0.9';
+  const changefreq = route === '/' ? 'hourly' : 'weekly';
+  coreUrls.push({ url: `${siteUrl}${route}`, changefreq, priority });
+}
+for (const kw of keywords) {
+  coreUrls.push({ url: `${siteUrl}/${kw}`, changefreq: 'daily', priority: '0.9' });
+}
 for (const kw of keywords) {
   for (const mod of modifiers) {
-    for (const adj of adjectives) {
-      // Just kw + mod + adj
-      let base = kw;
-      if (adj) base = `${adj}-${base}`;
-      if (mod) base += `-${mod}`;
-      allUrls.push(`${siteUrl}/${base}`);
-      
-      // kw + mod + adj + city
-      for (const city of cities) {
-        allUrls.push(`${siteUrl}/${base}-in-${city}`);
-      }
-    }
+    if (!mod) continue;
+    coreUrls.push({ url: `${siteUrl}/${kw}-${mod}`, changefreq: 'daily', priority: '0.8' });
   }
 }
+writeSitemap('sitemap-core.xml', coreUrls);
 
-// Remove duplicates
-allUrls = [...new Set(allUrls)];
-
-console.log(`Generated ${allUrls.length} unique URLs!`);
-
-// Chunk into sitemaps of 40,000 URLs each (Google limit is 50k)
-const chunkSize = 40000;
-const chunks = [];
-for (let i = 0; i < allUrls.length; i += chunkSize) {
-  chunks.push(allUrls.slice(i, i + chunkSize));
-}
-
-// Ensure public directory exists
-if (!fs.existsSync(publicDir)) {
-  fs.mkdirSync(publicDir);
-}
-
-// Write the child sitemaps
-const sitemapFiles = [];
-for (let i = 0; i < chunks.length; i++) {
-  const sitemapName = `sitemap-${i + 1}.xml`;
-  sitemapFiles.push(sitemapName);
-  
-  let xml = `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n`;
-  for (const url of chunks[i]) {
-    xml += `  <url>\n    <loc>${url}</loc>\n    <changefreq>daily</changefreq>\n    <priority>0.8</priority>\n  </url>\n`;
+// ─── City sitemap: keyword x city landing pages ───
+const cityUrls = [];
+for (const kw of keywords) {
+  for (const city of cities) {
+    cityUrls.push({ url: `${siteUrl}/${kw}-in-${city}`, changefreq: 'daily', priority: '0.7' });
   }
-  xml += `</urlset>`;
-  
-  fs.writeFileSync(path.join(publicDir, sitemapName), xml);
-  console.log(`Saved ${sitemapName} with ${chunks[i].length} URLs.`);
 }
+writeSitemap('sitemap-cities.xml', cityUrls);
 
-// Write the sitemap_index.xml
+// ─── Sitemap index (competitors + trends are written later in the build; blog is proxied) ───
 let indexXml = `<?xml version="1.0" encoding="UTF-8"?>\n<sitemapindex xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n`;
-for (const file of sitemapFiles) {
-  indexXml += `  <sitemap>\n    <loc>${siteUrl}/${file}</loc>\n  </sitemap>\n`;
+for (const file of ['sitemap-core.xml', 'sitemap-cities.xml', 'sitemap-competitors.xml', 'sitemap-trends.xml', 'sitemap-blog.xml']) {
+  indexXml += `  <sitemap>\n    <loc>${siteUrl}/${file}</loc>\n    <lastmod>${today}</lastmod>\n  </sitemap>\n`;
 }
-// Add the dynamic trend hijacker sitemap
-indexXml += `  <sitemap>\n    <loc>${siteUrl}/sitemap-trends.xml</loc>\n  </sitemap>\n`;
-indexXml += `</sitemapindex>`;
-
-// Overwrite the main sitemap.xml to act as the index
+indexXml += '</sitemapindex>';
 fs.writeFileSync(path.join(publicDir, 'sitemap.xml'), indexXml);
-console.log('Saved sitemap.xml (Sitemap Index).');
 
-console.log('✅ Successfully built 100k+ page architecture!');
+// Clean up obsolete giant sitemaps so Google stops crawling stale thin pages
+for (const oldFile of ['sitemap-1.xml', 'sitemap-2.xml', 'sitemap-3.xml']) {
+  const oldPath = path.join(publicDir, oldFile);
+  if (fs.existsSync(oldPath)) fs.unlinkSync(oldPath);
+}
+
+console.log('✅ Saved sitemap.xml (Sitemap Index) with high-quality, fully-prerendered pages.');

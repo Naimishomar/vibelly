@@ -16,6 +16,11 @@ export interface IUser extends Document {
   interests: string[];
   premiumStatus: boolean;
   premiumExpiryDate?: Date;
+  referralCode?: string;
+  referredBy?: mongoose.Types.ObjectId;
+  referralCount: number;
+  referralRewardDays: number;
+  liveEarnings: number;
   blockedUsers: mongoose.Types.ObjectId[];
   chatsThisWeek: number;
   lastChatResetDate: Date;
@@ -40,6 +45,11 @@ const UserSchema: Schema = new Schema({
   interests: [{ type: String }],
   premiumStatus: { type: Boolean, default: false },
   premiumExpiryDate: { type: Date },
+  referralCode: { type: String, unique: true, sparse: true },
+  referredBy: { type: Schema.Types.ObjectId, ref: 'User' },
+  referralCount: { type: Number, default: 0 },
+  referralRewardDays: { type: Number, default: 0 },
+  liveEarnings: { type: Number, default: 0 },
   blockedUsers: [{ type: Schema.Types.ObjectId, ref: 'User' }],
   chatsThisWeek: { type: Number, default: 0 },
   lastChatResetDate: { type: Date, default: Date.now },

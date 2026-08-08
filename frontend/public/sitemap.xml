@@ -1,15 +1,23 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <sitemapindex xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <sitemap>
-    <loc>https://vibelly.fun/sitemap-1.xml</loc>
+    <loc>https://vibelly.fun/sitemap-core.xml</loc>
+    <lastmod>2026-08-08</lastmod>
   </sitemap>
   <sitemap>
-    <loc>https://vibelly.fun/sitemap-2.xml</loc>
+    <loc>https://vibelly.fun/sitemap-cities.xml</loc>
+    <lastmod>2026-08-08</lastmod>
   </sitemap>
   <sitemap>
-    <loc>https://vibelly.fun/sitemap-3.xml</loc>
+    <loc>https://vibelly.fun/sitemap-competitors.xml</loc>
+    <lastmod>2026-08-08</lastmod>
   </sitemap>
   <sitemap>
     <loc>https://vibelly.fun/sitemap-trends.xml</loc>
+    <lastmod>2026-08-08</lastmod>
+  </sitemap>
+  <sitemap>
+    <loc>https://vibelly.fun/sitemap-blog.xml</loc>
+    <lastmod>2026-08-08</lastmod>
   </sitemap>
 </sitemapindex>

@@ -43,6 +43,7 @@ export default function Footer() {
           <Link to="/ometv-alternative" className="text-zinc-400 hover:text-white transition-colors">OmeTV Alternative</Link>
           <Link to="/chatroulette-alternative" className="text-zinc-400 hover:text-white transition-colors">Chatroulette Alternative</Link>
           <Link to="/omegle-unbanned" className="text-zinc-400 hover:text-white transition-colors">Omegle Unban Guide</Link>
+          <Link to="/backlinks" className="text-zinc-400 hover:text-white transition-colors">Link to Vibelly</Link>
         </div>
 
         {/* Global Chat (SEO Silo) */}

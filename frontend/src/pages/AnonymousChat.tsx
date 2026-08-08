@@ -9,6 +9,7 @@ import BlinkingDotsGrid from '../components/BlinkingDotsGrid';
 import { useAuthStore } from '../store/useAuthStore';
 import LoginModal from '../components/LoginModal';
 import FAQSection from '../components/FAQSection';
+import ShareButtons from '../components/ShareButtons';
 
 const features = [
   {
@@ -147,6 +148,11 @@ export default function AnonymousChat() {
             answer: "Absolutely. Our platform is fully optimized for mobile browsers, meaning you can enjoy seamless video chat on your iPhone or Android device without downloading any apps."
           }
         ]} />
+
+        <ShareButtons
+          title="Anonymous Chat Website | Free Private Chat Rooms"
+          description="The best anonymous chat website — private, free, and secure. Talk to strangers without revealing who you are."
+        />
 
         <div className="mt-auto relative z-20">
           <Footer />

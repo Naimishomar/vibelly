@@ -4,6 +4,7 @@ import { HelmetProvider } from 'react-helmet-async';
 import { ReactLenis } from 'lenis/react';
 import { Loader2 } from 'lucide-react';
 import { useAuthStore } from './store/useAuthStore';
+import { captureRefFromUrl, claimPendingReferral } from './lib/referral';
 import OnboardingModal from './components/OnboardingModal';
 
 // Lazy loaded components
@@ -20,6 +21,8 @@ const Contact = lazy(() => import('./pages/Contact'));
 const AdminDashboard = lazy(() => import('./pages/AdminDashboard'));
 const Groups = lazy(() => import('./pages/Groups'));
 const GroupChat = lazy(() => import('./pages/GroupChat'));
+const LiveStream = lazy(() => import('./pages/LiveStream'));
+const CreatorProfile = lazy(() => import('./pages/CreatorProfile'));
 const OmegleAlternative = lazy(() => import('./pages/OmegleAlternative'));
 const OmeTvAlternative = lazy(() => import('./pages/OmeTvAlternative'));
 const ChatrouletteAlternative = lazy(() => import('./pages/ChatrouletteAlternative'));
@@ -32,6 +35,7 @@ const AnonymousChat = lazy(() => import('./pages/AnonymousChat'));
 const ChatWithGirls = lazy(() => import('./pages/ChatWithGirls'));
 const VideoChatOnline = lazy(() => import('./pages/VideoChatOnline'));
 const DynamicSeoPage = lazy(() => import('./pages/DynamicSeoPage'));
+const LinkToUs = lazy(() => import('./pages/LinkToUs'));
 
 function ScrollToTop() {
   const { pathname } = useLocation();
@@ -52,11 +56,20 @@ const PageLoader = () => (
 function App() {
   const checkAuth = useAuthStore(state => state.checkAuth);
   const fetchSettings = useAuthStore(state => state.fetchSettings);
+  const isAuthenticated = useAuthStore(state => state.isAuthenticated);
 
   useEffect(() => {
+    captureRefFromUrl();
     checkAuth();
     fetchSettings();
   }, [checkAuth, fetchSettings]);
+
+  // Claim a pending referral (from ?ref=CODE) once the user is signed in
+  useEffect(() => {
+    if (isAuthenticated) {
+      void claimPendingReferral();
+    }
+  }, [isAuthenticated]);
 
   // Track unique visits
   useEffect(() => {
@@ -96,6 +109,8 @@ function App() {
             <Route path="/groups" element={<Groups />}>
               <Route path=":roomId" element={<GroupChat />} />
             </Route>
+            <Route path="/live" element={<LiveStream />} />
+            <Route path="/creator/:userId" element={<CreatorProfile />} />
             <Route path="/mcp" element={<Registry />} />
             <Route path="/setup/:type" element={<Lobby />} />
             <Route path="/admin" element={<AdminDashboard />} />
@@ -115,6 +130,7 @@ function App() {
             <Route path="/anonymous-chat" element={<AnonymousChat />} />
             <Route path="/chat-with-girls" element={<ChatWithGirls />} />
             <Route path="/video-chat-online" element={<VideoChatOnline />} />
+            <Route path="/backlinks" element={<LinkToUs />} />
             <Route path="/blog" element={<Blog />} />
             <Route path="/blog/:slug" element={<BlogPost />} />
             <Route path="/:slug" element={<DynamicSeoPage />} />

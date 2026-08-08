@@ -1,7 +1,17 @@
 import { useEffect, useRef } from 'react';
+import { getTheme } from '../lib/theme';
 
 export default function BlinkingDotsGrid({ opacity = 1 }: { opacity?: number } = {}) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
+  const themeRef = useRef<'dark' | 'light'>(getTheme());
+
+  useEffect(() => {
+    const themeObserver = new MutationObserver(() => {
+      themeRef.current = getTheme();
+    });
+    themeObserver.observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
+    return () => themeObserver.disconnect();
+  }, []);
 
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -66,7 +76,9 @@ export default function BlinkingDotsGrid({ opacity = 1 }: { opacity?: number } =
 
         ctx.beginPath();
         ctx.arc(dot.x, dot.y, radius, 0, Math.PI * 2);
-        ctx.fillStyle = `rgba(255, 255, 255, ${dot.currentAlpha * opacity})`;
+        ctx.fillStyle = themeRef.current === 'light'
+          ? `rgba(24, 24, 27, ${dot.currentAlpha * opacity})`
+          : `rgba(255, 255, 255, ${dot.currentAlpha * opacity})`;
         ctx.fill();
       }
 

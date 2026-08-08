@@ -27,6 +27,7 @@ export default function LoginModal({ isOpen, onClose }: LoginModalProps) {
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.95, y: 20 }}
             className="relative w-full max-w-md bg-[#131313] border border-white/10 rounded-3xl p-8 shadow-2xl overflow-hidden"
+            id="login-modal"
           >
             {/* Close Button */}
             <button

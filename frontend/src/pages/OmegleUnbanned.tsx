@@ -6,6 +6,7 @@ import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
 import SEO from '../components/SEO';
 import FAQSection from '../components/FAQSection';
+import ShareButtons from '../components/ShareButtons';
 import { useAuthStore } from '../store/useAuthStore';
 import LoginModal from '../components/LoginModal';
 
@@ -149,6 +150,11 @@ export default function OmegleUnbanned() {
             answer: "Yes! Vibelly does not share bans with Omegle or OmeTV. If you are banned on those platforms, you can instantly start chatting on Vibelly for free without any issues."
           }
         ]} />
+
+        <ShareButtons
+          title="How to Get Unbanned from Omegle (100% Working 2026) | Vibelly"
+          description="Banned from Omegle? Discover the unban-proof random video chat alternative and start talking to strangers again today."
+        />
 
         <Footer />
         <LoginModal isOpen={isLoginModalOpen} onClose={() => setIsLoginModalOpen(false)} />

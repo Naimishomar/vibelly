@@ -33,6 +33,51 @@ const features = [
   },
 ];
 
+// ─── Indexability gate ───
+// These must stay in sync with frontend/generate-100k-sitemaps.cjs so that every
+// sitemapped (and prerendered) URL is indexable while unknown patterns are noindexed.
+const BASE_KEYWORDS = [
+  'omegle-alternative', 'random-video-chat', 'talk-to-strangers', 'anonymous-chat',
+  'video-chat-with-girls', 'free-cam-chat', 'stranger-cam', 'chat-roulette-free',
+  'omegle-unbanned', 'video-call-app', 'chat-with-strangers-online', 'random-cam',
+  'free-video-chat-rooms', 'meet-new-people', 'stranger-video-call', 'live-video-chat',
+  'cam-to-cam-chat', 'anonymous-video-chat', 'chat-random', 'omegle-app',
+];
+const MODIFIERS = ['free', 'online', 'without-login', 'for-introverts'];
+const CITIES = [
+  'new-york', 'los-angeles', 'chicago', 'houston', 'miami', 'san-francisco',
+  'seattle', 'boston', 'austin', 'denver', 'las-vegas', 'atlanta',
+  'london', 'manchester', 'birmingham', 'paris', 'berlin', 'madrid',
+  'toronto', 'vancouver', 'montreal', 'sydney', 'melbourne', 'brisbane',
+  'tokyo', 'osaka', 'mumbai', 'delhi', 'bangalore', 'hyderabad',
+  'dubai', 'singapore', 'bangkok', 'kuala-lumpur', 'jakarta', 'manila',
+  'sao-paulo', 'mexico-city', 'buenos-aires', 'nairobi', 'lagos', 'cairo',
+];
+const COMPETITORS = [
+  'omegle', 'ometv', 'chatroulette', 'monkey-app', 'emerald-chat',
+  'bazoocam', 'chatrandom', 'camsurf', 'coomeet', 'tinychat',
+  'shagle', 'chathub', 'camfrog', 'joingy', 'flingster',
+];
+const COMP_MODIFIERS = [
+  'alternative', 'alternative-free', 'alternative-no-login', 'alternative-for-girls',
+  'unbanned', 'app', 'app-download', 'website-like', 'better-than', 'for-mobile',
+];
+
+function isKnownSeoSlug(s: string): boolean {
+  for (const kw of BASE_KEYWORDS) {
+    if (s === kw) return true;
+    for (const mod of MODIFIERS) if (s === `${kw}-${mod}`) return true;
+    for (const city of CITIES) if (s === `${kw}-in-${city}`) return true;
+  }
+  for (const comp of COMPETITORS) {
+    for (const mod of COMP_MODIFIERS) if (s === `${comp}-${mod}`) return true;
+  }
+  if (/^video-chat-about-/.test(s)) return true;
+  if (/^talk-about-.+-online$/.test(s)) return true;
+  if (/-chat-room$/.test(s)) return true;
+  return false;
+}
+
 export default function DynamicSeoPage() {
   const { slug } = useParams<{ slug: string }>();
   const navigate = useNavigate();
@@ -61,13 +106,31 @@ export default function DynamicSeoPage() {
 
     const isCompetitor = ['omegle', 'ometv', 'chatroulette', 'monkey', 'bazoocam', 'emerald', 'chatrandom', 'opentalk', 'whoapp', 'azar', 'chatspin'].some(c => slugStr.includes(c));
 
+    // Detect a "in-city" suffix so local pages get unique, geo-aware copy.
+    const cityMatch = slugStr.match(/-in-([a-z-]+)$/);
+    const city = cityMatch
+      ? cityMatch[1].split('-').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ')
+      : null;
+
+    const geo = city ? ` in ${city}` : '';
+
     if (isCompetitor) {
       return {
         title: `${formattedTopic} | Vibelly - The Best Alternative`,
-        h1: `The #1 ${formattedTopic}`,
-        desc: `Searching for a ${formattedTopic}? Vibelly is the fastest, safest, and most beautiful alternative. Start an anonymous HD video chat instantly with zero registration.`,
+        h1: `The #1 ${formattedTopic}${geo}`,
+        desc: `Searching for a ${formattedTopic}${geo}? Vibelly is the fastest, safest, and most beautiful alternative. Start an anonymous HD video chat instantly with zero registration.`,
         tagline: 'Top Rated Alternative',
-        subH1: `Omegle is gone, and other apps are full of bots. Experience the ultimate ${formattedTopic} with our modern, moderated platform.`
+        subH1: `Omegle is gone, and other apps are full of bots. Experience the ultimate ${formattedTopic}${geo} with our modern, moderated platform.`
+      };
+    }
+
+    if (city) {
+      return {
+        title: `${formattedTopic} in ${city} | Free Random Video Chat`,
+        h1: `${formattedTopic} in ${city}`,
+        desc: `Looking for ${formattedTopic} in ${city}? Join Vibelly, the ultimate free platform for random video chatting. Instantly connect with strangers from ${city} and worldwide with zero registration.`,
+        tagline: 'Popular in Your City',
+        subH1: `Meet strangers from ${city} and around the world with our high-quality video chat. No sign-up required.`
       };
     }
 
@@ -82,13 +145,23 @@ export default function DynamicSeoPage() {
 
   const pageData = generateWildcardData(slug || 'random-video-chat');
 
+  // Only pages listed in our sitemaps (all of which get unique prerendered HTML)
+  // should be indexed. Anything else — random backlinks, typos, unknown patterns —
+  // gets noindex so Google doesn't see low-value infinite pages.
+  const noindex = useMemo(() => {
+    const s = slug || '';
+    if (!s) return false;
+    if (isKnownSeoSlug(s)) return false;
+    return true;
+  }, [slug]);
+
   // Dynamic content logic
   const h1Words = pageData.h1.split(' ');
   const h1FirstPart = h1Words.slice(0, Math.max(1, h1Words.length - 2)).join(' ');
   const h1SecondPart = h1Words.slice(Math.max(1, h1Words.length - 2)).join(' ');
 
   const relatedPages = useMemo(() => {
-    // Generate 12 random related SEO slugs dynamically
+    // Deterministically derive related SEO slugs from the current slug (stable links + pure render).
     const seeds = [
       'random-video-chat', 'omegle-alternative', 'talk-to-strangers', 'anonymous-chat',
       'video-chat-with-girls', 'free-cam-chat', 'stranger-cam', 'chat-roulette-free',
@@ -101,15 +174,27 @@ export default function DynamicSeoPage() {
       'madrid', 'dubai', 'singapore', 'los-angeles', 'chicago', 'houston', 'miami'
     ];
 
+    let hash = 2166136261;
+    const slugSeed = slug || 'random-video-chat';
+    for (let i = 0; i < slugSeed.length; i++) {
+      hash ^= slugSeed.charCodeAt(i);
+      hash = Math.imul(hash, 16777619);
+    }
+    const pickIndex = (i: number) => {
+      hash = Math.imul(hash ^ (hash >>> 15), 2246822507) + (hash & 0x7fffffff);
+      hash = Math.imul(hash ^ (hash >>> 13), 3266489909);
+      hash ^= hash >>> 16;
+      return ((hash >>> 0) + i) % cities.length;
+    };
+
     const possibleSlugs = [
       ...seeds,
-      ...seeds.map(s => `${s}-in-${cities[Math.floor(Math.random() * cities.length)]}`),
+      ...seeds.map((s, i) => `${s}-in-${cities[pickIndex(i)]}`),
       ...seeds.map(s => `${s}-for-introverts`),
       ...seeds.map(s => `${s}-for-gamers`)
     ];
 
-    const shuffled = [...possibleSlugs].sort(() => 0.5 - Math.random());
-    return shuffled.filter(s => s !== slug).slice(0, 12);
+    return possibleSlugs.filter(s => s !== slug).slice(0, 12);
   }, [slug]);
 
   return (
@@ -118,6 +203,7 @@ export default function DynamicSeoPage() {
         title={pageData.title}
         description={pageData.desc}
         canonicalUrl={`/${slug}`}
+        noindex={noindex}
         faqs={[
           {
             question: "Do I need to sign up?",

@@ -49,7 +49,7 @@ export default function CurvedCarousel() {
       </div>
 
       {/* The 3D Carousel Stage */}
-      <div className="relative w-full h-[550px] md:h-[700px] flex items-center justify-center transform-style-3d mb-16">
+      <div className="relative w-full h-[550px] md:h-[700px] flex items-center justify-center transform-3d mb-16">
         
         <AnimatePresence mode="popLayout">
           {CAROUSEL_ITEMS.map((item, i) => {

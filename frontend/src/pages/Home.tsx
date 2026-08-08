@@ -11,6 +11,7 @@ import Footer from '../components/Footer';
 import BlinkingDotsGrid from '../components/BlinkingDotsGrid';
 import InteractiveHeroCards from '../components/InteractiveHeroCards';
 import CurvedCarousel from '../components/CurvedCarousel';
+import HotModels from '../components/HotModels';
 import { useAuthStore } from '../store/useAuthStore';
 import LoginModal from '../components/LoginModal';
 
@@ -301,6 +302,11 @@ export default function Home() {
         </section>
 
         {/* ══════════════════════════════════════════
+            SECTION 1.75 — HOT MODELS & TRENDING LIVE
+        ══════════════════════════════════════════ */}
+        <HotModels />
+
+        {/* ══════════════════════════════════════════
             SECTION 2 — QUOTE CARD
         ══════════════════════════════════════════ */}
         <section className="px-6 pb-28 max-w-3xl mx-auto w-full">
@@ -502,9 +508,9 @@ export default function Home() {
             className="bg-white text-black rounded-2xl p-8 text-center"
           >
             <p className="text-base md:text-lg text-zinc-700 leading-relaxed max-w-2xl mx-auto">
-              Social algorithms know what you like. They keep showing you more of it. Vibelly is the opposite —
-              the person on the other side is someone you'd never have found any other way.
-              That's not a bug. <strong className="text-black">That's the feature.</strong>
+              Social apps keep showing you more of what you already like. Vibelly is the opposite — every
+              stranger you meet here is someone you'd never have found on your own. That unpredictability
+              isn't a bug. <strong className="text-black">It's the whole point.</strong>
             </p>
           </motion.div>
         </section>

@@ -19,6 +19,8 @@ import blogRoutes from './routes/blog.routes';
 import sitemapRoutes from './routes/sitemap.routes';
 import analyticsRoutes from './routes/analytics.routes';
 import settingsRoutes from './routes/settings.routes';
+import referralRoutes from './routes/referral.routes';
+import creatorRoutes from './routes/creator.routes';
 import passport from './config/passport';
 
 import hpp from 'hpp';
@@ -78,11 +80,13 @@ app.use('/api/admin', adminRoutes);
 app.use('/api/blogs', blogRoutes);
 app.use('/api/analytics', analyticsRoutes);
 app.use('/api/settings', settingsRoutes);
+app.use('/api/referral', referralRoutes);
+app.use('/api/creator', creatorRoutes);
 app.use('/sitemap.xml', sitemapRoutes);
 
 
 app.get("/", (req,res)=>{
-  res.send("Vibe server never gets down🚀🚀");
+  res.send("Vibelly never gets down🚀🚀");
 })
 
 // ─── Database Connection ───

@@ -12,6 +12,7 @@ import { useAuthStore } from '../store/useAuthStore';
 import LightRays from '../components/LightRays';
 import SEO from '../components/SEO';
 import BlinkingDotsGrid from '../components/BlinkingDotsGrid';
+import SharePrompt from '../components/SharePrompt';
 
 const MEDIA_ERROR_MESSAGES: Record<MediaErrorCode, string> = {
   'not-supported': 'Your browser does not support camera access. Try Chrome or Firefox on HTTPS/localhost.',
@@ -64,6 +65,8 @@ export default function VideoCall() {
   const [audioLevel, setAudioLevel] = useState(0);
   const [peerFlag, setPeerFlag] = useState<string | null>(null);
   const [countryCodeMap, setCountryCodeMap] = useState<Record<string, string>>({});
+  const [showSharePrompt, setShowSharePrompt] = useState(false);
+  const hadMatchRef = useRef(false);
   const typingTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const isChatOpenRef = useRef(isChatOpen);
 
@@ -102,6 +105,7 @@ export default function VideoCall() {
       isInitiator: boolean;
     }) => {
       setMatch({ roomId: data.roomId, peerSocketId: data.peerSocketId, peerData: data.peerData });
+      hadMatchRef.current = true;
 
       const onRemoteStream = (stream: MediaStream) => {
         attachStreamToVideo(remoteVideoRef.current, stream);
@@ -139,6 +143,9 @@ export default function VideoCall() {
     const onPartnerDisconnected = () => {
       // Small 600ms delay to prevent the matchmaking race condition 
       // where both users enter an empty queue at the exact same millisecond.
+      if (hadMatchRef.current) {
+        setTimeout(() => setShowSharePrompt(true), 1200);
+      }
       setTimeout(() => handleSkip(true), 600);
     };
 
@@ -741,6 +748,7 @@ export default function VideoCall() {
           </motion.div>
         )}
       </AnimatePresence>
+      <SharePrompt open={showSharePrompt} onClose={() => setShowSharePrompt(false)} />
     </div>
   );
 }

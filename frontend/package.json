@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "node generate-100k-sitemaps.cjs && node scripts/trend-hijacker.cjs && node scripts/competitor-hijacker.cjs && tsc -b && vite build && node scripts/prerender.cjs",
+    "build": "node generate-100k-sitemaps.cjs && node scripts/trend-hijacker.cjs && node scripts/competitor-hijacker.cjs && tsc -b && vite build && node scripts/prerender.cjs && node scripts/indexnow.cjs",
     "lint": "eslint .",
     "preview": "vite preview"
   },

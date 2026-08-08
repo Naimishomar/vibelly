@@ -9,6 +9,7 @@ import BlinkingDotsGrid from '../components/BlinkingDotsGrid';
 import { useAuthStore } from '../store/useAuthStore';
 import LoginModal from '../components/LoginModal';
 import FAQSection from '../components/FAQSection';
+import ShareButtons from '../components/ShareButtons';
 
 const features = [
   {
@@ -176,6 +177,11 @@ export default function ChatrouletteAlternative() {
             answer: "No download required. Vibelly works seamlessly right in your browser on both desktop and mobile devices."
           }
         ]} />
+
+        <ShareButtons
+          title="The Best Chatroulette Alternative in 2026 | Vibelly"
+          description="The modern successor to classic chat roulette — free random cam chat with strangers, safe and anonymous."
+        />
 
         <Footer />
         <LoginModal isOpen={isLoginModalOpen} onClose={() => setIsLoginModalOpen(false)} />

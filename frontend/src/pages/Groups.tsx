@@ -2,6 +2,7 @@ import { useState, useEffect, useRef } from 'react';
 import { useNavigate, Outlet } from 'react-router-dom';
 import { Users, Plus, ArrowRight, Settings, X, Hash, Image as ImageIcon } from 'lucide-react';
 import Navbar from '../components/Navbar';
+import LoginModal from '../components/LoginModal';
 import SEO from '../components/SEO';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useAuthStore } from '../store/useAuthStore';
@@ -11,6 +12,7 @@ export default function Groups() {
   const [joinCode, setJoinCode] = useState('');
   const [groups, setGroups] = useState<any[]>([]);
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
+  const [isLoginOpen, setIsLoginOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const navigate = useNavigate();
   const { isAuthenticated, user } = useAuthStore();
@@ -27,11 +29,11 @@ export default function Groups() {
 
   useEffect(() => {
     if (!isAuthenticated) {
-      navigate('/');
+      setIsLoginOpen(true);
       return;
     }
     fetchGroups();
-  }, [isAuthenticated, navigate]);
+  }, [isAuthenticated]);
 
   const fetchGroups = async () => {
     try {
@@ -119,6 +121,13 @@ export default function Groups() {
     e.preventDefault();
     if (joinCode.trim()) {
       navigate(`/groups/${joinCode.trim().toUpperCase()}`);
+    }
+  };
+
+  const handleLoginClose = () => {
+    setIsLoginOpen(false);
+    if (!useAuthStore.getState().isAuthenticated) {
+      navigate('/');
     }
   };
 
@@ -338,6 +347,8 @@ export default function Groups() {
       </AnimatePresence>
 
       <Outlet />
+
+      <LoginModal isOpen={isLoginOpen} onClose={handleLoginClose} />
     </div>
   );
 }

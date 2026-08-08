@@ -40,10 +40,10 @@ router.get('/me', requireAuth, async (req, res) => {
   }
 });
 
-// Endpoint to report a user
+// Endpoint to report a user / stream
 router.post('/report', requireAuth, async (req, res) => {
   try {
-    const { reportedUserId, reason } = req.body;
+    const { reportedUserId, reason, type, roomCode, streamTitle, amountPaid } = req.body;
     const reporterId = (req as any).user.id;
 
     if (!reportedUserId) {
@@ -53,11 +53,15 @@ router.post('/report', requireAuth, async (req, res) => {
     const report = new Report({
       reporter: reporterId,
       reportedUser: reportedUserId,
-      reason: reason || 'Inappropriate behavior'
+      reason: reason || 'Inappropriate behavior',
+      type: type || 'call',
+      roomCode: roomCode || '',
+      streamTitle: streamTitle || '',
+      amountPaid: amountPaid || undefined,
     });
 
     await report.save();
-    res.json({ success: true, message: 'User reported successfully' });
+    res.json({ success: true, message: 'Report submitted successfully' });
   } catch (error) {
     console.error('Error reporting user:', error);
     res.status(500).json({ error: 'Failed to report user' });

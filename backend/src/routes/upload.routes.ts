@@ -38,6 +38,42 @@ router.post('/profile', requireAuth, upload.single('file'), async (req: any, res
   }
 });
 
+// Creator gallery photo upload (Persistent)
+router.post('/creator-gallery', requireAuth, upload.single('file'), async (req: any, res: any) => {
+  try {
+    if (!req.file) return res.status(400).json({ error: 'No file provided' });
+    const result = await uploadToR2(req.file, 'creators');
+    res.json({ url: result.url });
+  } catch (error) {
+    console.error('[Upload Creator Gallery]', error);
+    res.status(500).json({ error: 'Failed to upload photo' });
+  }
+});
+
+// Creator verification files (selfie + ID). Stored persistently for manual review.
+router.post('/verification', requireAuth, upload.single('file'), async (req: any, res: any) => {
+  try {
+    if (!req.file) return res.status(400).json({ error: 'No file provided' });
+    const result = await uploadToR2(req.file, 'verification');
+    res.json({ url: result.url });
+  } catch (error) {
+    console.error('[Upload Verification]', error);
+    res.status(500).json({ error: 'Failed to upload file' });
+  }
+});
+
+// Live stream thumbnail upload (Persistent)
+router.post('/thumbnail', requireAuth, upload.single('file'), async (req: any, res: any) => {
+  try {
+    if (!req.file) return res.status(400).json({ error: 'No file provided' });
+    const result = await uploadToR2(req.file, 'thumbnails');
+    res.json({ url: result.url });
+  } catch (error) {
+    console.error('[Upload Thumbnail]', error);
+    res.status(500).json({ error: 'Failed to upload thumbnail' });
+  }
+});
+
 // Group Photo Upload (Persistent)
 router.post('/group', requireAuth, upload.single('file'), async (req: any, res: any) => {
   try {

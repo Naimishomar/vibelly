@@ -1,15 +1,18 @@
 import { Link } from 'react-router-dom';
-import { LogOut, User, Settings, Shield } from 'lucide-react';
+import { LogOut, User, Settings, Shield, Gift, Radio } from 'lucide-react';
 import { useState, useRef, useEffect } from 'react';
 import { useAuthStore } from '../store/useAuthStore';
 import LoginModal from './LoginModal';
 import SettingsModal from './SettingsModal';
+import ReferralModal from './ReferralModal';
+import ThemeToggle from './ThemeToggle';
 import BottomNav from './BottomNav';
 import { useNavigate } from 'react-router-dom';
 
 export default function Navbar() {
   const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
   const [isSettingsModalOpen, setIsSettingsModalOpen] = useState(false);
+  const [isReferralModalOpen, setIsReferralModalOpen] = useState(false);
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [liveUsers, setLiveUsers] = useState(5500 + Math.floor(Math.random() * 500));
   const dropdownRef = useRef<HTMLDivElement>(null);
@@ -49,7 +52,7 @@ export default function Navbar() {
 
   return (
     <>
-      <nav className="flex items-center justify-between py-4 px-6 max-w-7xl mx-auto w-full text-sm text-zinc-400 relative z-50">
+      <nav id="main-header" className="flex items-center justify-between py-4 px-6 max-w-7xl mx-auto w-full text-sm text-zinc-400 relative z-50">
         {/* Logo */}
         <Link to="/" className="flex items-center gap-2 text-white font-bold text-base tracking-tight">
           <img 
@@ -67,6 +70,7 @@ export default function Navbar() {
           <button onClick={() => handleProtectedAction('/setup/audio')} className="px-3 py-1.5 rounded-lg hover:bg-zinc-800 hover:text-white transition-colors text-left cursor-pointer">Audio Call</button>
           <button onClick={() => handleProtectedAction('/setup/text')} className="px-3 py-1.5 rounded-lg hover:bg-zinc-800 hover:text-white transition-colors text-left cursor-pointer">Chat</button>
           <button onClick={() => handleProtectedAction('/groups')} className="px-3 py-1.5 rounded-lg hover:bg-zinc-800 hover:text-white transition-colors text-left cursor-pointer">Groups</button>
+          <button onClick={() => handleProtectedAction('/live')} className="px-3 py-1.5 rounded-lg hover:bg-zinc-800 hover:text-white transition-colors text-left cursor-pointer">Live</button>
           <Link to="/pricing" className="px-3 py-1.5 rounded-lg hover:bg-zinc-800 hover:text-white transition-colors">Pricing</Link>
         </div>
 
@@ -74,7 +78,7 @@ export default function Navbar() {
         <div className="flex items-center gap-4">
           {isAuthenticated && user ? (
             <div className="flex items-center gap-4">
-              
+              <ThemeToggle />
               {/* Live online user count */}
               <div className="hidden sm:flex items-center gap-2 px-3 py-2 ml-5 bg-zinc-900/80 border border-white/30 rounded-full backdrop-blur-md">
                 <div className="relative flex h-2 w-2">
@@ -122,6 +126,26 @@ export default function Navbar() {
                     </div>
                     
                     <div className="py-1">
+                      <Link
+                        to={`/creator/${user?._id}`}
+                        onClick={() => setDropdownOpen(false)}
+                        className="flex items-center gap-3 px-4 py-2 text-sm text-zinc-300 hover:bg-white/5 hover:text-white transition-colors w-full text-left"
+                      >
+                        <Radio size={16} />
+                        My Creator Profile
+                      </Link>
+
+                      <button 
+                        onClick={() => {
+                          setDropdownOpen(false);
+                          setIsReferralModalOpen(true);
+                        }}
+                        className="flex items-center gap-3 px-4 py-2 text-sm text-amber-300 hover:bg-amber-500/10 hover:text-amber-200 transition-colors w-full text-left cursor-pointer"
+                      >
+                        <Gift size={16} />
+                        Invite & Earn Premium
+                      </button>
+
                       <button 
                         onClick={() => {
                           setDropdownOpen(false);
@@ -158,6 +182,7 @@ export default function Navbar() {
             </div>
           ) : (
             <div className="flex items-center gap-2">
+              <ThemeToggle />
               <button
                 onClick={() => setIsLoginModalOpen(true)}
                 className="text-zinc-300 font-medium hover:text-white transition-colors text-[14px] px-4 py-2 cursor-pointer"
@@ -191,6 +216,7 @@ export default function Navbar() {
 
       <LoginModal isOpen={isLoginModalOpen} onClose={() => setIsLoginModalOpen(false)} />
       {isSettingsModalOpen && <SettingsModal onClose={() => setIsSettingsModalOpen(false)} />}
+      {isReferralModalOpen && <ReferralModal onClose={() => setIsReferralModalOpen(false)} />}
     </>
   );
 }
