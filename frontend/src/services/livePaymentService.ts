@@ -12,7 +12,7 @@ export const loadScript = (src: string) => {
 
 const getBackendUrl = () => import.meta.env.VITE_BACKEND_URL || 'http://localhost:5000';
 
-async function fetchWithTokenRefresh(url: string, options: RequestInit, retried = false): Promise<Response> {
+export async function fetchWithTokenRefresh(url: string, options: RequestInit, retried = false): Promise<Response> {
   const token = useAuthStore.getState().accessToken;
   const headers = { 'Content-Type': 'application/json', Authorization: `Bearer ${token}`, ...(options.headers || {}) };
   let res = await fetch(url, { ...options, headers });

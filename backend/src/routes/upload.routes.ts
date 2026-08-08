@@ -1,9 +1,10 @@
 import { Router } from 'express';
 import multer from 'multer';
-import { uploadToR2 } from '../services/r2.service';
+import { uploadToR2, uploadToR2WithCompression } from '../services/r2.service';
 import User from '../models/User';
 import { requireAuth } from '../middlewares/auth.middleware';
 import { redisClient } from '../server';
+
 
 const router = Router();
 
@@ -103,4 +104,23 @@ router.post('/ephemeral', requireAuth, upload.single('file'), async (req: any, r
   }
 });
 
+// Creator post photos upload — up to 3 images, compressed via sharp
+router.post('/post-photos', requireAuth, upload.array('files', 3), async (req: any, res: any) => {
+  try {
+    const files: Express.Multer.File[] = req.files || [];
+    if (!files.length) return res.status(400).json({ error: 'No files provided' });
+    if (files.length > 3) return res.status(400).json({ error: 'Maximum 3 photos per post' });
+
+    const results = await Promise.all(files.map((f) => uploadToR2WithCompression(f)));
+    res.json({
+      urls: results.map((r) => r.url),
+      keys: results.map((r) => r.s3Key),
+    });
+  } catch (error: any) {
+    console.error('[Upload Post Photos]', error);
+    res.status(500).json({ error: error.message || 'Failed to upload post photos' });
+  }
+});
+
 export default router;
+
