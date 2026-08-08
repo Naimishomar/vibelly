@@ -30,19 +30,36 @@ import rateLimit from 'express-rate-limit';
 const app = express();
 const httpServer = createServer(app);
 
-// CORS config
-const corsOptions = {
-  origin: [
-    'https://vibelly.fun',
-    'https://www.vibelly.fun',
-    'https://vibelly.vercel.app',
-  ],
+const ALLOWED_ORIGINS = [
+  'https://vibelly.fun',
+  'https://www.vibelly.fun',
+  'https://vibelly.vercel.app',
+  'http://localhost:5173',
+  'http://localhost:3000',
+];
+
+// CORS must be first — before helmet, hpp, rate-limit, everything.
+// This ensures OPTIONS preflights are answered before any other middleware
+// can short-circuit the request.
+app.use(cors({
+  origin: (origin, callback) => {
+    // Allow requests with no origin (server-to-server, curl, etc.)
+    if (!origin || ALLOWED_ORIGINS.includes(origin)) {
+      callback(null, true);
+    } else {
+      callback(new Error(`CORS: origin ${origin} not allowed`));
+    }
+  },
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization'],
   credentials: true,
-};
+  optionsSuccessStatus: 200, // Some older browsers choke on 204
+}));
 
 // Security Hardening
+app.use(helmet({
+  crossOriginResourcePolicy: { policy: 'cross-origin' },
+}));
 app.use(hpp());
 
 // Rate Limiting (500 requests per 10 minutes per IP)
@@ -55,20 +72,15 @@ const limiter = rateLimit({
 });
 app.use('/api', limiter);
 
-// Compression middleware (compresses API responses for slow networks)
+// Compression middleware
 app.use(compression());
-// Apply CORS before helmet to ensure preflight OPTIONS passes through cleanly
-app.use(cors(corsOptions));
-app.options('*', cors(corsOptions)); // Explicitly handle preflight for all routes
-app.use(helmet({
-  crossOriginResourcePolicy: { policy: 'cross-origin' }, // Allow cross-origin resource loading (needed for R2 uploads)
-}));
 app.use(express.json({
   verify: (req: any, res, buf) => {
     req.rawBody = buf;
   }
 }));
 app.use(passport.initialize());
+
 
 // Routes
 app.use('/api/auth', authRoutes);
