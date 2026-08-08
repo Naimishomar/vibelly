@@ -65,6 +65,14 @@ export default function CreatorProfile() {
   const isOwnProfile = !!user && !!profile?.user && user._id === profile.user._id;
 
   const fetchProfile = async () => {
+    if (!isOwnProfile && !user) {
+      // For viewing other profiles, we don't need auth
+    } else if (isOwnProfile && (!isAuthenticated || !user)) {
+      setError('Please sign in to view your creator profile');
+      setLoading(false);
+      return;
+    }
+    
     setLoading(true);
     setError('');
     try {
@@ -82,7 +90,10 @@ export default function CreatorProfile() {
         }),
         fetch(`${backendUrl}/api/creator/streams/${userId}`),
       ]);
+      console.log('[CreatorProfile] profileRes.status:', profileRes.status);
       if (!profileRes.ok) {
+        const errText = await profileRes.text();
+        console.error('[CreatorProfile] Error:', errText);
         setError('Creator profile not found');
         setLoading(false);
         return;

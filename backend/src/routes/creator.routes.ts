@@ -55,7 +55,9 @@ router.get('/:userId', async (req, res) => {
 // Get the signed-in user's own creator profile
 router.get('/me/profile', requireAuth, async (req, res) => {
   try {
+    console.log('[Creator me] User ID:', (req as any).user.id);
     const profile = await ensureProfile((req as any).user.id);
+    console.log('[Creator me] Profile created/found:', profile._id);
     const data = await serializeProfile(profile, (req as any).user.id);
     res.json({ profile: data });
   } catch (error) {
