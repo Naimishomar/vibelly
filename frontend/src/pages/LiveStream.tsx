@@ -460,7 +460,7 @@ export default function LiveStream() {
   };
 
   useEffect(() => {
-    let interval: NodeJS.Timeout;
+    let interval: ReturnType<typeof setInterval> | undefined;
     if (isLive) {
       loadPendingPayments();
       interval = setInterval(loadPendingPayments, 5000);
