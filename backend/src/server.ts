@@ -23,8 +23,8 @@ import referralRoutes from './routes/referral.routes';
 import creatorRoutes from './routes/creator.routes';
 import passport from './config/passport';
 
-import hpp from 'hpp';
-import helmet from 'helmet';
+// import hpp from 'hpp';
+// import helmet from 'helmet';
 import rateLimit from 'express-rate-limit';
 
 const app = express();
@@ -33,9 +33,7 @@ const httpServer = createServer(app);
 const ALLOWED_ORIGINS = [
   'https://vibelly.fun',
   'https://www.vibelly.fun',
-  'https://vibelly.vercel.app',
-  'http://localhost:5173',
-  'http://localhost:3000',
+  'https://vibelly.vercel.app'
 ];
 
 // CORS must be first — before helmet, hpp, rate-limit, everything.
@@ -57,10 +55,10 @@ app.use(cors({
 }));
 
 // Security Hardening
-app.use(helmet({
-  crossOriginResourcePolicy: { policy: 'cross-origin' },
-}));
-app.use(hpp());
+// app.use(helmet({
+//   crossOriginResourcePolicy: { policy: 'cross-origin' },
+// }));
+// app.use(hpp());
 
 // Rate Limiting (500 requests per 10 minutes per IP)
 const limiter = rateLimit({
