@@ -62,7 +62,7 @@ export default function CreatorProfile() {
   const [bioInput, setBioInput] = useState('');
   const [coverFile, setCoverFile] = useState<File | null>(null);
 
-  const isOwnProfile = !!user && !!profile?.user && user._id === profile.user._id;
+  const isOwnProfile = !!user && (userId === user._id || (!!profile?.user && user._id === profile.user._id));
 
   const fetchProfile = async () => {
     if (!isOwnProfile && !user) {
@@ -134,6 +134,13 @@ export default function CreatorProfile() {
   useEffect(() => {
     if (isOwnProfile) fetchCreatorData();
   }, [isOwnProfile]);
+
+  useEffect(() => {
+    if (profile && isOwnProfile) {
+      setBioInput(profile.bio || '');
+      setSubscriptionPriceInput(profile.subscriptionPrice ? String(profile.subscriptionPrice) : '');
+    }
+  }, [profile, isOwnProfile]);
 
   const handleCreateSubOrder = async () => {
     setCreatingSubOrder(true);

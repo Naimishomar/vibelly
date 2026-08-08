@@ -40,8 +40,10 @@ const serializeProfile = async (profile: any, viewerId?: string) => {
 // Get a creator's public profile
 router.get('/:userId', async (req, res) => {
   try {
-    const profile = await CreatorProfile.findOne({ user: req.params.userId });
-    if (!profile) return res.status(404).json({ error: 'Creator profile not found' });
+    const targetUser = await User.findById(req.params.userId);
+    if (!targetUser) return res.status(404).json({ error: 'User not found' });
+
+    const profile = await ensureProfile(req.params.userId);
 
     // Optional: pass viewer id via query for follow state (no auth required for public view)
     const data = await serializeProfile(profile, req.query.viewerId ? String(req.query.viewerId) : undefined);
