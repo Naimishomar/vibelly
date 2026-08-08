@@ -70,8 +70,16 @@ export default function CreatorProfile() {
     try {
       const backendUrl = getBackendUrl();
       const viewerId = user?._id || '';
+      const isOwn = isOwnProfile;
+      
+      const profileUrl = isOwn 
+        ? `${backendUrl}/api/creator/me/profile`
+        : `${backendUrl}/api/creator/${userId}?viewerId=${viewerId}`;
+      
       const [profileRes, streamsRes] = await Promise.all([
-        fetch(`${backendUrl}/api/creator/${userId}?viewerId=${viewerId}`),
+        fetch(profileUrl, {
+          headers: isOwn ? { 'Authorization': `Bearer ${accessToken || localStorage.getItem('vibe_token')}` } : {}
+        }),
         fetch(`${backendUrl}/api/creator/streams/${userId}`),
       ]);
       if (!profileRes.ok) {

@@ -590,61 +590,79 @@ export default function LiveStream() {
                       />
                     </div>
 
-                    {/* Thumbnail upload */}
-                    <div>
-                      <label className="block text-xs text-zinc-400 mb-1.5 font-medium uppercase tracking-wider">Thumbnail</label>
-                      <div className="flex items-center gap-3">
-                        <label className="flex items-center gap-2 bg-zinc-800 rounded-xl px-4 py-3 cursor-pointer hover:bg-zinc-700 transition-colors text-sm">
-                          <ImageIcon size={16} />
-                          {thumbnail ? 'Change' : 'Upload'} Thumbnail
-                          <input type="file" accept="image/*" className="hidden" onChange={(e) => e.target.files?.[0] && handleThumbnailPick(e.target.files[0])} />
-                        </label>
-                        {thumbnailUrl && <img src={thumbnailUrl} alt="Thumbnail preview" className="w-20 h-12 object-cover rounded-lg border border-white/10" />}
-                      </div>
-                    </div>
-
-                    <div>
-                      <label className="block text-xs text-zinc-400 mb-1.5 font-medium uppercase tracking-wider">
-                        Price to watch (₹, per subscription — leave empty for free)
-                      </label>
-                      <input
-                        type="number"
-                        min="0"
-                        value={price}
-                        onChange={(e) => setPrice(e.target.value)}
-                        placeholder="e.g. 49"
-                        className="w-full bg-zinc-900 border border-white/10 rounded-xl px-4 py-3 text-white outline-none focus:border-white/30 transition-colors placeholder:text-zinc-600"
-                      />
-                      {Number(price) > 0 && (
-                        <p className="text-xs text-zinc-400 mt-1.5 flex items-center gap-1">
-                          <Lock size={11} /> Paid stream — you earn 70%, Vibelly takes 30%. Requires a verified creator profile.
-                        </p>
-                      )}
-                    </div>
-
-                    {/* Private toggle */}
-                    <label className="flex items-center justify-between gap-3 bg-zinc-900/60 border border-white/10 rounded-xl px-4 py-3 cursor-pointer">
-                      <div className="flex items-center gap-2">
-                        <EyeOff size={16} className="text-zinc-400" />
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8">
+                      {/* Left column: Input fields */}
+                      <div className="space-y-4 md:pr-4">
                         <div>
-                          <span className="text-sm text-zinc-300">Private stream</span>
-                          <p className="text-[11px] text-zinc-500">Hidden from the browse list. Only people with the room code can join.</p>
+                          <label className="block text-xs text-zinc-400 mb-1.5 font-medium uppercase tracking-wider">
+                            Price to watch (₹, per stream — leave empty for free)
+                          </label>
+                          <input
+                            type="number"
+                            min="0"
+                            value={price}
+                            onChange={(e) => setPrice(e.target.value)}
+                            placeholder="e.g. 49"
+                            className="w-full bg-zinc-900 border border-white/10 rounded-xl px-4 py-3 text-white outline-none focus:border-white/30 transition-colors placeholder:text-zinc-600"
+                          />
+                          {Number(price) > 0 && (
+                            <p className="text-xs text-zinc-400 mt-1.5 flex items-center gap-1">
+                              <Lock size={11} /> Paid stream — you earn 100%, users pay you directly via UPI/Bank.
+                            </p>
+                          )}
+                        </div>
+
+                        {/* Private toggle */}
+                        <label className="flex items-center justify-between gap-3 bg-zinc-900/60 border border-white/10 rounded-xl px-4 py-3 cursor-pointer">
+                          <div className="flex items-center gap-2">
+                            <EyeOff size={16} className="text-zinc-400" />
+                            <div>
+                              <span className="text-sm text-zinc-300">Private stream</span>
+                              <p className="text-[11px] text-zinc-500">Hidden from the browse list. Only people with the room code can join.</p>
+                            </div>
+                          </div>
+                          <input type="checkbox" checked={isPrivate} onChange={(e) => setIsPrivate(e.target.checked)} className="w-4 h-4 accent-red-500 cursor-pointer" />
+                        </label>
+
+                        <div>
+                          <label className="block text-xs text-zinc-400 mb-1.5 font-medium uppercase tracking-wider">Room Code</label>
+                          <div className="flex items-center gap-2">
+                            <div className="flex-1 bg-zinc-900 border border-white/10 rounded-xl px-4 py-3 font-mono text-lg tracking-widest">
+                              {roomCode}
+                            </div>
+                            <button onClick={copyCode} className="p-3 bg-zinc-800 rounded-xl hover:bg-zinc-700 transition-colors cursor-pointer">
+                              {copied ? <Check size={16} className="text-emerald-400" /> : <Copy size={16} />}
+                            </button>
+                          </div>
                         </div>
                       </div>
-                      <input type="checkbox" checked={isPrivate} onChange={(e) => setIsPrivate(e.target.checked)} className="w-4 h-4 accent-red-500 cursor-pointer" />
-                    </label>
 
-                    <div>
-                      <label className="block text-xs text-zinc-400 mb-1.5 font-medium uppercase tracking-wider">Room Code</label>
-                      <div className="flex items-center gap-2">
-                        <div className="flex-1 bg-zinc-900 border border-white/10 rounded-xl px-4 py-3 font-mono text-lg tracking-widest">
-                          {roomCode}
+                      {/* Right column: Thumbnail upload with 16:9 preview */}
+                      <div className="space-y-4 md:pl-4">
+                        <label className="block text-xs text-zinc-400 mb-1.5 font-medium uppercase tracking-wider">Thumbnail (16:9)</label>
+                        <div className="relative aspect-video bg-zinc-800 rounded-xl border-2 border-dashed border-white/10 overflow-hidden">
+                          {thumbnailUrl ? (
+                            <>
+                              <img src={thumbnailUrl} alt="Thumbnail preview" className="w-full h-full object-cover" />
+                              <div className="absolute inset-0 bg-black/40 flex items-center justify-center opacity-0 hover:opacity-100 transition-opacity">
+                                <label className="flex items-center gap-2 bg-red-500/90 text-white px-4 py-2 rounded-lg cursor-pointer">
+                                  <ImageIcon size={16} /> Change Thumbnail
+                                  <input type="file" accept="image/*" className="hidden" onChange={(e) => e.target.files?.[0] && handleThumbnailPick(e.target.files[0])} />
+                                </label>
+                              </div>
+                            </>
+                          ) : (
+                            <label className="w-full h-full flex flex-col items-center justify-center gap-2 bg-zinc-800 rounded-xl px-4 py-6 cursor-pointer hover:bg-zinc-700 transition-colors text-center">
+                              <ImageIcon size={32} className="text-zinc-500" />
+                              <span className="text-sm text-zinc-400">Upload Thumbnail</span>
+                              <p className="text-[11px] text-zinc-600">Recommended: 1280x720 (16:9)</p>
+                              <input type="file" accept="image/*" className="hidden" onChange={(e) => e.target.files?.[0] && handleThumbnailPick(e.target.files[0])} />
+                            </label>
+                          )}
                         </div>
-                        <button onClick={copyCode} className="p-3 bg-zinc-800 rounded-xl hover:bg-zinc-700 transition-colors cursor-pointer">
-                          {copied ? <Check size={16} className="text-emerald-400" /> : <Copy size={16} />}
-                        </button>
                       </div>
                     </div>
+
                     <button
                       onClick={startLive}
                       disabled={isGoingLive}

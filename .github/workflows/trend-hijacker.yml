@@ -5,12 +5,17 @@ on:
     - cron: '0 8 * * *' # Runs daily at 8:00 AM UTC
   workflow_dispatch: # Allows manual trigger
 
+permissions:
+  contents: write
+
 jobs:
   trigger-build:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Trigger Vercel Rebuild via Dummy Commit
         run: |
