@@ -527,27 +527,88 @@ export default function CreatorProfile() {
             </div>
           </div>
 
-          {/* Creator Subscription Status for own profile */}
+          {/* Creator & Premium Subscription Statuses */}
           {isOwnProfile && (
-            <div className="mb-8 bg-zinc-900/60 border border-white/10 rounded-2xl p-5 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-              <div className="flex items-start gap-3">
-                <Wallet size={20} className={creatorSubscription?.active ? 'text-emerald-400' : 'text-amber-400'} flex-shrink-0 />
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+              {/* Creator Profile Access */}
+              <div className="bg-zinc-900/60 border border-white/10 rounded-2xl p-5 flex flex-col justify-between">
                 <div>
-                  <p className="text-sm font-medium">Live Streaming Access</p>
-                  <p className="text-xs text-zinc-400 mt-1">
-                    {user?.role === 'admin'
-                      ? 'Free Admin Access. You can go live and monetize streams.'
-                      : creatorSubscription?.active
-                      ? `Active until ${creatorSubscription.expiresAt ? new Date(creatorSubscription.expiresAt).toLocaleDateString() : 'N/A'}. You can go live and monetize streams.`
-                      : 'Pay ₹500/month to unlock live streaming. Your profile and photos are always free.'}
+                  <div className="flex items-center justify-between mb-3">
+                    <h3 className="font-semibold text-sm flex items-center gap-2">
+                      <Wallet size={16} className="text-amber-400" /> Creator Profile Access
+                    </h3>
+                    {(creatorSubscription?.active || user?.role === 'admin') && (
+                      <span className="text-[9px] bg-emerald-500/20 text-emerald-400 px-2 py-0.5 rounded-full font-bold uppercase tracking-wider">
+                        Active
+                      </span>
+                    )}
+                  </div>
+                  <p className="text-xs text-zinc-400 leading-normal mb-3">
+                    Required to go live and receive payments from viewers. 100% of stream earnings go straight to your account.
                   </p>
+                  <div className="bg-zinc-950/40 rounded-xl p-3 text-xs space-y-1.5 border border-white/5 mb-3">
+                    <div className="flex justify-between">
+                      <span className="text-zinc-500">Status</span>
+                      <span className={(creatorSubscription?.active || user?.role === 'admin') ? "text-emerald-400 font-semibold" : "text-amber-400 font-semibold"}>
+                        {user?.role === 'admin' ? 'Active (Free Admin)' : creatorSubscription?.active ? 'Active' : 'Inactive'}
+                      </span>
+                    </div>
+                    {(creatorSubscription?.active || user?.role === 'admin') && (
+                      <div className="flex justify-between">
+                        <span className="text-zinc-500">Expires</span>
+                        <span className="text-zinc-300">
+                          {user?.role === 'admin' ? 'Never' : creatorSubscription.expiresAt ? new Date(creatorSubscription.expiresAt).toLocaleDateString() : 'N/A'}
+                        </span>
+                      </div>
+                    )}
+                  </div>
                 </div>
+                {!creatorSubscription?.active && user?.role !== 'admin' && (
+                  <button onClick={handleCreateSubOrder} disabled={creatingSubOrder} className="w-full bg-amber-500 hover:bg-amber-400 text-black py-2 rounded-xl text-xs font-bold transition-colors disabled:opacity-50 cursor-pointer flex items-center justify-center gap-1.5 mt-2">
+                    {creatingSubOrder ? <RefreshCw className="animate-spin w-3.5 h-3.5" /> : <>Activate Creator Access (₹500/month)</>}
+                  </button>
+                )}
               </div>
-              {!creatorSubscription?.active && user?.role !== 'admin' && (
-                <button onClick={handleCreateSubOrder} disabled={creatingSubOrder} className="flex items-center gap-2 bg-amber-500 text-black px-4 py-2 rounded-xl text-sm font-medium hover:bg-amber-400 transition-colors disabled:opacity-50 cursor-pointer">
-                  {creatingSubOrder ? <RefreshCw className="animate-spin mx-auto" size={18} /> : <>Activate Live Streaming <IndianRupee size={14} /> 500/month</>}
-                </button>
-              )}
+
+              {/* Premium Website Access */}
+              <div className="bg-zinc-900/60 border border-white/10 rounded-2xl p-5 flex flex-col justify-between">
+                <div>
+                  <div className="flex items-center justify-between mb-3">
+                    <h3 className="font-semibold text-sm flex items-center gap-2">
+                      <Crown size={16} className="text-yellow-400" /> Premium Website Access
+                    </h3>
+                    {user?.premiumStatus && (
+                      <span className="text-[9px] bg-yellow-500/20 text-yellow-400 px-2 py-0.5 rounded-full font-bold uppercase tracking-wider">
+                        Active
+                      </span>
+                    )}
+                  </div>
+                  <p className="text-xs text-zinc-400 leading-normal mb-3">
+                    Unlocks HD video calls, opposite gender matching, country filters, interest matchmaking, and unlimited skips.
+                  </p>
+                  <div className="bg-zinc-950/40 rounded-xl p-3 text-xs space-y-1.5 border border-white/5 mb-3">
+                    <div className="flex justify-between">
+                      <span className="text-zinc-500">Status</span>
+                      <span className={user?.premiumStatus ? "text-yellow-400 font-semibold" : "text-zinc-500"}>
+                        {user?.premiumStatus ? 'Active' : 'Inactive'}
+                      </span>
+                    </div>
+                    {user?.premiumStatus && user?.premiumExpiryDate && (
+                      <div className="flex justify-between">
+                        <span className="text-zinc-500">Expires</span>
+                        <span className="text-zinc-300">
+                          {new Date(user.premiumExpiryDate).toLocaleDateString()}
+                        </span>
+                      </div>
+                    )}
+                  </div>
+                </div>
+                {!user?.premiumStatus && (
+                  <Link to="/pricing" className="w-full bg-yellow-500 hover:bg-yellow-400 text-black py-2 rounded-xl text-xs font-bold transition-colors text-center block mt-2">
+                    Upgrade to Premium
+                  </Link>
+                )}
+              </div>
             </div>
           )}
 
@@ -799,61 +860,7 @@ export default function CreatorProfile() {
             </div>
           )}
 
-          {/* Creator Profile Subscription (₹500/month) */}
-          {isOwnProfile && (
-            <div className="bg-zinc-900/60 border border-white/10 rounded-2xl p-6 mb-10">
-              <div className="flex items-center justify-between mb-4">
-                <h2 className="text-lg font-semibold flex items-center gap-2"><Wallet size={20} className="text-amber-400" /> Creator Profile Access</h2>
-                {creatorSubscription?.active && <span className="text-xs text-emerald-400 flex items-center gap-1"><CheckCircle2 size={12} /> Active</span>}
-              </div>
 
-              {creatorSubscription?.active ? (
-                <div className="bg-zinc-900/40 border border-white/5 rounded-xl p-5">
-                  <div className="space-y-2 text-sm">
-                    <div className="flex justify-between">
-                      <span className="text-zinc-500">Status</span>
-                      <span className="text-emerald-400 font-medium">
-                        {user?.role === 'admin' ? 'Active (Free Admin)' : 'Active'}
-                      </span>
-                    </div>
-                    <div className="flex justify-between">
-                      <span className="text-zinc-500">Monthly Fee</span>
-                      <span className="font-medium">
-                        {user?.role === 'admin' ? 'Free (Admin)' : '₹500'}
-                      </span>
-                    </div>
-                    {user?.role === 'admin' ? (
-                      <div className="flex justify-between"><span className="text-zinc-500">Expires</span><span>Never</span></div>
-                    ) : creatorSubscription.expiresAt ? (
-                      <div className="flex justify-between"><span className="text-zinc-500">Expires</span><span>{new Date(creatorSubscription.expiresAt).toLocaleDateString()}</span></div>
-                    ) : null}
-                  </div>
-                  <p className="text-xs text-zinc-500 mt-3">
-                    {user?.role === 'admin'
-                      ? 'Your creator profile is active for free as an administrator.'
-                      : 'Your creator profile is active. You can go live and receive payments from users.'}
-                  </p>
-                </div>
-              ) : user?.role === 'admin' ? (
-                <div className="bg-zinc-900/40 border border-white/5 rounded-xl p-5">
-                  <div className="space-y-2 text-sm">
-                    <div className="flex justify-between"><span className="text-zinc-500">Status</span><span className="text-emerald-400 font-medium">Active (Free Admin)</span></div>
-                    <div className="flex justify-between"><span className="text-zinc-500">Monthly Fee</span><span className="font-medium">Free (Admin)</span></div>
-                    <div className="flex justify-between"><span className="text-zinc-500">Expires</span><span>Never</span></div>
-                  </div>
-                  <p className="text-xs text-zinc-500 mt-3">Your creator profile is active for free as an administrator.</p>
-                </div>
-              ) : (
-                <div className="bg-zinc-900/40 border-2 border-dashed border-white/10 rounded-xl p-6 text-center">
-                  <Wallet size={32} className="mx-auto text-zinc-600 mb-3" />
-                  <p className="text-zinc-400 mb-4">Activate your creator profile for ₹500/month to go live and monetize your streams.</p>
-                  <button onClick={handleCreateSubOrder} disabled={creatingSubOrder} className="inline-flex items-center gap-2 bg-amber-500 text-black px-4 py-2 rounded-xl font-medium hover:bg-amber-400 transition-colors disabled:opacity-50 cursor-pointer">
-                    {creatingSubOrder ? <RefreshCw className="animate-spin mx-auto" size={18} /> : <div className='gap-[-8px]'>Activate Profile ₹500/month</div>}
-                  </button>
-                </div>
-              )}
-            </div>
-          )}
 
           {/* Creator Payment Details (for receiving user payments) */}
           {isOwnProfile && (

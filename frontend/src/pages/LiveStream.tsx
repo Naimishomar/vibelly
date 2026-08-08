@@ -62,6 +62,13 @@ export default function LiveStream() {
   const [thumbnailUrl, setThumbnailUrl] = useState('');
   const [isPrivate, setIsPrivate] = useState(false);
   const localVideoRef = useRef<HTMLVideoElement>(null);
+  const [localStream, setLocalStream] = useState<MediaStream | null>(null);
+
+  useEffect(() => {
+    if (isLive && localStream && localVideoRef.current) {
+      attachStreamToVideo(localVideoRef.current, localStream);
+    }
+  }, [isLive, localStream]);
 
   // Viewer state
   const [watching, setWatching] = useState(false);
@@ -194,7 +201,7 @@ export default function LiveStream() {
         video: { width: { ideal: 1280 }, height: { ideal: 720 }, facingMode: 'user', frameRate: { max: 15 } },
         audio: { echoCancellation: true, noiseSuppression: true },
       });
-      attachStreamToVideo(localVideoRef.current, stream);
+      setLocalStream(stream);
       const name = user?.name || user?.username || 'Anonymous';
       await liveService.startStream(
         stream,
@@ -225,6 +232,7 @@ export default function LiveStream() {
   const endLive = () => {
     liveService.stopStream();
     if (localVideoRef.current) localVideoRef.current.srcObject = null;
+    setLocalStream(null);
     setIsLive(false);
     setLivePrice(0);
     setLivePrivate(false);
