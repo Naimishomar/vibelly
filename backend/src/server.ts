@@ -132,8 +132,6 @@ export const connectRedis = async () => {
 };
 
 // ─── Socket.io ───
-export const io = new Server(httpServer, {
-  cors: corsOptions,
-});
+export const io = new Server(httpServer);
 
 export { httpServer, app };
