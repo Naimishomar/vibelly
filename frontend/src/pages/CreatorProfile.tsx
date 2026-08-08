@@ -330,10 +330,12 @@ export default function CreatorProfile() {
           </Link>
 
           {/* Cover */}
-          <div className="relative h-48 md:h-64 rounded-2xl overflow-hidden bg-zinc-900 border border-white/10 mb-16">
-            {p.coverImage ? <img src={p.coverImage} alt="Cover" className="w-full h-full object-cover" /> : <div className="w-full h-full flex items-center justify-center text-zinc-800"><ImageIcon size={48} /></div>}
+          <div className="relative mb-16">
+            <div className="h-48 md:h-64 rounded-2xl overflow-hidden bg-zinc-900 border border-white/10">
+              {p.coverImage ? <img src={p.coverImage} alt="Cover" className="w-full h-full object-cover" /> : <div className="w-full h-full flex items-center justify-center text-zinc-800"><ImageIcon size={48} /></div>}
+            </div>
             {/* Avatar */}
-            <div className="absolute -bottom-12 left-6 w-28 h-28 rounded-full bg-zinc-800 border-4 border-[#15171B] overflow-hidden flex-shrink-0">
+            <div className="absolute -bottom-12 left-6 w-28 h-28 rounded-full bg-zinc-800 border-4 border-[#15171B] overflow-hidden flex-shrink-0 z-10">
               {p.user?.profileImage ? <img src={p.user.profileImage} alt="" className="w-full h-full object-cover" /> : <span className="w-full h-full flex items-center justify-center text-4xl font-bold">{p.user?.name?.[0]?.toUpperCase()}</span>}
             </div>
           </div>

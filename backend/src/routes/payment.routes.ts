@@ -419,9 +419,14 @@ router.post('/creator/subscription/verify', requireAuth, async (req, res) => {
 router.get('/creator/payment-details', requireAuth, async (req, res) => {
   try {
     const creatorId = (req as any).user.id;
-    const profile = await CreatorProfile.findOne({ user: creatorId }).lean();
+    let profile = await CreatorProfile.findOne({ user: creatorId }).lean();
     if (!profile) {
-      return res.status(404).json({ error: 'Creator profile not found' });
+      // Auto-create to avoid 404 race conditions when frontend fetches concurrently
+      await CreatorProfile.create({ user: creatorId });
+      return res.json({
+        upiId: null,
+        bankAccount: null,
+      });
     }
     res.json({
       upiId: profile.upiId || null,
