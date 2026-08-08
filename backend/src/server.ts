@@ -36,15 +36,13 @@ const corsOptions = {
     'https://vibelly.fun',
     'https://www.vibelly.fun',
     'https://vibelly.vercel.app',
-    'http://localhost:5173',
-    'http://localhost:3000'
   ],
-  methods: ['GET', 'POST', 'PUT', 'DELETE'],
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization'],
   credentials: true,
 };
 
 // Security Hardening
-app.use(helmet());
 app.use(hpp());
 
 // Rate Limiting (500 requests per 10 minutes per IP)
@@ -59,7 +57,12 @@ app.use('/api', limiter);
 
 // Compression middleware (compresses API responses for slow networks)
 app.use(compression());
+// Apply CORS before helmet to ensure preflight OPTIONS passes through cleanly
 app.use(cors(corsOptions));
+app.options('*', cors(corsOptions)); // Explicitly handle preflight for all routes
+app.use(helmet({
+  crossOriginResourcePolicy: { policy: 'cross-origin' }, // Allow cross-origin resource loading (needed for R2 uploads)
+}));
 app.use(express.json({
   verify: (req: any, res, buf) => {
     req.rawBody = buf;
