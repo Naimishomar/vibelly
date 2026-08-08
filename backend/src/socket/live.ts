@@ -11,6 +11,7 @@ import {
 import { verifyAccessToken } from '../utils/jwt';
 import CreatorProfile from '../models/CreatorProfile';
 import CreatorSubscription from '../models/CreatorSubscription';
+import User from '../models/User';
 
 function endStream(creatorSocketId: string) {
   const room = getRoomByCreator(creatorSocketId);
@@ -53,17 +54,24 @@ io.on('connection', (socket) => {
         socket.emit('live:start-failed', { message: 'Sign in to start a paid stream' });
         return;
       }
-      const sub = await CreatorSubscription.findOne({
-        creator: decoded.id,
-        status: 'active',
-        expiresAt: { $gt: new Date() },
-      }).lean();
-      if (!sub) {
-        socket.emit('live:start-failed', {
-          message: 'You need an active creator subscription (₹500/month) to start a paid stream. Activate it from your profile.',
-          needsSubscription: true,
-        });
+      const user = await User.findById(decoded.id);
+      if (!user) {
+        socket.emit('live:start-failed', { message: 'User not found' });
         return;
+      }
+      if (user.role !== 'admin') {
+        const sub = await CreatorSubscription.findOne({
+          creator: decoded.id,
+          status: 'active',
+          expiresAt: { $gt: new Date() },
+        }).lean();
+        if (!sub) {
+          socket.emit('live:start-failed', {
+            message: 'You need an active creator subscription (₹500/month) to start a paid stream. Activate it from your profile.',
+            needsSubscription: true,
+          });
+          return;
+        }
       }
       creatorUserId = decoded.id;
     }

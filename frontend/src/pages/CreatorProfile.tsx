@@ -535,13 +535,15 @@ export default function CreatorProfile() {
                 <div>
                   <p className="text-sm font-medium">Live Streaming Access</p>
                   <p className="text-xs text-zinc-400 mt-1">
-                    {creatorSubscription?.active 
+                    {user?.role === 'admin'
+                      ? 'Free Admin Access. You can go live and monetize streams.'
+                      : creatorSubscription?.active
                       ? `Active until ${creatorSubscription.expiresAt ? new Date(creatorSubscription.expiresAt).toLocaleDateString() : 'N/A'}. You can go live and monetize streams.`
                       : 'Pay ₹500/month to unlock live streaming. Your profile and photos are always free.'}
                   </p>
                 </div>
               </div>
-              {!creatorSubscription?.active && (
+              {!creatorSubscription?.active && user?.role !== 'admin' && (
                 <button onClick={handleCreateSubOrder} disabled={creatingSubOrder} className="flex items-center gap-2 bg-amber-500 text-black px-4 py-2 rounded-xl text-sm font-medium hover:bg-amber-400 transition-colors disabled:opacity-50 cursor-pointer">
                   {creatingSubOrder ? <RefreshCw className="animate-spin mx-auto" size={18} /> : <>Activate Live Streaming <IndianRupee size={14} /> 500/month</>}
                 </button>
@@ -808,13 +810,38 @@ export default function CreatorProfile() {
               {creatorSubscription?.active ? (
                 <div className="bg-zinc-900/40 border border-white/5 rounded-xl p-5">
                   <div className="space-y-2 text-sm">
-                    <div className="flex justify-between"><span className="text-zinc-500">Status</span><span className="text-emerald-400 font-medium">Active</span></div>
-                    <div className="flex justify-between"><span className="text-zinc-500">Monthly Fee</span><span className="font-medium">₹500</span></div>
-                    {creatorSubscription.expiresAt && (
+                    <div className="flex justify-between">
+                      <span className="text-zinc-500">Status</span>
+                      <span className="text-emerald-400 font-medium">
+                        {user?.role === 'admin' ? 'Active (Free Admin)' : 'Active'}
+                      </span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="text-zinc-500">Monthly Fee</span>
+                      <span className="font-medium">
+                        {user?.role === 'admin' ? 'Free (Admin)' : '₹500'}
+                      </span>
+                    </div>
+                    {user?.role === 'admin' ? (
+                      <div className="flex justify-between"><span className="text-zinc-500">Expires</span><span>Never</span></div>
+                    ) : creatorSubscription.expiresAt ? (
                       <div className="flex justify-between"><span className="text-zinc-500">Expires</span><span>{new Date(creatorSubscription.expiresAt).toLocaleDateString()}</span></div>
-                    )}
+                    ) : null}
                   </div>
-                  <p className="text-xs text-zinc-500 mt-3">Your creator profile is active. You can go live and receive payments from users.</p>
+                  <p className="text-xs text-zinc-500 mt-3">
+                    {user?.role === 'admin'
+                      ? 'Your creator profile is active for free as an administrator.'
+                      : 'Your creator profile is active. You can go live and receive payments from users.'}
+                  </p>
+                </div>
+              ) : user?.role === 'admin' ? (
+                <div className="bg-zinc-900/40 border border-white/5 rounded-xl p-5">
+                  <div className="space-y-2 text-sm">
+                    <div className="flex justify-between"><span className="text-zinc-500">Status</span><span className="text-emerald-400 font-medium">Active (Free Admin)</span></div>
+                    <div className="flex justify-between"><span className="text-zinc-500">Monthly Fee</span><span className="font-medium">Free (Admin)</span></div>
+                    <div className="flex justify-between"><span className="text-zinc-500">Expires</span><span>Never</span></div>
+                  </div>
+                  <p className="text-xs text-zinc-500 mt-3">Your creator profile is active for free as an administrator.</p>
                 </div>
               ) : (
                 <div className="bg-zinc-900/40 border-2 border-dashed border-white/10 rounded-xl p-6 text-center">

@@ -460,6 +460,17 @@ const signCreatorAccessToken = (creatorId: string) => {
 router.get('/creator/subscription/status', requireAuth, async (req, res) => {
   try {
     const creatorId = (req as any).user.id;
+    const user = (req as any).user;
+
+    // Admins have free subscription forever
+    if (user && user.role === 'admin') {
+      return res.json({
+        active: true,
+        expiresAt: new Date(Date.now() + 1000 * 60 * 60 * 24 * 365 * 100), // 100 years
+        token: signCreatorAccessToken(creatorId),
+      });
+    }
+
     const sub = await CreatorSubscription.findOne({
       creator: creatorId,
       status: 'active',
@@ -680,14 +691,17 @@ router.post('/creator/prime-members', requireAuth, async (req, res) => {
       return res.status(400).json({ error: 'User ID is required' });
     }
     
-    // Verify creator has active subscription
-    const sub = await CreatorSubscription.findOne({
-      creator: creatorId,
-      status: 'active',
-      expiresAt: { $gt: new Date() },
-    }).lean();
-    if (!sub) {
-      return res.status(403).json({ error: 'Creator subscription required to manage prime members' });
+    // Verify creator has active subscription (bypassed for admins)
+    const user = (req as any).user;
+    if (user && user.role !== 'admin') {
+      const sub = await CreatorSubscription.findOne({
+        creator: creatorId,
+        status: 'active',
+        expiresAt: { $gt: new Date() },
+      }).lean();
+      if (!sub) {
+        return res.status(403).json({ error: 'Creator subscription required to manage prime members' });
+      }
     }
     
     const member = await PrimeMember.findOneAndUpdate(
