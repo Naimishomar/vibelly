@@ -80,20 +80,28 @@ export default function CreatorProfile() {
       const viewerId = user?._id || '';
       const isOwn = isOwnProfile;
       
+      const token = accessToken || localStorage.getItem('vibe_token');
+      console.log('[CreatorProfile] isOwn:', isOwn, 'token exists:', !!token, 'user:', user?._id);
+      
       const profileUrl = isOwn 
         ? `${backendUrl}/api/creator/me/profile`
         : `${backendUrl}/api/creator/${userId}?viewerId=${viewerId}`;
       
+      const headers: Record<string, string> = {};
+      if (isOwn && token) {
+        headers['Authorization'] = `Bearer ${token}`;
+      }
+      
+      console.log('[CreatorProfile] Fetching:', profileUrl, 'headers:', headers);
+      
       const [profileRes, streamsRes] = await Promise.all([
-        fetch(profileUrl, {
-          headers: isOwn ? { 'Authorization': `Bearer ${accessToken || localStorage.getItem('vibe_token')}` } : {}
-        }),
+        fetch(profileUrl, { headers }),
         fetch(`${backendUrl}/api/creator/streams/${userId}`),
       ]);
-      console.log('[CreatorProfile] profileRes.status:', profileRes.status);
+      console.log('[CreatorProfile] profileRes.status:', profileRes.status, 'profileRes.ok:', profileRes.ok);
       if (!profileRes.ok) {
         const errText = await profileRes.text();
-        console.error('[CreatorProfile] Error:', errText);
+        console.error('[CreatorProfile] Error response:', errText);
         setError('Creator profile not found');
         setLoading(false);
         return;
