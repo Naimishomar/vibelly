@@ -187,6 +187,7 @@ function makeContent(info, rng) {
     while (set.size < n) set.add(pick(rng, features));
     return [...set];
   };
+  const fList = (n, joiner = ', ') => fSet(n).join(joiner);
 
   const openers = info.isCompetitor
     ? [
@@ -215,17 +216,17 @@ function makeContent(info, rng) {
   const lead = `${opener} You will find ${f()}${citySentence}`;
 
   const sectionWhy = [
-    `Vibelly was rebuilt from the ground up to make ${low} effortless. The experience is built on ${f()}, ${f()}, and ${f()}.`,
+    `Vibelly was rebuilt from the ground up to make ${low} effortless. The experience is built on ${fList(3)}.`,
     `Most platforms that claim to offer ${low} bury you behind logins, paywalls, and pop-ups. Vibelly does the opposite: ${f()}. Everything is one click away.`,
   ];
 
   const sectionHow = [
     `Getting started with ${low} takes exactly one click. Open the site, press Start, and you are matched with a stranger in under a second. No setup wizard, no profile to fill in, no waiting list.`,
-    `There is nothing to install and nothing to configure. ${f()}, ${f()}. You can switch between video, voice, and text chat without leaving the page.`,
+    `There is nothing to install and nothing to configure. ${fList(2)}. You can switch between video, voice, and text chat without leaving the page.`,
   ];
 
   const sectionSafe = [
-    `Safety is the number one concern with ${low}, and it is the reason Vibelly is built the way it is. Every room is protected by ${f()} and ${f()}.`,
+    `Safety is the number one concern with ${low}, and it is the reason Vibelly is built the way it is. Every room is protected by ${fList(2, ' and ')}.`,
     `If you ever feel uncomfortable, skip to the next person or tap Report — ${f()}. Our moderation team reviews flags around the clock so the community stays friendly.`,
   ];
 
@@ -246,7 +247,7 @@ function makeContent(info, rng) {
     },
     {
       q: `Is ${low} on Vibelly anonymous and safe?`,
-      a: `Yes. Your identity stays private, conversations are ephemeral, and ${f()} plus ${f()} keep ${low} rooms clean and safe.`,
+      a: `Yes. Your identity stays private, conversations are ephemeral, and ${fList(2, ' plus ')} keep ${low} rooms clean and safe.`,
     },
     {
       q: `Can I use ${low}${where} right now?`,
@@ -615,7 +616,6 @@ function buildJsonLd(info, slug, faqs) {
       operatingSystem: 'Web, Android, iOS',
       applicationCategory: 'SocialNetworkingApplication',
       offers: { '@type': 'Offer', price: '0', priceCurrency: 'USD' },
-      aggregateRating: { '@type': 'AggregateRating', ratingValue: '4.9', ratingCount: '18452' },
     },
     {
       '@context': 'https://schema.org',
@@ -642,6 +642,7 @@ function buildBody(info, sections, faqs, links, h1Override) {
   const where = cityName ? ` in ${cityName}` : '';
 
   const sectionsHtml = sections
+    .slice(1)
     .map((section) => {
       const heading = section.h2 ? `      <h2>${esc(section.h2)}</h2>\n` : '';
       const paras = section.paragraphs.map((p) => `      <p>${esc(p)}</p>`).join('\n');
