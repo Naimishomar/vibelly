@@ -50,6 +50,10 @@
       font-size: 12px;
       color: #a1a1aa;
     }
+    .live-count {
+      font-weight: 700;
+      color: #fff;
+    }
     .dot {
       width: 8px; height: 8px; border-radius: 50%;
       background: #34d399;
@@ -75,11 +79,24 @@
     <a class="btn" href="https://vibelly.fun/?ref=widget">Start Chatting</a>
     <div class="live">
       <span class="dot"></span>
-      <span>People are online now</span>
+      <span><span class="live-count" id="onlineCount">…</span> people are online now</span>
     </div>
     <p class="powered">
       <a href="https://vibelly.fun/?ref=widget">Powered by Vibelly</a> &middot; anonymous, free &amp; safe
     </p>
   </div>
+  <script>
+    (function () {
+      var el = document.getElementById('onlineCount');
+      try {
+        fetch('https://api.vibelly.fun/api/stats/online')
+          .then(function (r) { return r.json(); })
+          .then(function (d) {
+            var n = Number(d.online);
+            el.textContent = (isFinite(n) && n > 0) ? (n >= 1000 ? (n / 1000).toFixed(1) + 'k' : String(n)) : '0';
+          });
+      } catch (e) {}
+    })();
+  </script>
 </body>
 </html>

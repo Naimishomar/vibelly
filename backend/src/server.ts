@@ -21,6 +21,7 @@ import analyticsRoutes from './routes/analytics.routes';
 import settingsRoutes from './routes/settings.routes';
 import referralRoutes from './routes/referral.routes';
 import creatorRoutes from './routes/creator.routes';
+import statsRoutes from './routes/stats.routes';
 import passport from './config/passport';
 
 // import hpp from 'hpp';
@@ -39,20 +40,28 @@ const ALLOWED_ORIGINS = [
 // CORS must be first — before helmet, hpp, rate-limit, everything.
 // This ensures OPTIONS preflights are answered before any other middleware
 // can short-circuit the request.
-app.use(cors({
-  origin: (origin, callback) => {
-    // Allow requests with no origin (server-to-server, curl, etc.)
-    if (!origin || ALLOWED_ORIGINS.includes(origin)) {
-      callback(null, true);
-    } else {
-      callback(new Error(`CORS: origin ${origin} not allowed`));
-    }
-  },
-  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization'],
-  credentials: true,
-  optionsSuccessStatus: 200, // Some older browsers choke on 204
-}));
+app.use((req, res, next) => {
+  // /api/stats is a public, read-only endpoint (the embeddable live counter).
+  // It must stay reachable from any foreign origin, so skip the strict CORS
+  // gate for it and let stats.routes.ts answer with its own '*' header.
+  if (req.path.startsWith('/api/stats')) {
+    return next();
+  }
+  cors({
+    origin: (origin, callback) => {
+      // Allow requests with no origin (server-to-server, curl, etc.)
+      if (!origin || ALLOWED_ORIGINS.includes(origin)) {
+        callback(null, true);
+      } else {
+        callback(new Error(`CORS: origin ${origin} not allowed`));
+      }
+    },
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization'],
+    credentials: true,
+    optionsSuccessStatus: 200, // Some older browsers choke on 204
+  })(req, res, next);
+});
 
 // Security Hardening
 // app.use(helmet({
@@ -95,6 +104,7 @@ app.use('/api/analytics', analyticsRoutes);
 app.use('/api/settings', settingsRoutes);
 app.use('/api/referral', referralRoutes);
 app.use('/api/creator', creatorRoutes);
+app.use('/api/stats', statsRoutes);
 app.use('/sitemap.xml', sitemapRoutes);
 
 
