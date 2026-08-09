@@ -5,7 +5,9 @@ const router = Router();
 
 // Answer preflight for any foreign origin, then let the strict CORS middleware
 // above stay untouched for the rest of the API.
-router.all('*', (req, res, next) => {
+// NOTE: use router.use(), NOT router.all('*') — Express 5 dropped the '*' wildcard
+// and a bare '*' throws a path-to-regexp error that crashes the server at startup.
+router.use((req, res, next) => {
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'GET, OPTIONS');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
