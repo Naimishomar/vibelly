@@ -66,6 +66,7 @@ export default function VideoCall() {
   const [peerFlag, setPeerFlag] = useState<string | null>(null);
   const [countryCodeMap, setCountryCodeMap] = useState<Record<string, string>>({});
   const [showSharePrompt, setShowSharePrompt] = useState(false);
+  const [connectionFailed, setConnectionFailed] = useState(false);
   const hadMatchRef = useRef(false);
   const typingTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const isChatOpenRef = useRef(isChatOpen);
@@ -106,10 +107,15 @@ export default function VideoCall() {
     }) => {
       setMatch({ roomId: data.roomId, peerSocketId: data.peerSocketId, peerData: data.peerData });
       hadMatchRef.current = true;
+      setConnectionFailed(false);
 
       const onRemoteStream = (stream: MediaStream) => {
         attachStreamToVideo(remoteVideoRef.current, stream);
         setRemoteStreamVersion(v => v + 1);
+      };
+
+      const onConnectionFailed = () => {
+        setConnectionFailed(true);
       };
 
       const resolution = user?.premiumStatus ? '720' : '480';
@@ -118,7 +124,8 @@ export default function VideoCall() {
         !isAudioOnly,
         onRemoteStream,
         resolution,
-        data.isInitiator
+        data.isInitiator,
+        onConnectionFailed
       );
 
       if (!ok && !mediaError) {
@@ -128,16 +135,16 @@ export default function VideoCall() {
       attachStreamToVideo(localVideoRef.current, webrtcService.localStream);
     };
 
-    const onOffer = async (data: { offer: RTCSessionDescriptionInit }) => {
-      await webrtcService.handleOffer(data.offer);
+    const onOffer = async (data: { peerSocketId?: string; offer: RTCSessionDescriptionInit }) => {
+      await webrtcService.handleOffer(data);
     };
 
-    const onAnswer = async (data: { answer: RTCSessionDescriptionInit }) => {
-      await webrtcService.handleAnswer(data.answer);
+    const onAnswer = async (data: { peerSocketId?: string; answer: RTCSessionDescriptionInit }) => {
+      await webrtcService.handleAnswer(data);
     };
 
-    const onIceCandidate = async (data: { candidate: RTCIceCandidateInit }) => {
-      await webrtcService.handleIceCandidate(data.candidate);
+    const onIceCandidate = async (data: { peerSocketId?: string; candidate: RTCIceCandidateInit }) => {
+      await webrtcService.handleIceCandidate(data);
     };
 
     const onPartnerDisconnected = () => {
@@ -441,6 +448,24 @@ export default function VideoCall() {
       )}
 
       <div className="absolute inset-0 bg-[#15171B] flex items-center justify-center">
+        {/* ─── Connection failure overlay ─── */}
+        {connectionFailed && isMatched && (
+          <div className="absolute inset-0 z-40 flex flex-col items-center justify-center gap-4 bg-black/70 backdrop-blur-sm">
+            <div className="flex flex-col items-center gap-3 text-center px-6">
+              <AlertTriangle size={40} className="text-amber-400" />
+              <p className="text-white font-semibold text-lg">Couldn't establish the video connection</p>
+              <p className="text-zinc-400 text-sm">This can happen on restrictive networks. Try the next person.</p>
+            </div>
+            <motion.button
+              whileTap={{ scale: 0.95 }}
+              onClick={() => handleSkip(false)}
+              className="cursor-pointer px-6 py-3 rounded-full bg-white hover:bg-zinc-200 transition-colors text-black font-semibold text-sm flex items-center gap-2 shadow-lg shadow-white/10"
+            >
+              Next
+              <SkipForward size={16} className="md:w-[18px] md:h-[18px]" />
+            </motion.button>
+          </div>
+        )}
         {/* ─── Dot Grid ─── */}
         {(isSearching || !isMatched) && (
           <BlinkingDotsGrid />

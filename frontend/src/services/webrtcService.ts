@@ -30,10 +30,20 @@ class WebRTCService {
 
   private peerSocketId: string | null = null;
   private onRemoteStreamCallback: ((stream: MediaStream) => void) | null = null;
+  private onConnectionFailedCallback: (() => void) | null = null;
 
   // Queues for handling race conditions where signaling arrives before camera is ready
-  private queuedOffer: RTCSessionDescriptionInit | null = null;
-  private queuedCandidates: RTCIceCandidateInit[] = [];
+  private queuedOffer: { peerSocketId?: string | null; offer: RTCSessionDescriptionInit } | null = null;
+  private queuedCandidates: { peerSocketId?: string | null; candidate: RTCIceCandidateInit }[] = [];
+
+  // Stale signaling (offer/answer/ICE) from a previous match can arrive in-flight after a Skip
+  // and corrupt the fresh RTCPeerConnection (double setRemoteDescription => InvalidStateError,
+  // which manifests as a black screen: matched + name shown but no remote video).
+  // Drop any signaling that is not from the peer we are currently matched with.
+  private isStalePeer(senderSocketId?: string | null): boolean {
+    if (!this.peerSocketId || !senderSocketId) return false;
+    return senderSocketId !== this.peerSocketId;
+  }
 
   isMediaSupported(): boolean {
     return !!(navigator.mediaDevices?.getUserMedia);
@@ -87,11 +97,13 @@ class WebRTCService {
     videoEnabled: boolean,
     onRemoteStream: (stream: MediaStream) => void,
     resolution: '480' | '720' | '1080' = '480',
-    isInitiator: boolean
+    isInitiator: boolean,
+    onConnectionFailed?: () => void
   ): Promise<{ ok: boolean; error?: string }> {
     try {
       this.peerSocketId = peerSocketId;
       this.onRemoteStreamCallback = onRemoteStream;
+      this.onConnectionFailedCallback = onConnectionFailed || null;
 
       if (!this.localStream) {
         const { stream, error } = await this.startLocalStream(videoEnabled, resolution);
@@ -107,6 +119,9 @@ class WebRTCService {
           { urls: 'stun:stun.l.google.com:19302' },
           { urls: 'stun:stun1.l.google.com:19302' },
           { urls: 'stun:stun2.l.google.com:19302' },
+          { urls: 'stun:stun3.l.google.com:19302' },
+          { urls: 'stun:stun4.l.google.com:19302' },
+          { urls: 'stun:stun.services.mozilla.com:3478' },
           // Free TURN server fallback for restrictive networks/NAT Hairpinning issues
           {
             urls: 'turn:openrelay.metered.ca:80',
@@ -120,6 +135,12 @@ class WebRTCService {
           }
         ]
       });
+
+      this.peerConnection.oniceconnectionstatechange = () => {
+        if (this.peerConnection?.iceConnectionState === 'failed') {
+          this.onConnectionFailedCallback?.();
+        }
+      };
 
       this.peerConnection.onicecandidate = (event) => {
         if (event.candidate && this.peerSocketId) {
@@ -160,8 +181,6 @@ class WebRTCService {
         }
       }
 
-      // We don't process ICE candidates here anymore; they will be flushed when the remote description is set.
-
       return { ok: true };
     } catch (error) {
       console.error('WebRTC initialization error:', error);
@@ -169,14 +188,22 @@ class WebRTCService {
     }
   }
 
-  async handleOffer(offer: RTCSessionDescriptionInit) {
+  async handleOffer(data: { peerSocketId?: string | null; offer: RTCSessionDescriptionInit }) {
+    if (this.isStalePeer(data.peerSocketId)) return;
+    const offer = data.offer;
     if (!this.peerConnection) {
-      this.queuedOffer = offer;
+      this.queuedOffer = data;
+      return;
+    }
+    // Ignore duplicate/stale offers — setting a remote description twice throws
+    // 'InvalidStateError: Can't set remote offer twice' and kills the connection.
+    const state = this.peerConnection.signalingState;
+    if (state !== 'stable' && state !== 'have-local-offer') {
       return;
     }
     await this.peerConnection.setRemoteDescription(new RTCSessionDescription(offer));
     this.flushIceCandidates();
-    
+
     const answer = await this.peerConnection.createAnswer();
     await this.peerConnection.setLocalDescription(answer);
     if (this.peerSocketId) {
@@ -187,26 +214,33 @@ class WebRTCService {
     }
   }
 
-  async handleAnswer(answer: RTCSessionDescriptionInit) {
-    if (!this.peerConnection) return;
-    await this.peerConnection.setRemoteDescription(new RTCSessionDescription(answer));
+  async handleAnswer(data: { peerSocketId?: string | null; answer: RTCSessionDescriptionInit }) {
+    if (!this.peerConnection || this.isStalePeer(data.peerSocketId)) return;
+    // Only accept an answer while we actually have an outstanding local offer
+    // (a stale answer from a previous peer would otherwise throw here).
+    if (this.peerConnection.signalingState !== 'have-local-offer') {
+      return;
+    }
+    await this.peerConnection.setRemoteDescription(new RTCSessionDescription(data.answer));
     this.flushIceCandidates();
   }
 
   private async flushIceCandidates() {
     if (!this.peerConnection) return;
-    for (const candidate of this.queuedCandidates) {
-      await this.peerConnection.addIceCandidate(new RTCIceCandidate(candidate)).catch(console.error);
+    for (const entry of this.queuedCandidates) {
+      if (this.isStalePeer(entry.peerSocketId)) continue;
+      await this.peerConnection.addIceCandidate(new RTCIceCandidate(entry.candidate)).catch(console.error);
     }
     this.queuedCandidates = [];
   }
 
-  async handleIceCandidate(candidate: RTCIceCandidateInit) {
+  async handleIceCandidate(data: { peerSocketId?: string | null; candidate: RTCIceCandidateInit }) {
+    if (this.isStalePeer(data.peerSocketId)) return;
     if (!this.peerConnection || !this.peerConnection.remoteDescription) {
-      this.queuedCandidates.push(candidate);
+      this.queuedCandidates.push(data);
       return;
     }
-    await this.peerConnection.addIceCandidate(new RTCIceCandidate(candidate)).catch(console.error);
+    await this.peerConnection.addIceCandidate(new RTCIceCandidate(data.candidate)).catch(console.error);
   }
 
   async setVideoEnabled(enabled: boolean, resolution: '480' | '720' | '1080' = '480'): Promise<boolean> {
@@ -270,6 +304,7 @@ class WebRTCService {
     this.remoteStream = null;
     this.peerSocketId = null;
     this.onRemoteStreamCallback = null;
+    this.onConnectionFailedCallback = null;
     this.queuedOffer = null;
     this.queuedCandidates = [];
   }

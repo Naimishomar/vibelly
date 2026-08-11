@@ -48,8 +48,9 @@ export default function TextChat() {
 
   useEffect(() => {
     // Component Mount
+    socketService.connect();
+
     const state = location.state as { targetCountry?: string; targetGender?: string } | null;
-    handleStartSearch(null, state?.targetCountry, state?.targetGender);
 
     const onMatchFound = (data: any) => {
       setMatch(data);
@@ -79,6 +80,8 @@ export default function TextChat() {
     socketService.on('partner-disconnected', onPartnerDisconnected);
     socketService.on('receive-message', onReceiveMessage);
     socketService.on('typing', onTyping);
+
+    handleStartSearch(null, state?.targetCountry, state?.targetGender);
 
     return () => {
       socketService.off('match-found', onMatchFound);
