@@ -203,7 +203,7 @@ function makeContent(info, rng) {
 
   if (info.isCompetitor && info.comp) {
     openers.push(
-      `${info.comp} has its share of problems — bans, bots, and paywalls. Vibelly is the ${low} alternative built to solve every one of them.`
+      `${info.comp} has its share of problems — bans, bots, and paywalls. Vibelly is the ${info.comp} alternative built to solve every one of them.`
     );
   }
 

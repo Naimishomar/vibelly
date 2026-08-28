@@ -30,12 +30,6 @@ export interface SeoPageConfig {
 export const absoluteUrl = (path?: string): string =>
   path ? `${site.url}${path.startsWith('/') ? path : `/${path}`}` : site.url;
 
-const aggregateRating = {
-  '@type': 'AggregateRating',
-  ratingValue: '4.9',
-  ratingCount: '18452',
-} as const;
-
 export function softwareAppSchema() {
   return {
     '@context': 'https://schema.org',
@@ -48,7 +42,6 @@ export function softwareAppSchema() {
       price: '0',
       priceCurrency: 'USD',
     },
-    aggregateRating,
   };
 }
 
