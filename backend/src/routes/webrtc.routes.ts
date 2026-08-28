@@ -1,11 +1,9 @@
 import { Router } from 'express';
-import { createCloudflareSession, createCloudflareTrack } from '../controllers/webrtc.controller';
-import { requireAuth } from '../middlewares/auth.middleware';
+import { getIceServers } from '../controllers/webrtc.controller';
 
 const router = Router();
 
-// Retrieve Cloudflare Realtime session token
-router.post('/sessions/new', createCloudflareSession);
-router.post('/sessions/:sessionId/tracks/new', createCloudflareTrack);
+// STUN/TURN servers for the browser's RTCPeerConnection
+router.get('/ice', getIceServers);
 
 export default router;

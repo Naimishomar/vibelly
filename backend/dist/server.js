@@ -25,20 +25,69 @@ const blog_routes_1 = __importDefault(require("./routes/blog.routes"));
 const sitemap_routes_1 = __importDefault(require("./routes/sitemap.routes"));
 const analytics_routes_1 = __importDefault(require("./routes/analytics.routes"));
 const settings_routes_1 = __importDefault(require("./routes/settings.routes"));
+const referral_routes_1 = __importDefault(require("./routes/referral.routes"));
+const creator_routes_1 = __importDefault(require("./routes/creator.routes"));
+const stats_routes_1 = __importDefault(require("./routes/stats.routes"));
 const passport_1 = __importDefault(require("./config/passport"));
+// import hpp from 'hpp';
+// import helmet from 'helmet';
+const express_rate_limit_1 = __importDefault(require("express-rate-limit"));
 const app = (0, express_1.default)();
 exports.app = app;
 const httpServer = (0, http_1.createServer)(app);
 exports.httpServer = httpServer;
-// CORS config
-const corsOptions = {
-    origin: '*',
-    methods: ['GET', 'POST', 'PUT', 'DELETE'],
-};
-// Compression middleware (compresses API responses for slow networks)
+const ALLOWED_ORIGINS = [
+    'https://vibelly.fun',
+    'https://www.vibelly.fun',
+    'https://vibelly.vercel.app'
+];
+// CORS must be first — before helmet, hpp, rate-limit, everything.
+// This ensures OPTIONS preflights are answered before any other middleware
+// can short-circuit the request.
+app.use((req, res, next) => {
+    // /api/stats is a public, read-only endpoint (the embeddable live counter).
+    // It must stay reachable from any foreign origin, so skip the strict CORS
+    // gate for it and let stats.routes.ts answer with its own '*' header.
+    if (req.path.startsWith('/api/stats')) {
+        return next();
+    }
+    (0, cors_1.default)({
+        origin: (origin, callback) => {
+            // Allow requests with no origin (server-to-server, curl, etc.)
+            if (!origin || ALLOWED_ORIGINS.includes(origin)) {
+                callback(null, true);
+            }
+            else {
+                callback(new Error(`CORS: origin ${origin} not allowed`));
+            }
+        },
+        methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+        allowedHeaders: ['Content-Type', 'Authorization'],
+        credentials: true,
+        optionsSuccessStatus: 200, // Some older browsers choke on 204
+    })(req, res, next);
+});
+// Security Hardening
+// app.use(helmet({
+//   crossOriginResourcePolicy: { policy: 'cross-origin' },
+// }));
+// app.use(hpp());
+// Rate Limiting (500 requests per 10 minutes per IP)
+const limiter = (0, express_rate_limit_1.default)({
+    windowMs: 10 * 60 * 1000,
+    max: 500,
+    message: 'Too many requests from this IP, please try again later.',
+    standardHeaders: true,
+    legacyHeaders: false,
+});
+app.use('/api', limiter);
+// Compression middleware
 app.use((0, compression_1.default)());
-app.use((0, cors_1.default)(corsOptions));
-app.use(express_1.default.json());
+app.use(express_1.default.json({
+    verify: (req, res, buf) => {
+        req.rawBody = buf;
+    }
+}));
 app.use(passport_1.default.initialize());
 // Routes
 app.use('/api/auth', auth_routes_1.default);
@@ -53,9 +102,12 @@ app.use('/api/admin', admin_routes_1.default);
 app.use('/api/blogs', blog_routes_1.default);
 app.use('/api/analytics', analytics_routes_1.default);
 app.use('/api/settings', settings_routes_1.default);
+app.use('/api/referral', referral_routes_1.default);
+app.use('/api/creator', creator_routes_1.default);
+app.use('/api/stats', stats_routes_1.default);
 app.use('/sitemap.xml', sitemap_routes_1.default);
 app.get("/", (req, res) => {
-    res.send("Vibe server never gets down🚀🚀");
+    res.send("Vibelly never gets down🚀🚀");
 });
 // ─── Database Connection ───
 const connectDB = async () => {
@@ -88,7 +140,5 @@ const connectRedis = async () => {
 };
 exports.connectRedis = connectRedis;
 // ─── Socket.io ───
-exports.io = new socket_io_1.Server(httpServer, {
-    cors: corsOptions,
-});
+exports.io = new socket_io_1.Server(httpServer);
 //# sourceMappingURL=server.js.map

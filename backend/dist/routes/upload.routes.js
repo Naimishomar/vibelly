@@ -39,6 +39,45 @@ router.post('/profile', auth_middleware_1.requireAuth, upload.single('file'), as
         res.status(500).json({ error: 'Failed to upload profile photo' });
     }
 });
+// Creator gallery photo upload (Persistent)
+router.post('/creator-gallery', auth_middleware_1.requireAuth, upload.single('file'), async (req, res) => {
+    try {
+        if (!req.file)
+            return res.status(400).json({ error: 'No file provided' });
+        const result = await (0, r2_service_1.uploadToR2)(req.file, 'creators');
+        res.json({ url: result.url });
+    }
+    catch (error) {
+        console.error('[Upload Creator Gallery]', error);
+        res.status(500).json({ error: 'Failed to upload photo' });
+    }
+});
+// Creator verification files (selfie + ID). Stored persistently for manual review.
+router.post('/verification', auth_middleware_1.requireAuth, upload.single('file'), async (req, res) => {
+    try {
+        if (!req.file)
+            return res.status(400).json({ error: 'No file provided' });
+        const result = await (0, r2_service_1.uploadToR2)(req.file, 'verification');
+        res.json({ url: result.url });
+    }
+    catch (error) {
+        console.error('[Upload Verification]', error);
+        res.status(500).json({ error: 'Failed to upload file' });
+    }
+});
+// Live stream thumbnail upload (Persistent)
+router.post('/thumbnail', auth_middleware_1.requireAuth, upload.single('file'), async (req, res) => {
+    try {
+        if (!req.file)
+            return res.status(400).json({ error: 'No file provided' });
+        const result = await (0, r2_service_1.uploadToR2)(req.file, 'thumbnails');
+        res.json({ url: result.url });
+    }
+    catch (error) {
+        console.error('[Upload Thumbnail]', error);
+        res.status(500).json({ error: 'Failed to upload thumbnail' });
+    }
+});
 // Group Photo Upload (Persistent)
 router.post('/group', auth_middleware_1.requireAuth, upload.single('file'), async (req, res) => {
     try {
@@ -65,6 +104,25 @@ router.post('/ephemeral', auth_middleware_1.requireAuth, upload.single('file'), 
     catch (error) {
         console.error('[Upload Ephemeral]', error);
         res.status(500).json({ error: error.message || 'Failed to upload file' });
+    }
+});
+// Creator post photos upload — up to 3 images, compressed via sharp
+router.post('/post-photos', auth_middleware_1.requireAuth, upload.array('files', 3), async (req, res) => {
+    try {
+        const files = req.files || [];
+        if (!files.length)
+            return res.status(400).json({ error: 'No files provided' });
+        if (files.length > 3)
+            return res.status(400).json({ error: 'Maximum 3 photos per post' });
+        const results = await Promise.all(files.map((f) => (0, r2_service_1.uploadToR2WithCompression)(f)));
+        res.json({
+            urls: results.map((r) => r.url),
+            keys: results.map((r) => r.s3Key),
+        });
+    }
+    catch (error) {
+        console.error('[Upload Post Photos]', error);
+        res.status(500).json({ error: error.message || 'Failed to upload post photos' });
     }
 });
 exports.default = router;

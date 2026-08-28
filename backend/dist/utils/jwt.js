@@ -6,11 +6,22 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.verifyRefreshToken = exports.verifyAccessToken = exports.generateTokens = void 0;
 const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
 const env_1 = require("../config/env");
-const generateTokens = (userId) => {
-    const accessToken = jsonwebtoken_1.default.sign({ id: userId.toString() }, env_1.ENV.JWT_SECRET, {
+const generateTokens = (user) => {
+    const payload = {
+        id: user._id.toString(),
+        _id: user._id.toString(),
+        name: user.name,
+        username: user.username,
+        email: user.email,
+        profileImage: user.profileImage,
+        premiumStatus: user.premiumStatus,
+        gender: user.gender,
+        country: user.country
+    };
+    const accessToken = jsonwebtoken_1.default.sign(payload, env_1.ENV.JWT_SECRET, {
         expiresIn: env_1.ENV.JWT_ACCESS_EXPIRES_IN,
     });
-    const refreshToken = jsonwebtoken_1.default.sign({ id: userId.toString() }, env_1.ENV.JWT_REFRESH_SECRET, {
+    const refreshToken = jsonwebtoken_1.default.sign(payload, env_1.ENV.JWT_REFRESH_SECRET, {
         expiresIn: env_1.ENV.JWT_REFRESH_EXPIRES_IN,
     });
     return { accessToken, refreshToken };

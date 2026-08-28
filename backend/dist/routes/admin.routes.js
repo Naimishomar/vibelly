@@ -86,7 +86,7 @@ router.get('/settings', auth_middleware_1.requireAuth, auth_middleware_1.require
         const { redisClient } = require('../server');
         const guestAccessEnabled = await redisClient.get('appSettings:guestAccessEnabled');
         res.json({
-            guestAccessEnabled: guestAccessEnabled === null ? true : guestAccessEnabled === 'true'
+            guestAccessEnabled: guestAccessEnabled === null ? true : guestAccessEnabled === 'true' || guestAccessEnabled === true
         });
     }
     catch (error) {

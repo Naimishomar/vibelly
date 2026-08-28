@@ -38,6 +38,10 @@ const ReportSchema = new mongoose_1.Schema({
     reporter: { type: mongoose_1.Schema.Types.ObjectId, ref: 'User', required: true },
     reportedUser: { type: mongoose_1.Schema.Types.ObjectId, ref: 'User', required: true },
     reason: { type: String, required: true },
+    type: { type: String, enum: ['call', 'live', 'profile', 'paid-no-show'], default: 'call' },
+    roomCode: { type: String, default: '' },
+    streamTitle: { type: String, default: '' },
+    amountPaid: { type: Number },
 }, {
     timestamps: true,
 });

@@ -6,9 +6,15 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = __importDefault(require("express"));
 const razorpay_1 = __importDefault(require("razorpay"));
 const crypto_1 = __importDefault(require("crypto"));
+const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
 const env_1 = require("../config/env");
 const User_1 = __importDefault(require("../models/User"));
+const LivePayment_1 = __importDefault(require("../models/LivePayment"));
+const CreatorProfile_1 = __importDefault(require("../models/CreatorProfile"));
+const CreatorSubscription_1 = __importDefault(require("../models/CreatorSubscription"));
+const PrimeMember_1 = __importDefault(require("../models/PrimeMember"));
 const auth_middleware_1 = require("../middlewares/auth.middleware");
+const liveRooms_1 = require("../socket/liveRooms");
 const router = express_1.default.Router();
 const razorpay = new razorpay_1.default({
     key_id: env_1.ENV.RAZORPAY_KEY_ID,
@@ -26,6 +32,9 @@ router.post('/create-order', auth_middleware_1.requireAuth, async (req, res) => 
             amount: amount * 100, // amount in the smallest currency unit
             currency: "INR",
             receipt: `receipt_order_${Math.floor(Math.random() * 1000)}`,
+            notes: {
+                userId: req.user.id
+            }
         };
         const order = await razorpay.orders.create(options);
         res.json(order);
@@ -87,6 +96,619 @@ router.post('/verify', auth_middleware_1.requireAuth, async (req, res) => {
     catch (error) {
         console.error('Error verifying payment:', error);
         res.status(500).json({ error: 'Failed to verify payment' });
+    }
+});
+// ─── Live Stream Subscriptions ───
+// Viewer pays to unlock a creator's paid live room. Split: 70% creator / 30% platform.
+const signLiveAccessToken = (viewerId, roomCode) => {
+    return jsonwebtoken_1.default.sign({ type: 'live-access', viewerId, roomCode }, env_1.ENV.JWT_SECRET, { expiresIn: '12h' });
+};
+// Check access for a room (prime member or paid)
+router.get('/live/access/:roomCode', auth_middleware_1.requireAuth, async (req, res) => {
+    try {
+        const roomCode = String(req.params.roomCode || '').trim().toUpperCase();
+        const room = (0, liveRooms_1.getLiveRoom)(roomCode);
+        if (!room)
+            return res.status(404).json({ error: 'Stream not found' });
+        if (room.price <= 0) {
+            return res.json({ access: true, price: 0, token: null });
+        }
+        // Creator always has access to their own room.
+        if (room.creatorUserId && room.creatorUserId === req.user.id) {
+            return res.json({ access: true, price: room.price, token: null });
+        }
+        const viewerId = req.user.id;
+        // Check if user is a prime member of this creator (for this room or all rooms)
+        const primeMember = await PrimeMember_1.default.findOne({
+            creator: room.creatorUserId,
+            user: viewerId,
+            $or: [{ roomCode }, { roomCode: { $exists: false } }, { roomCode: null }],
+        }).lean();
+        if (primeMember) {
+            return res.json({ access: true, price: room.price, token: signLiveAccessToken(viewerId, roomCode) });
+        }
+        // Check if user paid via platform (legacy or UPI)
+        const paid = await LivePayment_1.default.findOne({
+            viewer: viewerId,
+            roomCode,
+            status: 'paid',
+        }).lean();
+        if (paid) {
+            return res.json({ access: true, price: room.price, token: signLiveAccessToken(viewerId, roomCode) });
+        }
+        // Check if there is a pending payment
+        const pending = await LivePayment_1.default.findOne({
+            viewer: viewerId,
+            roomCode,
+            status: 'pending',
+        }).lean();
+        if (pending) {
+            return res.json({ access: false, price: room.price, token: null, isPendingApproval: true, utr: pending.utr });
+        }
+        res.json({ access: false, price: room.price, token: null });
+    }
+    catch (error) {
+        console.error('Error checking live access:', error);
+        res.status(500).json({ error: 'Failed to check access' });
+    }
+});
+// Create a Razorpay order for a paid live room.
+router.post('/live/create-order', auth_middleware_1.requireAuth, async (req, res) => {
+    try {
+        const roomCode = ((req.body || {}).roomCode || '').trim().toUpperCase();
+        const room = (0, liveRooms_1.getLiveRoom)(roomCode);
+        if (!room)
+            return res.status(404).json({ error: 'Stream not found' });
+        if (!room.price || room.price <= 0) {
+            return res.status(400).json({ error: 'This stream is free to watch' });
+        }
+        if (!room.creatorUserId) {
+            return res.status(400).json({ error: 'Creator is not registered for payouts' });
+        }
+        if (room.creatorUserId === req.user.id) {
+            return res.status(400).json({ error: 'You cannot pay for your own stream' });
+        }
+        const alreadyPaid = await LivePayment_1.default.findOne({
+            viewer: req.user.id,
+            roomCode,
+            status: 'paid',
+        }).lean();
+        if (alreadyPaid) {
+            return res.json({
+                alreadyPaid: true,
+                token: signLiveAccessToken(req.user.id, roomCode),
+            });
+        }
+        const options = {
+            amount: room.price * 100, // paise
+            currency: 'INR',
+            receipt: `live_${roomCode}_${Date.now()}`,
+            notes: {
+                type: 'live-subscription',
+                viewerId: req.user.id,
+                creatorId: room.creatorUserId,
+                roomCode,
+            },
+        };
+        const order = await razorpay.orders.create(options);
+        res.json(order);
+    }
+    catch (error) {
+        console.error('Error creating live order:', error);
+        res.status(500).json({ error: 'Failed to create order' });
+    }
+});
+// Verify a live subscription payment, credit creator 70% / platform 30%.
+router.post('/live/verify', auth_middleware_1.requireAuth, async (req, res) => {
+    try {
+        const { razorpay_order_id, razorpay_payment_id, razorpay_signature } = req.body;
+        const sign = razorpay_order_id + '|' + razorpay_payment_id;
+        const expectedSign = crypto_1.default
+            .createHmac('sha256', env_1.ENV.RAZORPAY_KEY_SECRET)
+            .update(sign)
+            .digest('hex');
+        if (razorpay_signature !== expectedSign) {
+            return res.status(400).json({ success: false, message: 'Invalid signature sent!' });
+        }
+        const order = await razorpay.orders.fetch(razorpay_order_id);
+        const notes = order.notes || {};
+        const roomCode = (notes.roomCode || '').trim().toUpperCase();
+        const viewerId = notes.viewerId;
+        const creatorId = notes.creatorId;
+        if (!roomCode || !viewerId || !creatorId) {
+            return res.status(400).json({ success: false, message: 'Invalid order metadata' });
+        }
+        if (viewerId !== req.user.id) {
+            return res.status(400).json({ success: false, message: 'Payment does not belong to this user' });
+        }
+        const amountPaid = order.amount / 100;
+        const room = (0, liveRooms_1.getLiveRoom)(roomCode);
+        if (room && amountPaid !== room.price) {
+            return res.status(400).json({ success: false, message: 'Amount mismatch' });
+        }
+        const existing = await LivePayment_1.default.findOne({
+            viewer: viewerId,
+            roomCode,
+            status: 'paid',
+        }).lean();
+        if (existing) {
+            return res.json({ success: true, token: signLiveAccessToken(viewerId, roomCode) });
+        }
+        await LivePayment_1.default.create({
+            viewer: viewerId,
+            creator: creatorId,
+            roomCode,
+            amount: amountPaid,
+            currency: 'INR',
+            razorpayOrderId: razorpay_order_id,
+            razorpayPaymentId: razorpay_payment_id,
+            status: 'paid',
+        });
+        res.json({
+            success: true,
+            token: signLiveAccessToken(viewerId, roomCode),
+        });
+    }
+    catch (error) {
+        console.error('Error verifying live payment:', error);
+        res.status(500).json({ error: 'Failed to verify payment' });
+    }
+});
+// Submit UPI payment proof (UTR) for a paid live stream
+router.post('/live/submit-upi', auth_middleware_1.requireAuth, async (req, res) => {
+    try {
+        const { roomCode, utr } = req.body;
+        const viewerId = req.user.id;
+        if (!roomCode || !utr) {
+            return res.status(400).json({ error: 'Room code and UTR are required' });
+        }
+        const cleanRoomCode = String(roomCode).trim().toUpperCase();
+        const cleanUtr = String(utr).trim();
+        // Validate UTR is 12 digits
+        if (!/^\d{12}$/.test(cleanUtr)) {
+            return res.status(400).json({ error: 'UTR must be exactly 12 numeric digits' });
+        }
+        const room = (0, liveRooms_1.getLiveRoom)(cleanRoomCode);
+        if (!room) {
+            return res.status(404).json({ error: 'Stream not found' });
+        }
+        if (!room.creatorUserId) {
+            return res.status(400).json({ error: 'Creator is not registered' });
+        }
+        // Check if this UTR has already been submitted to prevent double-claiming
+        const duplicateUtr = await LivePayment_1.default.findOne({ utr: cleanUtr });
+        if (duplicateUtr) {
+            return res.status(400).json({ error: 'This transaction UTR has already been submitted' });
+        }
+        // Check if user already has a pending/paid payment for this room
+        const existing = await LivePayment_1.default.findOne({
+            viewer: viewerId,
+            roomCode: cleanRoomCode,
+            status: { $in: ['pending', 'paid'] },
+        });
+        if (existing) {
+            if (existing.status === 'paid') {
+                return res.json({ success: true, message: 'You already have access to this stream', token: signLiveAccessToken(viewerId, cleanRoomCode) });
+            }
+            return res.status(400).json({ error: 'You have already submitted a payment request for this stream' });
+        }
+        // Create a pending LivePayment. Split: P2P gets 100% direct to creator.
+        await LivePayment_1.default.create({
+            viewer: viewerId,
+            creator: room.creatorUserId,
+            roomCode: cleanRoomCode,
+            amount: room.price,
+            currency: 'INR',
+            creatorShare: room.price,
+            platformShare: 0,
+            paymentMethod: 'upi',
+            utr: cleanUtr,
+            status: 'pending',
+        });
+        res.json({ success: true, message: 'Payment submitted successfully. Waiting for creator approval.' });
+    }
+    catch (error) {
+        console.error('Error submitting UPI payment:', error);
+        res.status(500).json({ error: 'Failed to submit payment proof' });
+    }
+});
+// Get pending payments for the creator's live streams
+router.get('/creator/pending-payments', auth_middleware_1.requireAuth, async (req, res) => {
+    try {
+        const creatorId = req.user.id;
+        const payments = await LivePayment_1.default.find({
+            creator: creatorId,
+            status: 'pending',
+            paymentMethod: 'upi',
+        })
+            .sort({ createdAt: -1 })
+            .populate('viewer', 'name username profileImage')
+            .lean();
+        res.json({ success: true, payments });
+    }
+    catch (error) {
+        console.error('Error fetching pending payments:', error);
+        res.status(500).json({ error: 'Failed to fetch pending payments' });
+    }
+});
+// Approve a pending UPI payment
+router.post('/creator/approve-upi', auth_middleware_1.requireAuth, async (req, res) => {
+    try {
+        const creatorId = req.user.id;
+        const { paymentId } = req.body;
+        if (!paymentId) {
+            return res.status(400).json({ error: 'Payment ID is required' });
+        }
+        const payment = await LivePayment_1.default.findOne({
+            _id: paymentId,
+            creator: creatorId,
+            status: 'pending',
+        });
+        if (!payment) {
+            return res.status(404).json({ error: 'Pending payment request not found' });
+        }
+        payment.status = 'paid';
+        await payment.save();
+        // Automatically add as a Prime Member for this roomCode to grant permanent access
+        await PrimeMember_1.default.findOneAndUpdate({ creator: creatorId, user: payment.viewer, roomCode: payment.roomCode }, { creator: creatorId, user: payment.viewer, roomCode: payment.roomCode, addedBy: creatorId }, { upsert: true, new: true });
+        res.json({ success: true, message: 'Payment approved. Access granted to viewer.' });
+    }
+    catch (error) {
+        console.error('Error approving payment:', error);
+        res.status(500).json({ error: 'Failed to approve payment' });
+    }
+});
+// Decline a pending UPI payment
+router.post('/creator/decline-upi', auth_middleware_1.requireAuth, async (req, res) => {
+    try {
+        const creatorId = req.user.id;
+        const { paymentId } = req.body;
+        if (!paymentId) {
+            return res.status(400).json({ error: 'Payment ID is required' });
+        }
+        const payment = await LivePayment_1.default.findOne({
+            _id: paymentId,
+            creator: creatorId,
+            status: 'pending',
+        });
+        if (!payment) {
+            return res.status(404).json({ error: 'Pending payment request not found' });
+        }
+        payment.status = 'failed';
+        await payment.save();
+        res.json({ success: true, message: 'Payment request declined.' });
+    }
+    catch (error) {
+        console.error('Error declining payment:', error);
+        res.status(500).json({ error: 'Failed to decline payment' });
+    }
+});
+// Creator earnings overview.
+router.get('/live/earnings', auth_middleware_1.requireAuth, async (req, res) => {
+    try {
+        const user = await User_1.default.findById(req.user.id).select('liveEarnings');
+        const payments = await LivePayment_1.default.find({ creator: req.user.id, status: 'paid' })
+            .sort({ createdAt: -1 })
+            .limit(100)
+            .populate('viewer', 'name username profileImage');
+        res.json({ success: true, liveEarnings: user?.liveEarnings || 0, payments });
+    }
+    catch (error) {
+        console.error('Error fetching live earnings:', error);
+        res.status(500).json({ error: 'Failed to fetch earnings' });
+    }
+});
+// ─── Creator Monthly Subscription (₹500/month) ───
+const CREATOR_MONTHLY_PRICE = 500; // ₹500/month for creator live streaming access
+const signCreatorAccessToken = (creatorId) => {
+    return jsonwebtoken_1.default.sign({ type: 'creator-access', creatorId }, env_1.ENV.JWT_SECRET, { expiresIn: '32d' });
+};
+// Check if creator has active subscription
+router.get('/creator/subscription/status', auth_middleware_1.requireAuth, async (req, res) => {
+    try {
+        const creatorId = req.user.id;
+        const user = req.user;
+        // Admins have free subscription forever
+        if (user && user.role === 'admin') {
+            return res.json({
+                active: true,
+                expiresAt: new Date(Date.now() + 1000 * 60 * 60 * 24 * 365 * 100), // 100 years
+                token: signCreatorAccessToken(creatorId),
+            });
+        }
+        const sub = await CreatorSubscription_1.default.findOne({
+            creator: creatorId,
+            status: 'active',
+            expiresAt: { $gt: new Date() },
+        }).lean();
+        if (sub) {
+            return res.json({
+                active: true,
+                expiresAt: sub.expiresAt,
+                token: signCreatorAccessToken(creatorId),
+            });
+        }
+        res.json({
+            active: false,
+            price: CREATOR_MONTHLY_PRICE,
+            token: null,
+        });
+    }
+    catch (error) {
+        console.error('Error checking creator subscription:', error);
+        res.status(500).json({ error: 'Failed to check subscription' });
+    }
+});
+// Create order for creator monthly subscription
+router.post('/creator/subscription/create-order', auth_middleware_1.requireAuth, async (req, res) => {
+    try {
+        const creatorId = req.user.id;
+        const existing = await CreatorSubscription_1.default.findOne({
+            creator: creatorId,
+            status: 'active',
+            expiresAt: { $gt: new Date() },
+        }).lean();
+        if (existing) {
+            return res.json({
+                alreadySubscribed: true,
+                token: signCreatorAccessToken(creatorId),
+            });
+        }
+        const options = {
+            amount: CREATOR_MONTHLY_PRICE * 100,
+            currency: 'INR',
+            receipt: `creator_sub_${creatorId}_${Date.now()}`,
+            notes: {
+                type: 'creator-subscription',
+                creatorId,
+            },
+        };
+        const order = await razorpay.orders.create(options);
+        res.json(order);
+    }
+    catch (error) {
+        console.error('Error creating creator subscription order:', error);
+        res.status(500).json({ error: 'Failed to create order' });
+    }
+});
+// Verify creator subscription payment
+router.post('/creator/subscription/verify', auth_middleware_1.requireAuth, async (req, res) => {
+    try {
+        const { razorpay_order_id, razorpay_payment_id, razorpay_signature } = req.body;
+        const creatorId = req.user.id;
+        const sign = razorpay_order_id + '|' + razorpay_payment_id;
+        const expectedSign = crypto_1.default
+            .createHmac('sha256', env_1.ENV.RAZORPAY_KEY_SECRET)
+            .update(sign)
+            .digest('hex');
+        if (razorpay_signature !== expectedSign) {
+            return res.status(400).json({ success: false, message: 'Invalid signature' });
+        }
+        const order = await razorpay.orders.fetch(razorpay_order_id);
+        const notes = order.notes || {};
+        if (notes.type !== 'creator-subscription' || notes.creatorId !== creatorId) {
+            return res.status(400).json({ success: false, message: 'Invalid order metadata' });
+        }
+        if (creatorId !== req.user.id) {
+            return res.status(400).json({ success: false, message: 'Payment does not belong to this user' });
+        }
+        const amountPaid = order.amount / 100;
+        if (amountPaid !== CREATOR_MONTHLY_PRICE) {
+            return res.status(400).json({ success: false, message: 'Amount mismatch' });
+        }
+        const existing = await CreatorSubscription_1.default.findOne({
+            creator: creatorId,
+            status: 'active',
+            expiresAt: { $gt: new Date() },
+        }).lean();
+        if (existing) {
+            return res.json({ success: true, token: signCreatorAccessToken(creatorId) });
+        }
+        const expiresAt = new Date(Date.now() + 30 * 24 * 60 * 60 * 1000);
+        await CreatorSubscription_1.default.create({
+            creator: creatorId,
+            price: amountPaid,
+            currency: 'INR',
+            razorpayOrderId: razorpay_order_id,
+            razorpayPaymentId: razorpay_payment_id,
+            status: 'active',
+            expiresAt,
+        });
+        res.json({
+            success: true,
+            token: signCreatorAccessToken(creatorId),
+            expiresAt,
+        });
+    }
+    catch (error) {
+        console.error('Error verifying creator subscription:', error);
+        res.status(500).json({ error: 'Failed to verify payment' });
+    }
+});
+// Get creator payment details (UPI/Bank) for receiving user payments
+router.get('/creator/payment-details', auth_middleware_1.requireAuth, async (req, res) => {
+    try {
+        const creatorId = req.user.id;
+        let profile = await CreatorProfile_1.default.findOne({ user: creatorId }).lean();
+        if (!profile) {
+            // Auto-create to avoid 404 race conditions when frontend fetches concurrently
+            await CreatorProfile_1.default.create({ user: creatorId });
+            return res.json({
+                upiId: null,
+                bankAccount: null,
+            });
+        }
+        res.json({
+            upiId: profile.upiId || null,
+            bankAccount: profile.bankAccount || null,
+        });
+    }
+    catch (error) {
+        console.error('Error fetching payment details:', error);
+        res.status(500).json({ error: 'Failed to fetch payment details' });
+    }
+});
+// Get a specific creator's payment details (UPI/Bank) for a viewer to pay them
+router.get('/creator/payment-details/:creatorId', auth_middleware_1.requireAuth, async (req, res) => {
+    try {
+        const creatorId = String(req.params.creatorId);
+        let profile = await CreatorProfile_1.default.findOne({ user: creatorId }).lean();
+        if (!profile) {
+            // Auto-create to avoid 404
+            await CreatorProfile_1.default.create({ user: creatorId });
+            return res.json({
+                upiId: null,
+                bankAccount: null,
+            });
+        }
+        res.json({
+            upiId: profile.upiId || null,
+            bankAccount: profile.bankAccount || null,
+        });
+    }
+    catch (error) {
+        console.error('Error fetching creator payment details:', error);
+        res.status(500).json({ error: 'Failed to fetch creator payment details' });
+    }
+});
+// Save creator payment details (UPI/Bank)
+router.post('/creator/payment-details', auth_middleware_1.requireAuth, async (req, res) => {
+    try {
+        const creatorId = req.user.id;
+        const { upiId, bankAccount } = req.body;
+        const profile = await CreatorProfile_1.default.findOneAndUpdate({ user: creatorId }, {
+            upiId: upiId?.trim() || undefined,
+            bankAccount: bankAccount?.trim() || undefined,
+        }, { upsert: true, new: true }).lean();
+        if (!profile) {
+            return res.status(404).json({ error: 'Creator profile not found' });
+        }
+        res.json({ success: true, upiId: profile.upiId, bankAccount: profile.bankAccount });
+    }
+    catch (error) {
+        console.error('Error saving payment details:', error);
+        res.status(500).json({ error: 'Failed to save payment details' });
+    }
+});
+// ─── Prime Member Management (Creator adds users who paid via UPI/Bank) ───
+// List prime members for a creator
+router.get('/creator/prime-members', auth_middleware_1.requireAuth, async (req, res) => {
+    try {
+        const creatorId = req.user.id;
+        const members = await PrimeMember_1.default.find({ creator: creatorId })
+            .populate('user', 'name username profileImage')
+            .sort({ createdAt: -1 })
+            .lean();
+        res.json({ members });
+    }
+    catch (error) {
+        console.error('Error fetching prime members:', error);
+        res.status(500).json({ error: 'Failed to fetch prime members' });
+    }
+});
+// Add a prime member (creator manually adds user who paid via UPI/Bank)
+router.post('/creator/prime-members', auth_middleware_1.requireAuth, async (req, res) => {
+    try {
+        const creatorId = req.user.id;
+        const { userId, roomCode } = req.body;
+        if (!userId) {
+            return res.status(400).json({ error: 'User ID is required' });
+        }
+        // Verify creator has active subscription (bypassed for admins)
+        const user = req.user;
+        if (user && user.role !== 'admin') {
+            const sub = await CreatorSubscription_1.default.findOne({
+                creator: creatorId,
+                status: 'active',
+                expiresAt: { $gt: new Date() },
+            }).lean();
+            if (!sub) {
+                return res.status(403).json({ error: 'Creator subscription required to manage prime members' });
+            }
+        }
+        const member = await PrimeMember_1.default.findOneAndUpdate({ creator: creatorId, user: userId, roomCode: roomCode || null }, { creator: creatorId, user: userId, roomCode: roomCode || null, addedBy: creatorId }, { upsert: true, new: true }).populate('user', 'name username profileImage');
+        res.json({ success: true, member });
+    }
+    catch (error) {
+        if (error.code === 11000) {
+            return res.status(400).json({ error: 'User is already a prime member' });
+        }
+        console.error('Error adding prime member:', error);
+        res.status(500).json({ error: 'Failed to add prime member' });
+    }
+});
+// Remove a prime member
+router.delete('/creator/prime-members/:userId', auth_middleware_1.requireAuth, async (req, res) => {
+    try {
+        const creatorId = req.user.id;
+        const userId = req.params.userId;
+        const roomCode = req.query.roomCode;
+        await PrimeMember_1.default.findOneAndDelete({
+            creator: creatorId,
+            user: userId,
+            roomCode: roomCode || null,
+        });
+        res.json({ success: true });
+    }
+    catch (error) {
+        console.error('Error removing prime member:', error);
+        res.status(500).json({ error: 'Failed to remove prime member' });
+    }
+});
+// Razorpay Webhook Endpoint
+router.post('/webhook', async (req, res) => {
+    try {
+        const webhookSecret = env_1.ENV.RAZORPAY_WEBHOOK_SECRET || 'fallback_secret_never_use_in_prod';
+        const razorpaySignature = req.headers['x-razorpay-signature'];
+        // Use the raw body buffer saved by express.json middleware
+        const bodyStr = req.rawBody ? req.rawBody.toString() : JSON.stringify(req.body);
+        const expectedSignature = crypto_1.default
+            .createHmac('sha256', webhookSecret)
+            .update(bodyStr)
+            .digest('hex');
+        if (expectedSignature !== razorpaySignature) {
+            console.error('Webhook signature mismatch!');
+            return res.status(400).send('Invalid signature');
+        }
+        const event = typeof req.body === 'string' ? JSON.parse(req.body) : req.body;
+        if (event.event === 'payment.captured' || event.event === 'order.paid') {
+            const paymentEntity = event.payload.payment.entity;
+            const amountPaid = paymentEntity.amount / 100;
+            const userId = paymentEntity.notes?.userId;
+            if (userId) {
+                const user = await User_1.default.findById(userId);
+                if (user) {
+                    let daysToAdd = 0;
+                    if (amountPaid === 9)
+                        daysToAdd = 1;
+                    else if (amountPaid === 49)
+                        daysToAdd = 30;
+                    else if (amountPaid === 499)
+                        daysToAdd = 365;
+                    if (daysToAdd > 0) {
+                        user.premiumStatus = true;
+                        const now = new Date();
+                        if (user.premiumExpiryDate && user.premiumExpiryDate > now) {
+                            const newExpiry = new Date(user.premiumExpiryDate);
+                            newExpiry.setDate(newExpiry.getDate() + daysToAdd);
+                            user.premiumExpiryDate = newExpiry;
+                        }
+                        else {
+                            const newExpiry = new Date();
+                            newExpiry.setDate(newExpiry.getDate() + daysToAdd);
+                            user.premiumExpiryDate = newExpiry;
+                        }
+                        await user.save();
+                        console.log(`Webhook successfully granted Premium to user: ${userId}`);
+                    }
+                }
+            }
+        }
+        res.status(200).send('OK');
+    }
+    catch (error) {
+        console.error('Webhook error:', error);
+        res.status(500).send('Webhook failed');
     }
 });
 exports.default = router;

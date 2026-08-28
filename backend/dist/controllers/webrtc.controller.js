@@ -1,58 +1,57 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.createCloudflareTrack = exports.createCloudflareSession = void 0;
+exports.getIceServers = void 0;
 const env_1 = require("../config/env");
-const createCloudflareSession = async (req, res) => {
+const STUN = [
+    { urls: 'stun:stun.l.google.com:19302' },
+    { urls: 'stun:stun1.l.google.com:19302' },
+];
+let cachedIce = null;
+const TURN_TTL_SECONDS = 3600;
+async function fetchTurnServers() {
+    if (env_1.ENV.TURN_URLS) {
+        return [{
+                urls: env_1.ENV.TURN_URLS.split(',').map((u) => u.trim()).filter(Boolean),
+                username: env_1.ENV.TURN_USERNAME,
+                credential: env_1.ENV.TURN_CREDENTIAL,
+            }];
+    }
+    if (!env_1.ENV.TURN_KEY_ID || !env_1.ENV.TURN_API_TOKEN)
+        return [];
+    const url = `https://rtc.live.cloudflare.com/v1/turn/keys/${env_1.ENV.TURN_KEY_ID}/credentials/generate-ice-servers`;
+    const response = await fetch(url, {
+        method: 'POST',
+        headers: {
+            Authorization: `Bearer ${env_1.ENV.TURN_API_TOKEN}`,
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ ttl: TURN_TTL_SECONDS }),
+    });
+    if (!response.ok)
+        throw new Error(await response.text());
+    const data = await response.json();
+    return Array.isArray(data.iceServers) ? data.iceServers : [data.iceServers];
+}
+// Clients call this before every peer connection. Falls back to STUN-only so a
+// TURN outage degrades to "works on open networks" instead of failing outright.
+const getIceServers = async (_req, res) => {
+    if (cachedIce && cachedIce.expiresAt > Date.now()) {
+        res.json({ iceServers: cachedIce.servers });
+        return;
+    }
     try {
-        const url = `https://rtc.live.cloudflare.com/v1/apps/${env_1.ENV.CLOUDFLARE_APP_ID}/sessions/new`;
-        const response = await fetch(url, {
-            method: 'POST',
-            headers: {
-                Authorization: `Bearer ${env_1.ENV.CLOUDFLARE_API_TOKEN}`,
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(req.body)
-        });
-        if (!response.ok) {
-            const text = await response.text();
-            console.error('CF Create Session Error:', text);
-            res.status(response.status).json({ error: 'Failed to create CF session', details: text });
-            return;
+        const turn = await fetchTurnServers();
+        const servers = [...STUN, ...turn];
+        if (turn.length) {
+            // Renew a few minutes before the credential actually expires.
+            cachedIce = { servers, expiresAt: Date.now() + (TURN_TTL_SECONDS - 300) * 1000 };
         }
-        const data = await response.json();
-        res.json(data);
+        res.json({ iceServers: servers });
     }
     catch (error) {
-        console.error('Error generating Cloudflare session:', error);
-        res.status(500).json({ error: 'Internal Server Error' });
+        console.error('Failed to fetch TURN credentials:', error);
+        res.json({ iceServers: STUN });
     }
 };
-exports.createCloudflareSession = createCloudflareSession;
-const createCloudflareTrack = async (req, res) => {
-    try {
-        const { sessionId } = req.params;
-        const url = `https://rtc.live.cloudflare.com/v1/apps/${env_1.ENV.CLOUDFLARE_APP_ID}/sessions/${sessionId}/tracks/new`;
-        const response = await fetch(url, {
-            method: 'POST',
-            headers: {
-                Authorization: `Bearer ${env_1.ENV.CLOUDFLARE_API_TOKEN}`,
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(req.body)
-        });
-        if (!response.ok) {
-            const text = await response.text();
-            console.error('CF Create Track Error:', text);
-            res.status(response.status).json({ error: 'Failed to create CF track', details: text });
-            return;
-        }
-        const data = await response.json();
-        res.json(data);
-    }
-    catch (error) {
-        console.error('Error generating Cloudflare track:', error);
-        res.status(500).json({ error: 'Internal Server Error' });
-    }
-};
-exports.createCloudflareTrack = createCloudflareTrack;
+exports.getIceServers = getIceServers;
 //# sourceMappingURL=webrtc.controller.js.map

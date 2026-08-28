@@ -7,10 +7,14 @@ export declare const ENV: {
     JWT_REFRESH_SECRET: string;
     JWT_ACCESS_EXPIRES_IN: string;
     JWT_REFRESH_EXPIRES_IN: string;
-    CLOUDFLARE_APP_ID: string;
-    CLOUDFLARE_API_TOKEN: string;
+    TURN_KEY_ID: string;
+    TURN_API_TOKEN: string;
+    TURN_URLS: string;
+    TURN_USERNAME: string;
+    TURN_CREDENTIAL: string;
     RAZORPAY_KEY_ID: string;
     RAZORPAY_KEY_SECRET: string;
+    RAZORPAY_WEBHOOK_SECRET: string;
     FRONTEND_URL: string;
 };
 //# sourceMappingURL=env.d.ts.map

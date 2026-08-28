@@ -1,5 +1,4 @@
-import mongoose from 'mongoose';
-export declare const generateTokens: (userId: mongoose.Types.ObjectId | string) => {
+export declare const generateTokens: (user: any) => {
     accessToken: string;
     refreshToken: string;
 };

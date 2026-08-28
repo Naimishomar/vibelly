@@ -15,6 +15,11 @@ export interface IUser extends Document {
     interests: string[];
     premiumStatus: boolean;
     premiumExpiryDate?: Date;
+    referralCode?: string;
+    referredBy?: mongoose.Types.ObjectId;
+    referralCount: number;
+    referralRewardDays: number;
+    liveEarnings: number;
     blockedUsers: mongoose.Types.ObjectId[];
     chatsThisWeek: number;
     lastChatResetDate: Date;

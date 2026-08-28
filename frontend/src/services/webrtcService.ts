@@ -1,4 +1,5 @@
 import { socketService } from './socketService';
+import { loadIceServers } from './iceConfig';
 
 export type MediaErrorCode = 'not-supported' | 'permission-denied' | 'not-found' | 'in-use' | 'unknown';
 
@@ -114,30 +115,19 @@ class WebRTCService {
       }
 
       this.remoteStream = new MediaStream();
-      this.peerConnection = new RTCPeerConnection({
-        iceServers: [
-          { urls: 'stun:stun.l.google.com:19302' },
-          { urls: 'stun:stun1.l.google.com:19302' },
-          { urls: 'stun:stun2.l.google.com:19302' },
-          { urls: 'stun:stun3.l.google.com:19302' },
-          { urls: 'stun:stun4.l.google.com:19302' },
-          { urls: 'stun:stun.services.mozilla.com:3478' },
-          // Free TURN server fallback for restrictive networks/NAT Hairpinning issues
-          {
-            urls: 'turn:openrelay.metered.ca:80',
-            username: 'openrelayproject',
-            credential: 'openrelayproject'
-          },
-          {
-            urls: 'turn:openrelay.metered.ca:443',
-            username: 'openrelayproject',
-            credential: 'openrelayproject'
-          }
-        ]
-      });
+      this.peerConnection = new RTCPeerConnection({ iceServers: await loadIceServers() });
 
       this.peerConnection.oniceconnectionstatechange = () => {
         if (this.peerConnection?.iceConnectionState === 'failed') {
+          this.onConnectionFailedCallback?.();
+        }
+      };
+
+      // ICE can sit in 'checking' for ~30s before it reports 'failed', which the
+      // user just sees as an unexplained black screen. connectionState reaches
+      // 'failed' sooner, so surface that too.
+      this.peerConnection.onconnectionstatechange = () => {
+        if (this.peerConnection?.connectionState === 'failed') {
           this.onConnectionFailedCallback?.();
         }
       };

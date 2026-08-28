@@ -36,9 +36,9 @@ const steps = [
     number: '02',
     eyebrow: 'START THE CALL',
     title: 'Real-time WebRTC video or voice.',
-    body: 'The moment a match is found, WebRTC negotiation begins automatically. Your camera and mic stream directly — no server relay for media, ultra-low latency.',
+    body: 'The moment a match is found, WebRTC negotiation begins automatically. Your camera and mic stream straight to the other person, with a relay only as fallback on restrictive networks.',
     bullets: [
-      'WebRTC peer-to-peer via Cloudflare SFU',
+      'Direct peer-to-peer WebRTC, no media server',
       'Mic and camera toggles without dropping the call',
       'Picture-in-picture local preview, drag anywhere',
     ],

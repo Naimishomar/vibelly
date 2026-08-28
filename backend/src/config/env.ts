@@ -14,8 +14,15 @@ export const ENV = {
   JWT_ACCESS_EXPIRES_IN: '15m',
   JWT_REFRESH_EXPIRES_IN: '30d',
 
-  CLOUDFLARE_APP_ID: process.env.CLOUDFLARE_APP_ID || 'mock_app_id',
-  CLOUDFLARE_API_TOKEN: process.env.CLOUDFLARE_API_TOKEN || 'mock_api_token',
+  // TURN relay. Without it, any two peers behind symmetric NAT / mobile CGNAT
+  // connect at the signaling layer (name shows) but no media flows (black video).
+  // Cloudflare Realtime TURN:
+  TURN_KEY_ID: process.env.TURN_KEY_ID || '',
+  TURN_API_TOKEN: process.env.TURN_API_TOKEN || '',
+  // ...or any static TURN (coturn, Metered, Twilio). Comma-separated urls.
+  TURN_URLS: process.env.TURN_URLS || '',
+  TURN_USERNAME: process.env.TURN_USERNAME || '',
+  TURN_CREDENTIAL: process.env.TURN_CREDENTIAL || '',
 
   RAZORPAY_KEY_ID: process.env.RAZORPAY_KEY_ID || '',
   RAZORPAY_KEY_SECRET: process.env.RAZORPAY_KEY_SECRET || '',

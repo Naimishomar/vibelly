@@ -24,11 +24,11 @@ const addToQueue = async (socketId, userId, baseQueueName, targetCountry, target
     const oppositeGender = userGender === 'male' ? 'female' : 'male';
     let queuesToCheck = [];
     if (isPremium && targetGender) {
-        if (targetGender === 'opposite' && userGender !== 'unspecified') {
-            queuesToCheck = [`${baseQueueName}:${oppositeGender}`, `${baseQueueName}:unspecified`, `${baseQueueName}:${userGender}`];
+        if (targetGender === 'female') {
+            queuesToCheck = [`${baseQueueName}:female`, `${baseQueueName}:unspecified`, `${baseQueueName}:male`];
         }
-        else if (targetGender === 'same' && userGender !== 'unspecified') {
-            queuesToCheck = [`${baseQueueName}:${userGender}`, `${baseQueueName}:unspecified`, `${baseQueueName}:${oppositeGender}`];
+        else if (targetGender === 'male') {
+            queuesToCheck = [`${baseQueueName}:male`, `${baseQueueName}:unspecified`, `${baseQueueName}:female`];
         }
         else {
             // random gender or unspecified user gender
@@ -42,9 +42,9 @@ const addToQueue = async (socketId, userId, baseQueueName, targetCountry, target
     else {
         // Free users or unspecified gender
         if (userGender !== 'unspecified') {
-            // 80% of the time, free users won't even check the opposite gender queue.
+            // 90% of the time, free users won't even check the opposite gender queue.
             // If they do check it, we put same gender first to minimize opposite gender matches.
-            const shouldCheckOpposite = Math.random() < 0.2;
+            const shouldCheckOpposite = Math.random() < 0.1;
             if (shouldCheckOpposite) {
                 queuesToCheck = [`${baseQueueName}:${userGender}`, `${baseQueueName}:unspecified`, `${baseQueueName}:${oppositeGender}`];
             }
@@ -139,7 +139,7 @@ const addToQueue = async (socketId, userId, baseQueueName, targetCountry, target
         // Match found!
         console.log(`Match found between ${userId} and ${peerData.userId}!`);
         const roomId = (0, uuid_1.v4)();
-        const callType = baseQueueName.includes('audio') ? 'audio' : 'video';
+        const callType = baseQueueName.includes('text') ? 'text' : (baseQueueName.includes('audio') ? 'audio' : 'video');
         // Create session in DB
         try {
             const session = new Session_1.default({ roomId, user1: userId, user2: peerData.userId, callType });

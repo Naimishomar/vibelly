@@ -16,22 +16,4 @@ io.on('connection', (socket) => {
     io.to(peerSocketId).emit('webrtc-ice-candidate', { peerSocketId: socket.id, candidate });
   });
 
-  // Legacy Cloudflare track sharing (kept for backwards compatibility)
-  socket.on('share-track', (data) => {
-    const { peerSocketId, trackName, trackId } = data;
-    io.to(peerSocketId).emit('receive-track', {
-      peerSocketId: socket.id,
-      trackName,
-      trackId,
-    });
-  });
-
-  socket.on('share-tracks', (data) => {
-    const { peerSocketId, tracks, sessionId } = data;
-    io.to(peerSocketId).emit('receive-tracks', {
-      peerSocketId: socket.id,
-      tracks,
-      sessionId,
-    });
-  });
 });

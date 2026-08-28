@@ -25,7 +25,7 @@ const login = async (req, res) => {
             });
             await user.save();
         }
-        const tokens = (0, jwt_1.generateTokens)(user._id);
+        const tokens = (0, jwt_1.generateTokens)(user);
         res.json({ user, ...tokens });
     }
     catch (error) {
@@ -46,7 +46,7 @@ const refresh = async (req, res) => {
             res.status(401).json({ error: 'User not found' });
             return;
         }
-        const tokens = (0, jwt_1.generateTokens)(user._id);
+        const tokens = (0, jwt_1.generateTokens)(user);
         res.json({ ...tokens });
     }
     catch (error) {

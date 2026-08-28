@@ -11,7 +11,7 @@ const router = (0, express_1.Router)();
 // Helper to generate tokens and redirect
 const handleAuthSuccess = (req, res) => {
     const user = req.user;
-    const frontendUrl = process.env.NODE_ENV === 'production' ? 'https://vibelly.vercel.app' : (process.env.FRONTEND_URL || 'http://localhost:5173');
+    const frontendUrl = process.env.NODE_ENV === 'production' ? 'https://vibelly.fun' : (process.env.FRONTEND_URL || 'http://localhost:5173');
     if (!user) {
         return res.redirect(`${frontendUrl}?error=auth_failed`);
     }
@@ -22,7 +22,9 @@ const handleAuthSuccess = (req, res) => {
         username: user.username,
         email: user.email,
         profileImage: user.profileImage,
-        premiumStatus: user.premiumStatus
+        premiumStatus: user.premiumStatus,
+        gender: user.gender,
+        country: user.country
     };
     const accessToken = jsonwebtoken_1.default.sign(payload, env_1.ENV.JWT_SECRET, { expiresIn: '15m' });
     const refreshToken = jsonwebtoken_1.default.sign(payload, env_1.ENV.JWT_REFRESH_SECRET, { expiresIn: '7d' });
@@ -31,10 +33,10 @@ const handleAuthSuccess = (req, res) => {
     res.redirect(redirectUrl);
 };
 // ─── GOOGLE ───
-router.get('/google', passport_1.default.authenticate('google', { scope: ['profile', 'email'] }));
+router.get('/google', passport_1.default.authenticate('google', { scope: ['profile', 'email'], session: false }));
 router.get('/google/callback', passport_1.default.authenticate('google', { session: false, failureRedirect: '/' }), handleAuthSuccess);
 // ─── GITHUB ───
-router.get('/github', passport_1.default.authenticate('github', { scope: ['user:email'] }));
+router.get('/github', passport_1.default.authenticate('github', { scope: ['user:email'], session: false }));
 router.get('/github/callback', passport_1.default.authenticate('github', { session: false, failureRedirect: '/' }), handleAuthSuccess);
 // ─── APPLE ───
 router.get('/apple', passport_1.default.authenticate('apple'));

@@ -57,6 +57,7 @@ server_1.io.on('connection', (socket) => {
         await (0, matchmaking_1.removeFromQueue)(socket.id, 'random-audio');
         await (0, matchmaking_1.removeFromQueue)(socket.id, 'random-video-480-v2');
         await (0, matchmaking_1.removeFromQueue)(socket.id, 'random-audio-v2');
+        await (0, matchmaking_1.removeFromQueue)(socket.id, 'random-text');
     });
 });
 //# sourceMappingURL=matchmaking.js.map

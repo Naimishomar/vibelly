@@ -41,10 +41,10 @@ router.get('/me', auth_middleware_1.requireAuth, async (req, res) => {
         res.status(500).json({ error: 'Failed to fetch profile' });
     }
 });
-// Endpoint to report a user
+// Endpoint to report a user / stream
 router.post('/report', auth_middleware_1.requireAuth, async (req, res) => {
     try {
-        const { reportedUserId, reason } = req.body;
+        const { reportedUserId, reason, type, roomCode, streamTitle, amountPaid } = req.body;
         const reporterId = req.user.id;
         if (!reportedUserId) {
             return res.status(400).json({ error: 'Reported user ID is required' });
@@ -52,10 +52,14 @@ router.post('/report', auth_middleware_1.requireAuth, async (req, res) => {
         const report = new Report_1.default({
             reporter: reporterId,
             reportedUser: reportedUserId,
-            reason: reason || 'Inappropriate behavior'
+            reason: reason || 'Inappropriate behavior',
+            type: type || 'call',
+            roomCode: roomCode || '',
+            streamTitle: streamTitle || '',
+            amountPaid: amountPaid || undefined,
         });
         await report.save();
-        res.json({ success: true, message: 'User reported successfully' });
+        res.json({ success: true, message: 'Report submitted successfully' });
     }
     catch (error) {
         console.error('Error reporting user:', error);
