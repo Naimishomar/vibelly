@@ -743,9 +743,18 @@ router.delete('/creator/prime-members/:userId', requireAuth, async (req, res) =>
 // Razorpay Webhook Endpoint
 router.post('/webhook', async (req, res) => {
   try {
-    const webhookSecret = ENV.RAZORPAY_WEBHOOK_SECRET || 'fallback_secret_never_use_in_prod';
+    // No secret configured => refuse to grant anything. A hardcoded fallback
+    // that lives in a public repo lets anyone forge a payment.captured webhook.
+    const webhookSecret = ENV.RAZORPAY_WEBHOOK_SECRET;
+    if (!webhookSecret) {
+      console.error('RAZORPAY_WEBHOOK_SECRET is not set — rejecting webhook.');
+      return res.status(500).send('Webhook not configured');
+    }
     const razorpaySignature = req.headers['x-razorpay-signature'];
-    
+    if (typeof razorpaySignature !== 'string') {
+      return res.status(400).send('Missing signature');
+    }
+
     // Use the raw body buffer saved by express.json middleware
     const bodyStr = (req as any).rawBody ? (req as any).rawBody.toString() : JSON.stringify(req.body);
 
@@ -754,7 +763,10 @@ router.post('/webhook', async (req, res) => {
       .update(bodyStr)
       .digest('hex');
 
-    if (expectedSignature !== razorpaySignature) {
+    // Constant-time compare; timingSafeEqual throws on length mismatch, so guard it.
+    const expected = Buffer.from(expectedSignature, 'hex');
+    const received = Buffer.from(razorpaySignature, 'hex');
+    if (expected.length !== received.length || !crypto.timingSafeEqual(expected, received)) {
       console.error('Webhook signature mismatch!');
       return res.status(400).send('Invalid signature');
     }
