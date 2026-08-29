@@ -1,6 +1,7 @@
 import { io, redisClient } from '../server';
 import { v4 as uuidv4 } from 'uuid';
 import User from '../models/User';
+import { isPremiumActive } from '../utils/premium';
 
 io.on('connection', (socket) => {
   // Existing WebRTC in-session chat
@@ -35,7 +36,7 @@ io.on('connection', (socket) => {
       const conversationKey = `chat:${[senderId, targetUserId].sort().join(':')}`;
       const msgCount = await redisClient.llen(conversationKey);
 
-      if (msgCount === 0 && !senderUser.premiumStatus) {
+      if (msgCount === 0 && !isPremiumActive(senderUser)) {
         // Reset check
         const now = new Date();
         const oneWeek = 7 * 24 * 60 * 60 * 1000;

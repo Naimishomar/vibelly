@@ -6,6 +6,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const server_1 = require("../server");
 const matchmaking_1 = require("../redis/matchmaking");
 const User_1 = __importDefault(require("../models/User"));
+const premium_1 = require("../utils/premium");
 server_1.io.on('connection', (socket) => {
     socket.on('search', async (data) => {
         const { userId, queueName = 'random-video-480', targetCountry, previousPeerSocketId } = data;
@@ -17,9 +18,9 @@ server_1.io.on('connection', (socket) => {
                     targetGender = undefined; // Guests cannot use gender filter
                 }
                 else {
-                    const user = await User_1.default.findById(userId).select('premiumStatus');
-                    if (!user || !user.premiumStatus) {
-                        targetGender = undefined; // Non-premium users cannot use gender filter
+                    const user = await User_1.default.findById(userId).select('premiumStatus premiumExpiryDate');
+                    if (!(0, premium_1.isPremiumActive)(user)) {
+                        targetGender = undefined; // Non-premium (or expired) users cannot use gender filter
                     }
                 }
             }

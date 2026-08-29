@@ -6,6 +6,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const server_1 = require("../server");
 const uuid_1 = require("uuid");
 const User_1 = __importDefault(require("../models/User"));
+const premium_1 = require("../utils/premium");
 server_1.io.on('connection', (socket) => {
     // Existing WebRTC in-session chat
     socket.on('send-message', (data) => {
@@ -34,7 +35,7 @@ server_1.io.on('connection', (socket) => {
                 return;
             const conversationKey = `chat:${[senderId, targetUserId].sort().join(':')}`;
             const msgCount = await server_1.redisClient.llen(conversationKey);
-            if (msgCount === 0 && !senderUser.premiumStatus) {
+            if (msgCount === 0 && !(0, premium_1.isPremiumActive)(senderUser)) {
                 // Reset check
                 const now = new Date();
                 const oneWeek = 7 * 24 * 60 * 60 * 1000;

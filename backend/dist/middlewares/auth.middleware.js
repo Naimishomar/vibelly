@@ -6,6 +6,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.requireAdmin = exports.requireAuth = void 0;
 const jwt_1 = require("../utils/jwt");
 const User_1 = __importDefault(require("../models/User"));
+const premium_1 = require("../utils/premium");
 const requireAuth = async (req, res, next) => {
     try {
         const authHeader = req.headers.authorization;
@@ -28,8 +29,8 @@ const requireAuth = async (req, res, next) => {
             res.status(403).json({ error: 'Forbidden: Your account has been banned' });
             return;
         }
-        // Lazy check for premium expiry
-        if (user.premiumStatus && user.premiumExpiryDate && new Date() > user.premiumExpiryDate) {
+        // Lazy check for premium expiry: self-heal the cached boolean once expired.
+        if (user.premiumStatus && !(0, premium_1.isPremiumActive)(user)) {
             user.premiumStatus = false;
             await user.save();
         }

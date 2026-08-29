@@ -2,6 +2,7 @@ import { redisClient, io } from '../server';
 import { v4 as uuidv4 } from 'uuid';
 import Session from '../models/Session';
 import User from '../models/User';
+import { isPremiumActive } from '../utils/premium';
 
 export const addToQueue = async (socketId: string, userId: string, baseQueueName: string, targetCountry?: string, targetGender?: string, previousPeerSocketId?: string): Promise<void> => {
   let userGender = 'unspecified';
@@ -12,7 +13,7 @@ export const addToQueue = async (socketId: string, userId: string, baseQueueName
     const user = await User.findById(userId);
     if (user) {
       userGender = user.gender || 'unspecified';
-      isPremium = user.premiumStatus || false;
+      isPremium = isPremiumActive(user);
       myCountry = user.country || 'unspecified';
     }
   }

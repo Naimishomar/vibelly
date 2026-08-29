@@ -1,6 +1,7 @@
 import { io } from '../server';
 import { addToQueue, removeFromQueue } from '../redis/matchmaking';
 import User from '../models/User';
+import { isPremiumActive } from '../utils/premium';
 
 io.on('connection', (socket) => {
   socket.on('search', async (data) => {
@@ -13,9 +14,9 @@ io.on('connection', (socket) => {
         if (!userId || userId.startsWith('guest-')) {
           targetGender = undefined; // Guests cannot use gender filter
         } else {
-          const user = await User.findById(userId).select('premiumStatus');
-          if (!user || !user.premiumStatus) {
-            targetGender = undefined; // Non-premium users cannot use gender filter
+          const user = await User.findById(userId).select('premiumStatus premiumExpiryDate');
+          if (!isPremiumActive(user)) {
+            targetGender = undefined; // Non-premium (or expired) users cannot use gender filter
           }
         }
       } catch (err) {

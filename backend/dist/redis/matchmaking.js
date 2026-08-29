@@ -8,6 +8,7 @@ const server_1 = require("../server");
 const uuid_1 = require("uuid");
 const Session_1 = __importDefault(require("../models/Session"));
 const User_1 = __importDefault(require("../models/User"));
+const premium_1 = require("../utils/premium");
 const addToQueue = async (socketId, userId, baseQueueName, targetCountry, targetGender, previousPeerSocketId) => {
     let userGender = 'unspecified';
     let isPremium = false;
@@ -16,7 +17,7 @@ const addToQueue = async (socketId, userId, baseQueueName, targetCountry, target
         const user = await User_1.default.findById(userId);
         if (user) {
             userGender = user.gender || 'unspecified';
-            isPremium = user.premiumStatus || false;
+            isPremium = (0, premium_1.isPremiumActive)(user);
             myCountry = user.country || 'unspecified';
         }
     }

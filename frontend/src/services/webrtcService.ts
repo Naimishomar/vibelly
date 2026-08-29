@@ -15,10 +15,12 @@ function parseMediaError(err: unknown): MediaErrorCode {
 
 export function attachStreamToVideo(video: HTMLVideoElement | null, stream: MediaStream | null) {
   if (!video || !stream) return;
-  // If the browser doesn't update dynamically when tracks are added, force a new MediaStream
-  if (video.srcObject === stream) {
-    video.srcObject = new MediaStream(stream.getTracks());
-  } else {
+  // Assign the live MediaStream directly. Do NOT snapshot it into a
+  // `new MediaStream(stream.getTracks())` — that captures whatever tracks exist
+  // at call time, so the track that arrives second (audio) gets stranded and is
+  // never heard. The browser keeps a directly-assigned stream up to date as
+  // tracks are added.
+  if (video.srcObject !== stream) {
     video.srcObject = stream;
   }
   void video.play().catch((e) => console.warn('Video play blocked by browser:', e));
@@ -142,9 +144,16 @@ class WebRTCService {
       };
 
       this.peerConnection.ontrack = (event) => {
-        const track = event.track;
-        if (!this.remoteStream!.getTracks().some((t) => t.id === track.id)) {
-          this.remoteStream!.addTrack(track);
+        // Prefer the stream the sender grouped its tracks into (both peers call
+        // addTrack(track, localStream), so event.streams[0] holds audio + video
+        // together and stays live). Fall back to hand-building only if absent.
+        if (event.streams[0]) {
+          this.remoteStream = event.streams[0];
+        } else {
+          const track = event.track;
+          if (!this.remoteStream!.getTracks().some((t) => t.id === track.id)) {
+            this.remoteStream!.addTrack(track);
+          }
         }
         this.onRemoteStreamCallback?.(this.remoteStream!);
       };

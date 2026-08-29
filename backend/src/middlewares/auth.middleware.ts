@@ -1,6 +1,7 @@
 import { Request, Response, NextFunction } from 'express';
 import { verifyAccessToken } from '../utils/jwt';
 import User from '../models/User';
+import { isPremiumActive } from '../utils/premium';
 
 export const requireAuth = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
   try {
@@ -28,8 +29,8 @@ export const requireAuth = async (req: Request, res: Response, next: NextFunctio
       return;
     }
 
-    // Lazy check for premium expiry
-    if (user.premiumStatus && user.premiumExpiryDate && new Date() > user.premiumExpiryDate) {
+    // Lazy check for premium expiry: self-heal the cached boolean once expired.
+    if (user.premiumStatus && !isPremiumActive(user)) {
       user.premiumStatus = false;
       await user.save();
     }
