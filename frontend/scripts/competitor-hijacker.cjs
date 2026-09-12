@@ -57,7 +57,13 @@ async function generateCompetitorPages() {
   console.log('✅ Saved sitemap-competitors.xml successfully!');
   
   // --- GOOGLE INDEXING API PING ---
-  const { google } = require('googleapis');
+  let google;
+  try {
+    ({ google } = require('googleapis'));
+  } catch (error) {
+    console.warn(`Google Indexing API unavailable; sitemap generation will continue: ${error.message}`);
+    return;
+  }
   let auth;
   
   const localKeyPath = path.join(__dirname, '..', 'google-key.json');

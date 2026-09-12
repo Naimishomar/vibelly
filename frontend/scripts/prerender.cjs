@@ -5,6 +5,7 @@ const siteUrl = 'https://vibelly.fun';
 const distPath = path.resolve(__dirname, '../dist');
 const publicDir = path.resolve(__dirname, '../public');
 const indexPath = path.join(distPath, 'index.html');
+const MAX_ROUTE_SEGMENT_LENGTH = 120;
 
 if (!fs.existsSync(indexPath)) {
   console.error('dist/index.html not found! Run build first.');
@@ -766,9 +767,15 @@ console.log(`Generating ${pages.length} prerendered SEO pages...`);
 
 let count = 0;
 for (const page of pages) {
-  const routeDir = path.join(distPath, page.slug);
+  // Keep generated route directories below filesystem filename limits even if
+  // an upstream content source introduces an unexpectedly long slug.
+  const safeSlug = page.slug
+    .split('/')
+    .map((segment) => segment.slice(0, MAX_ROUTE_SEGMENT_LENGTH).replace(/-+$/, ''))
+    .join('/');
+  const routeDir = path.join(distPath, safeSlug);
   if (!fs.existsSync(routeDir)) fs.mkdirSync(routeDir, { recursive: true });
-  fs.writeFileSync(path.join(routeDir, 'index.html'), renderPage(page.slug, page.city));
+  fs.writeFileSync(path.join(routeDir, 'index.html'), renderPage(safeSlug, page.city));
   count++;
 }
 

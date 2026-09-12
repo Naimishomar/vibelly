@@ -1,8 +1,18 @@
 const fs = require('fs');
 const path = require('path');
+const crypto = require('crypto');
 
 const siteUrl = 'https://vibelly.fun';
 const publicDir = path.join(__dirname, '..', 'public');
+const MAX_ROUTE_SLUG_LENGTH = 120;
+
+function boundedSlug(prefix, trend, suffix = '') {
+  const hash = crypto.createHash('sha1').update(trend).digest('hex').slice(0, 8);
+  const reserved = prefix.length + suffix.length + hash.length + 2;
+  const available = Math.max(20, MAX_ROUTE_SLUG_LENGTH - reserved);
+  const shortened = trend.slice(0, available).replace(/-+$/, '');
+  return `${prefix}${shortened}-${hash}${suffix}`;
+}
 
 async function hijackTrends() {
   console.log('🚀 Starting Trend Hijacker via Google News RSS...');
@@ -40,10 +50,10 @@ async function hijackTrends() {
         
       if (!cleanTrend) continue;
       
-      trendUrls.push(`${siteUrl}/video-chat-about-${cleanTrend}`);
-      trendUrls.push(`${siteUrl}/talk-about-${cleanTrend}-online`);
-      trendUrls.push(`${siteUrl}/${cleanTrend}-chat-room`);
-      trendUrls.push(`${siteUrl}/random-video-chat-for-${cleanTrend}`);
+      trendUrls.push(`${siteUrl}/${boundedSlug('video-chat-about-', cleanTrend)}`);
+      trendUrls.push(`${siteUrl}/${boundedSlug('talk-about-', cleanTrend, '-online')}`);
+      trendUrls.push(`${siteUrl}/${boundedSlug('', cleanTrend, '-chat-room')}`);
+      trendUrls.push(`${siteUrl}/${boundedSlug('random-video-chat-for-', cleanTrend)}`);
     }
     
     // Remove duplicates
@@ -67,7 +77,13 @@ async function hijackTrends() {
     console.log('✅ Saved sitemap-trends.xml successfully!');
     
     // --- GOOGLE INDEXING API PING ---
-    const { google } = require('googleapis');
+    let google;
+    try {
+      ({ google } = require('googleapis'));
+    } catch (error) {
+      console.warn(`Google Indexing API unavailable; sitemap generation will continue: ${error.message}`);
+      return;
+    }
     let auth;
     
     const localKeyPath = path.join(__dirname, '..', 'google-key.json');
