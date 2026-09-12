@@ -12,7 +12,9 @@ const router = (0, express_1.Router)();
 // GET /api/admin/users
 router.get('/users', auth_middleware_1.requireAuth, auth_middleware_1.requireAdmin, async (req, res) => {
     try {
-        const users = await User_1.default.find({}).select('-password -__v').sort({ createdAt: -1 });
+        const users = await User_1.default.find({})
+            .select('-password -__v')
+            .sort({ createdAt: -1 });
         res.json(users);
     }
     catch (error) {

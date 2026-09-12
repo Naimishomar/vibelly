@@ -8,7 +8,7 @@ export const getAllBlogs = async (req: Request, res: Response): Promise<void> =>
     const skip = (page - 1) * limit;
 
     const blogs = await Blog.find()
-      .select('-content') // exclude content for faster list loading
+      .select('-content -_id -__v') // expose only public blog metadata
       .sort({ createdAt: -1 })
       .skip(skip)
       .limit(limit);
@@ -33,7 +33,7 @@ export const getAllBlogs = async (req: Request, res: Response): Promise<void> =>
 export const getBlogBySlug = async (req: Request, res: Response): Promise<void> => {
   try {
     const { slug } = req.params;
-    const blog = await Blog.findOne({ slug });
+    const blog = await Blog.findOne({ slug }).select('-_id -__v');
 
     if (!blog) {
       res.status(404).json({ success: false, message: 'Blog not found' });
@@ -55,7 +55,7 @@ export const getRelatedBlogs = async (req: Request, res: Response): Promise<void
     const relatedBlogs = await Blog.aggregate([
       { $match: { slug: { $ne: slug } } },
       { $sample: { size: 3 } },
-      { $project: { content: 0 } } // Exclude full content to save bandwidth
+      { $project: { content: 0, _id: 0, __v: 0 } } // Exclude internal fields and full content
     ]);
 
     res.status(200).json({ success: true, data: relatedBlogs });

@@ -31,6 +31,13 @@ import rateLimit from 'express-rate-limit';
 const app = express();
 const httpServer = createServer(app);
 
+// API responses are not documents intended for search results.
+// This is a discovery/indexing hint only; route authorization remains mandatory.
+app.use('/api', (_req, res, next) => {
+  res.setHeader('X-Robots-Tag', 'noindex, nofollow, noarchive');
+  next();
+});
+
 const ALLOWED_ORIGINS = [
   'https://vibelly.fun',
   'https://www.vibelly.fun',

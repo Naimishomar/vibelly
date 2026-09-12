@@ -11,6 +11,7 @@ interface AdminUser {
   email: string;
   role: string;
   premiumStatus: boolean;
+  premiumExpiryDate?: string;
   createdAt: string;
   isBanned: boolean;
 }
@@ -131,11 +132,16 @@ export default function AdminDashboard() {
     }
   };
 
-  const filteredUsers = users.filter(u => 
-    u.name.toLowerCase().includes(searchQuery.toLowerCase()) || 
-    u.username.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    (u.email && u.email.toLowerCase().includes(searchQuery.toLowerCase()))
-  );
+  const isActivePremium = (u: AdminUser) =>
+    u.premiumStatus &&
+    (!u.premiumExpiryDate || new Date(u.premiumExpiryDate).getTime() > Date.now());
+
+  const filteredUsers = users.filter(u => {
+    const query = searchQuery.toLowerCase();
+    return u.name.toLowerCase().includes(query) ||
+      u.username.toLowerCase().includes(query) ||
+      Boolean(u.email && u.email.toLowerCase().includes(query));
+  });
 
   const filteredReports = reports.filter(r => 
     r.reporter?.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -264,9 +270,9 @@ export default function AdminDashboard() {
           >
             <div className="flex items-center gap-3 mb-4 text-zinc-400">
               <Crown size={18} className="text-yellow-500" />
-              <span className="text-sm font-medium uppercase tracking-wider">Premium Users</span>
+              <span className="text-sm font-medium uppercase tracking-wider">Active Premium Users</span>
             </div>
-            <p className="text-4xl font-light text-white">{isLoading ? '-' : users.filter(u => u.premiumStatus).length}</p>
+            <p className="text-4xl font-light text-white">{isLoading ? '-' : users.filter(isActivePremium).length}</p>
           </motion.div>
 
           <motion.div 
@@ -365,8 +371,10 @@ export default function AdminDashboard() {
                         </span>
                       </td>
                       <td className="px-6 py-4">
-                        {u.premiumStatus ? (
+                        {isActivePremium(u) ? (
                           <span className="text-yellow-400 font-medium text-xs">Premium</span>
+                        ) : u.premiumStatus ? (
+                          <span className="text-zinc-600 text-xs">Expired</span>
                         ) : (
                           <span className="text-zinc-600 text-xs">Free</span>
                         )}

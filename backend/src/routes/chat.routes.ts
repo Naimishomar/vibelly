@@ -57,10 +57,25 @@ router.get('/inbox', requireAuth, async (req, res) => {
   }
 });
 
+function canAccessConversation(req: any, userId: string, peerId: string): boolean {
+  const authenticatedUser = req.user;
+  const requesterIds = new Set([
+    authenticatedUser?._id?.toString(),
+    authenticatedUser?.id?.toString(),
+    authenticatedUser?.username,
+  ].filter(Boolean));
+  return requesterIds.has(userId) || requesterIds.has(peerId);
+}
+
 // GET /api/chat/history/:userId/:peerId - Fetch up to 25 latest messages
-router.get('/history/:userId/:peerId', async (req, res) => {
+router.get('/history/:userId/:peerId', requireAuth, async (req, res) => {
   try {
-    const { userId, peerId } = req.params;
+    const userId = String(req.params.userId);
+    const peerId = String(req.params.peerId);
+    if (!canAccessConversation(req, userId, peerId)) {
+      res.status(403).json({ error: 'Forbidden: You are not part of this conversation' });
+      return;
+    }
     const conversationKey = `chat:${[userId, peerId].sort().join(':')}`;
 
     // Get all messages from the list (which is capped at 25 anyway)
@@ -82,9 +97,14 @@ router.get('/history/:userId/:peerId', async (req, res) => {
 });
 
 // DELETE /api/chat/history/:userId/:peerId - Clear chat history between two users
-router.delete('/history/:userId/:peerId', async (req, res) => {
+router.delete('/history/:userId/:peerId', requireAuth, async (req, res) => {
   try {
-    const { userId, peerId } = req.params;
+    const userId = String(req.params.userId);
+    const peerId = String(req.params.peerId);
+    if (!canAccessConversation(req, userId, peerId)) {
+      res.status(403).json({ error: 'Forbidden: You are not part of this conversation' });
+      return;
+    }
     const conversationKey = `chat:${[userId, peerId].sort().join(':')}`;
     
     await redisClient.del(conversationKey);

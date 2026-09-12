@@ -8,7 +8,7 @@ const getAllBlogs = async (req, res) => {
         const limit = parseInt(req.query.limit) || 20;
         const skip = (page - 1) * limit;
         const blogs = await Blog_1.Blog.find()
-            .select('-content') // exclude content for faster list loading
+            .select('-content -_id -__v') // expose only public blog metadata
             .sort({ createdAt: -1 })
             .skip(skip)
             .limit(limit);
@@ -32,7 +32,7 @@ exports.getAllBlogs = getAllBlogs;
 const getBlogBySlug = async (req, res) => {
     try {
         const { slug } = req.params;
-        const blog = await Blog_1.Blog.findOne({ slug });
+        const blog = await Blog_1.Blog.findOne({ slug }).select('-_id -__v');
         if (!blog) {
             res.status(404).json({ success: false, message: 'Blog not found' });
             return;
@@ -52,7 +52,7 @@ const getRelatedBlogs = async (req, res) => {
         const relatedBlogs = await Blog_1.Blog.aggregate([
             { $match: { slug: { $ne: slug } } },
             { $sample: { size: 3 } },
-            { $project: { content: 0 } } // Exclude full content to save bandwidth
+            { $project: { content: 0, _id: 0, __v: 0 } } // Exclude internal fields and full content
         ]);
         res.status(200).json({ success: true, data: relatedBlogs });
     }

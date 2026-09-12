@@ -35,7 +35,10 @@ export default function DirectChatWindow({ socket, currentUser, selectedUser, on
     const fetchHistory = async () => {
       try {
         const backendUrl = import.meta.env.VITE_BACKEND_URL || 'http://localhost:5000';
-        const res = await fetch(`${backendUrl}/api/chat/history/${currentUser._id || currentUser.username}/${selectedUser.userId}`);
+        const token = localStorage.getItem('vibe_token') || authState.accessToken;
+        const res = await fetch(`${backendUrl}/api/chat/history/${currentUser._id || currentUser.username}/${selectedUser.userId}`, {
+          headers: token ? { Authorization: `Bearer ${token}` } : undefined,
+        });
         const data = await res.json();
         if (data.messages) {
           setMessages(data.messages);

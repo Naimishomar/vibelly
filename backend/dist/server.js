@@ -36,6 +36,12 @@ const app = (0, express_1.default)();
 exports.app = app;
 const httpServer = (0, http_1.createServer)(app);
 exports.httpServer = httpServer;
+// API responses are not documents intended for search results.
+// This is a discovery/indexing hint only; route authorization remains mandatory.
+app.use('/api', (_req, res, next) => {
+    res.setHeader('X-Robots-Tag', 'noindex, nofollow, noarchive');
+    next();
+});
 const ALLOWED_ORIGINS = [
     'https://vibelly.fun',
     'https://www.vibelly.fun',

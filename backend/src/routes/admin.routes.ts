@@ -10,7 +10,9 @@ const router = Router();
 // GET /api/admin/users
 router.get('/users', requireAuth, requireAdmin, async (req, res) => {
   try {
-    const users = await User.find({}).select('-password -__v').sort({ createdAt: -1 });
+    const users = await User.find({})
+      .select('-password -__v')
+      .sort({ createdAt: -1 });
     res.json(users);
   } catch (error) {
     console.error('Error fetching users for admin:', error);
