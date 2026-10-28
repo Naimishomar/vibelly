@@ -105,33 +105,33 @@ const faqs = [
 ];
 
 const stats = [
-  { value: '5M+', label: 'Conversations' },
-  { value: '190+', label: 'Countries' },
-  { value: '<1s', label: 'Match time' },
+  { value: 'Free', label: 'Video & text chat' },
+  { value: 'HD', label: 'WebRTC video' },
+  { value: '0', label: 'Apps to install' },
   { value: '18+', label: 'Adults only' },
 ];
 
 const blogPosts = [
   {
-    title: 'Safe Fun OmeTV Alternatives: The Best Sites to chat with strangers online.',
-    category: 'Chat Platforms',
-    date: 'July 1, 2026',
-    image: 'https://images.unsplash.com/photo-1516321497487-e288fb19713f?w=600&h=400&fit=crop',
-    link: '/blog/ometv-alternatives'
-  },
-  {
-    title: 'Best Websites to Chat with Strangers',
+    title: 'How to Choose an Omegle Alternative: 7 Things That Actually Matter',
     category: 'Guides',
-    date: 'June 28, 2026',
-    image: 'https://images.unsplash.com/photo-1515378791036-0648a3ef77b2?w=600&h=400&fit=crop',
-    link: '/blog/best-websites-to-chat-with-strangers'
+    date: 'October 28, 2026',
+    image: 'https://images.unsplash.com/photo-1516321497487-e288fb19713f?w=600&h=400&fit=crop',
+    link: '/blog/how-to-choose-an-omegle-alternative'
   },
   {
-    title: 'How to Talk to a Stranger Online safely in 2026',
+    title: 'How to Start a Conversation With a Stranger on Video Chat',
+    category: 'Tips',
+    date: 'October 28, 2026',
+    image: 'https://images.unsplash.com/photo-1515378791036-0648a3ef77b2?w=600&h=400&fit=crop',
+    link: '/blog/how-to-start-a-conversation-with-a-stranger'
+  },
+  {
+    title: 'How to Stay Safe on Random Video Chat: A Practical Checklist',
     category: 'Safety',
-    date: 'June 24, 2026',
+    date: 'October 28, 2026',
     image: 'https://images.unsplash.com/photo-1573164713988-8665fc963095?w=600&h=400&fit=crop',
-    link: '/blog/how-to-talk-to-a-stranger-online'
+    link: '/blog/random-video-chat-safety-checklist'
   }
 ];
 

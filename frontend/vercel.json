@@ -2,11 +2,11 @@
   "trailingSlash": false,
   "rewrites": [
     {
-      "source": "/(chat|live|mcp|admin|oauth-callback|backlinks|blog|groups|call)",
+      "source": "/(chat|live|mcp|admin|oauth-callback|backlinks|groups|call)",
       "destination": "/app.html"
     },
     {
-      "source": "/(groups|creator|setup|call|blog)/(.*)",
+      "source": "/(groups|creator|setup|call)/(.*)",
       "destination": "/app.html"
     }
   ],

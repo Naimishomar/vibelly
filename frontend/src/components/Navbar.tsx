@@ -14,7 +14,7 @@ export default function Navbar() {
   const [isSettingsModalOpen, setIsSettingsModalOpen] = useState(false);
   const [isReferralModalOpen, setIsReferralModalOpen] = useState(false);
   const [dropdownOpen, setDropdownOpen] = useState(false);
-  const [liveUsers, setLiveUsers] = useState(5500 + Math.floor(Math.random() * 500));
+  const [liveUsers, setLiveUsers] = useState(0);
   const dropdownRef = useRef<HTMLDivElement>(null);
   
   const { user, isAuthenticated, logout, guestAccessEnabled } = useAuthStore();
@@ -25,10 +25,16 @@ export default function Navbar() {
     setDropdownOpen(false);
   };
 
+  // Real count from the backend (Redis online:users); the pill hides while it is 0/unknown.
   useEffect(() => {
-    const interval = setInterval(() => {
-      setLiveUsers(5500 + Math.floor(Math.random() * 500));
-    }, 3000);
+    const backendUrl = import.meta.env.VITE_BACKEND_URL || 'http://localhost:5000';
+    const load = () =>
+      fetch(`${backendUrl}/api/stats/online`)
+        .then((res) => res.json())
+        .then((data: { online?: number }) => setLiveUsers(Number(data.online) || 0))
+        .catch(() => {});
+    load();
+    const interval = setInterval(load, 30000);
     return () => clearInterval(interval);
   }, []);
 
@@ -80,7 +86,7 @@ export default function Navbar() {
             <div className="flex items-center gap-4">
               <ThemeToggle />
               {/* Live online user count */}
-              <div className="hidden sm:flex items-center gap-2 px-3 py-2 ml-5 bg-zinc-900/80 border border-white/30 rounded-full backdrop-blur-md">
+              <div className={`hidden ${liveUsers > 0 ? 'sm:flex' : ''} items-center gap-2 px-3 py-2 ml-5 bg-zinc-900/80 border border-white/30 rounded-full backdrop-blur-md`}>
                 <div className="relative flex h-2 w-2">
                   <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
                   <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
@@ -197,7 +203,7 @@ export default function Navbar() {
               </button>
 
               {/* Live online user count */}
-              <div className="hidden sm:flex items-center gap-2 px-3 py-2 ml-5  bg-zinc-900/80 border border-white/30 rounded-full backdrop-blur-md">
+              <div className={`hidden ${liveUsers > 0 ? 'sm:flex' : ''} items-center gap-2 px-3 py-2 ml-5  bg-zinc-900/80 border border-white/30 rounded-full backdrop-blur-md`}>
                 <div className="relative flex h-2 w-2">
                   <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
                   <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>

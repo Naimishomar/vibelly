@@ -3,9 +3,9 @@ export const site = {
   url: 'https://vibelly.fun',
   defaultDescription:
     'Vibelly is the ultimate free alternative to Omegle and OmeTV. Instantly connect with strangers worldwide through high-quality random video calling and chat.',
-  defaultImage: 'https://i.pinimg.com/736x/bf/f9/90/bff990bfc21bdc142b69c6ed28b53b6d.jpg',
+  defaultImage: 'https://vibelly.fun/og-image.png',
   logo: 'https://vibelly.fun/favicon.jpg',
-  social: ['https://twitter.com/vibellyapp', 'https://instagram.com/vibellyapp'],
+  social: ['https://instagram.com/vibelly.official'],
 } as const;
 
 export interface Faq {

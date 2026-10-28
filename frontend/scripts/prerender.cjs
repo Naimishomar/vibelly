@@ -21,6 +21,8 @@ if (!SEO_BLOCK.test(template)) {
   process.exit(1);
 }
 
+const BLOG_POSTS = require('../src/content/blog-posts.json');
+
 const esc = (str) =>
   String(str)
     .replace(/&/g, '&amp;')
@@ -454,10 +456,10 @@ function headBlock({ title, description, url, robots = INDEX_ROBOTS, graph = [] 
       `<meta data-ssr property="og:url" content="${url}" />`,
       `<meta data-ssr property="og:title" content="${esc(title)}" />`,
       `<meta data-ssr property="og:description" content="${esc(description)}" />`,
-      `<meta data-ssr property="og:image" content="${siteUrl}/favicon.jpg" />`,
+      `<meta data-ssr property="og:image" content="${siteUrl}/og-image.png" />`,
       `<meta data-ssr property="twitter:title" content="${esc(title)}" />`,
       `<meta data-ssr property="twitter:description" content="${esc(description)}" />`,
-      `<meta data-ssr property="twitter:image" content="${siteUrl}/favicon.jpg" />`
+      `<meta data-ssr property="twitter:image" content="${siteUrl}/og-image.png" />`
     );
   }
   if (graph.length) {
@@ -468,7 +470,7 @@ function headBlock({ title, description, url, robots = INDEX_ROBOTS, graph = [] 
   return `<!-- seo:start -->\n    ${tags.join('\n    ')}\n    <!-- seo:end -->`;
 }
 
-function pageGraph(slug, title, description, faqs) {
+function pageGraph(slug, title, description, faqs, crumbs = []) {
   const url = `${siteUrl}/${slug}`;
   const graph = [
     ...SITE_GRAPH,
@@ -487,7 +489,8 @@ function pageGraph(slug, title, description, faqs) {
       '@id': `${url}#breadcrumb`,
       itemListElement: [
         { '@type': 'ListItem', position: 1, name: 'Home', item: `${siteUrl}/` },
-        { '@type': 'ListItem', position: 2, name: title.split(' | ')[0], item: url },
+        ...crumbs.map(([name, item], i) => ({ '@type': 'ListItem', position: i + 2, name, item })),
+        { '@type': 'ListItem', position: crumbs.length + 2, name: title.split(' | ')[0], item: url },
       ],
     },
   ];
@@ -507,6 +510,7 @@ function pageGraph(slug, title, description, faqs) {
 const NAV_LINKS = [
   ...Object.entries(CORE_COPY).map(([slug, c]) => [`/${slug}`, c.h1]),
   ['/safety', 'Safety & Community Rules'],
+  ['/blog', 'Vibelly Blog: tips & guides'],
 ];
 
 function buildBody({ h1, lead, sections = [], faqs = [] }, selfPath) {
@@ -544,6 +548,28 @@ ${linkHtml}
       </nav>
     </main>
   </div>`;
+}
+
+// Same markdown subset BlogPost.tsx renders: ##, ###, "- " lists, **bold**, paragraphs.
+function markdownToHtml(md) {
+  const inline = (t) => esc(t).replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>');
+  const out = [];
+  let list = [];
+  const flush = () => {
+    if (list.length) out.push(`      <ul>\n${list.map((li) => `        <li>${inline(li)}</li>`).join('\n')}\n      </ul>`);
+    list = [];
+  };
+  for (const raw of md.split('\n')) {
+    const line = raw.trim();
+    if (line.startsWith('- ')) { list.push(line.slice(2)); continue; }
+    flush();
+    if (!line) continue;
+    if (line.startsWith('### ')) out.push(`      <h3>${inline(line.slice(4))}</h3>`);
+    else if (line.startsWith('## ')) out.push(`      <h2>${inline(line.slice(3))}</h2>`);
+    else out.push(`      <p>${inline(line)}</p>`);
+  }
+  flush();
+  return out.join('\n');
 }
 
 function render(head, body) {
@@ -599,6 +625,45 @@ for (const [slug, page] of Object.entries(APP_PAGES)) {
       buildBody({ h1: page.h1, lead: page.description }, `/${slug}`)
     )
   );
+  sitemapPaths.push(`/${slug}`);
+}
+
+// ─── Blog ───
+{
+  const title = 'Vibelly Blog | Random Video Chat Tips & Guides';
+  const description = 'Tips, guides, and safety advice for random video chat, talking to strangers, and choosing an Omegle alternative.';
+  const list = BLOG_POSTS.map(
+    (p) => `        <li><a href="/blog/${p.slug}">${esc(p.title)}</a> - ${esc(p.description)}</li>`
+  ).join('\n');
+  const body = buildBody({ h1: 'The Vibelly Blog', lead: description }, '/blog').replace(
+    '      <h2>Explore Vibelly</h2>',
+    `      <ul>\n${list}\n      </ul>\n      <h2>Explore Vibelly</h2>`
+  );
+  write('blog/index.html', render(headBlock({ title, description, url: `${siteUrl}/blog`, graph: pageGraph('blog', title, description) }), body));
+  sitemapPaths.push('/blog');
+}
+
+for (const post of BLOG_POSTS) {
+  const slug = `blog/${post.slug}`;
+  const url = `${siteUrl}/${slug}`;
+  const title = `${post.title} | Vibelly Blog`;
+  const graph = pageGraph(slug, title, post.description, null, [['Blog', `${siteUrl}/blog`]]);
+  graph.push({
+    '@type': 'BlogPosting',
+    headline: post.title,
+    description: post.description,
+    image: `${siteUrl}/og-image.png`,
+    datePublished: post.date,
+    dateModified: post.date,
+    author: { '@type': 'Organization', name: post.author, url: `${siteUrl}/` },
+    publisher: { '@id': `${siteUrl}/#org` },
+    mainEntityOfPage: { '@id': `${url}#webpage` },
+  });
+  const body = buildBody({ h1: post.title, lead: `${post.date} · By ${post.author}` }, `/${slug}`).replace(
+    '      <h2>Explore Vibelly</h2>',
+    `${markdownToHtml(post.content)}\n      <h2>Explore Vibelly</h2>`
+  );
+  write(`${slug}/index.html`, render(headBlock({ title, description: post.description, url, graph }), body));
   sitemapPaths.push(`/${slug}`);
 }
 

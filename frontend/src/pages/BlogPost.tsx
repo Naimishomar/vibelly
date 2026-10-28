@@ -1,19 +1,11 @@
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
 import SEO from '../components/SEO';
-import { ArrowLeft, Loader2 } from 'lucide-react';
+import { ArrowLeft } from 'lucide-react';
 import { motion } from 'framer-motion';
-
-interface BlogPostData {
-  slug: string;
-  title: string;
-  description: string;
-  content: string;
-  date: string;
-  author: string;
-}
+import posts from '../content/blog-posts.json';
 
 const renderMarkdown = (content: string) => {
   return content.split('\n').map((line, i) => {
@@ -35,44 +27,12 @@ const renderMarkdown = (content: string) => {
 
 export default function BlogPost() {
   const { slug } = useParams<{ slug: string }>();
-  const [post, setPost] = useState<BlogPostData | null>(null);
-  const [relatedPosts, setRelatedPosts] = useState<BlogPostData[]>([]);
-  const [loading, setLoading] = useState(true);
+  const post = posts.find((p) => p.slug === slug);
+  const relatedPosts = posts.filter((p) => p.slug !== slug);
 
   useEffect(() => {
     window.scrollTo(0, 0);
-    const fetchBlog = async () => {
-      try {
-        const backendUrl = import.meta.env.VITE_BACKEND_URL || 'http://localhost:5000';
-        const res = await fetch(`${backendUrl}/api/blogs/${slug}`);
-        const data = await res.json();
-        if (data.success) {
-          setPost(data.data);
-        }
-        
-        // Fetch related blogs
-        const relatedRes = await fetch(`${backendUrl}/api/blogs/related/${slug}`);
-        const relatedData = await relatedRes.json();
-        if (relatedData.success) {
-          setRelatedPosts(relatedData.data);
-        }
-
-      } catch (error) {
-        console.error('Failed to fetch blog', error);
-      } finally {
-        setLoading(false);
-      }
-    };
-    fetchBlog();
   }, [slug]);
-
-  if (loading) {
-    return (
-      <div className="min-h-screen bg-[#15171B] flex items-center justify-center">
-        <Loader2 className="animate-spin text-white w-8 h-8" />
-      </div>
-    );
-  }
 
   if (!post) {
     return (
@@ -89,8 +49,8 @@ export default function BlogPost() {
         title={`${post.title} | Vibelly Blog`}
         description={post.description}
         canonicalUrl={`/blog/${post.slug}`}
-        noindex
         type="article"
+        datePublished={post.date}
       />
       <div className="relative z-10 flex flex-col min-h-screen">
         <Navbar />
