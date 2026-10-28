@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useLayoutEffect } from 'react';
 import { Helmet } from 'react-helmet-async';
 import { site, absoluteUrl } from '../lib/seo';
 import type { SeoPageConfig } from '../lib/seo';
@@ -13,10 +13,11 @@ export default function SEO({
 }: SeoPageConfig) {
   const url = absoluteUrl(canonicalUrl);
 
-  // Drop the static/prerendered meta tags (marked data-ssr) once Helmet's are mounted,
-  // otherwise the page ships two <title>s, two canonicals, etc. The prerendered JSON-LD
-  // is kept: it is the only structured data on the page.
-  useEffect(() => {
+  // Before the real page paints: drop the prerendered body (#prerender) and the static
+  // meta tags (marked data-ssr), otherwise the page shows twice and ships two <title>s,
+  // canonicals, etc. The prerendered JSON-LD is kept: it is the only structured data.
+  useLayoutEffect(() => {
+    document.getElementById('prerender')?.remove();
     document.head.querySelectorAll('[data-ssr]:not(script)').forEach((el) => el.remove());
   }, []);
 

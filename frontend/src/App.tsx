@@ -46,7 +46,8 @@ function ScrollToTop() {
   return null;
 }
 
-const PageLoader = () => (
+// On prerendered pages the static content stays visible while the page chunk loads.
+const PageLoader = () => document.getElementById('prerender') ? null : (
   <div className="min-h-screen bg-[#15171B] flex items-center justify-center">
     <Loader2 className="animate-spin text-white w-8 h-8" />
   </div>

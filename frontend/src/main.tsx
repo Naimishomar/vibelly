@@ -7,6 +7,11 @@ import { applyTheme, getTheme } from './lib/theme'
 
 applyTheme(getTheme())
 
+// #prerender belongs to one URL. If the service worker served this HTML for another route
+// (it falls back to index.html), drop it now; otherwise SEO.tsx removes it on mount.
+const prerendered = document.getElementById('prerender')
+if (prerendered && prerendered.dataset.path !== location.pathname) prerendered.remove()
+
 // After a deploy, an open tab (or one served by the previous service worker) can request
 // lazy chunks that no longer exist, which leaves a blank page. Reload once to pick up the
 // new build; the timestamp guard prevents a reload loop if the chunk is genuinely broken.

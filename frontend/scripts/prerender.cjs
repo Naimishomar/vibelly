@@ -16,6 +16,10 @@ if (!fs.existsSync(indexPath)) {
 
 const template = fs.readFileSync(indexPath, 'utf-8');
 const SEO_BLOCK = /<!-- seo:start -->[\s\S]*?<!-- seo:end -->/;
+if (template.includes('id="prerender"')) {
+  console.error('dist/index.html is already prerendered; run `vite build` before this script.');
+  process.exit(1);
+}
 if (!SEO_BLOCK.test(template)) {
   console.error('index.html is missing the <!-- seo:start --> / <!-- seo:end --> markers.');
   process.exit(1);
@@ -474,7 +478,9 @@ function buildBody({ h1, lead, sections = [], faqs = [] }, selfPath) {
 
   // The h1 uses the same size classes as the React hero, so React's re-render on mount is
   // not a larger paint and LCP is recorded at first paint instead of after the JS loads.
-  return `<div id="root">
+  // Prerendered markup lives beside #root, not inside it: React mounts into the empty #root
+  // and SEO.tsx removes #prerender just before the real page paints (no spinner in between).
+  return `<div id="prerender" data-path="${selfPath || ''}">
     <main class="px-6 py-10 max-w-4xl mx-auto">
       <h1 class="text-4xl sm:text-5xl lg:text-6xl font-normal tracking-tight leading-[1.1] mb-4" style="font-family: 'Playfair Display', Georgia, serif">${esc(h1)}</h1>
 ${lead ? `      <p class="text-base sm:text-lg text-zinc-400 mb-6">${esc(lead)}</p>\n` : ''}${sectionsHtml}${faqHtml}
@@ -485,7 +491,8 @@ ${linkHtml}
         </ul>
       </nav>
     </main>
-  </div>`;
+  </div>
+    <div id="root"></div>`;
 }
 
 // Same markdown subset BlogPost.tsx renders: ##, ###, "- " lists, **bold**, paragraphs.
@@ -499,7 +506,7 @@ function markdownToHtml(md) {
   const out = [];
   let list = [];
   const flush = () => {
-    if (list.length) out.push(`      <ul>\n${list.map((li) => `        <li>${inline(li)}</li>`).join('\n')}\n      </ul>`);
+    if (list.length) out.push(`      <ul>\n${list.map((li) => `        <li class="ml-6 list-disc mb-2 text-zinc-300">${inline(li)}</li>`).join('\n')}\n      </ul>`);
     list = [];
   };
   for (const raw of md.split('\n')) {
@@ -509,7 +516,7 @@ function markdownToHtml(md) {
     if (!line) continue;
     if (line.startsWith('### ')) out.push(`      <h3>${inline(line.slice(4))}</h3>`);
     else if (line.startsWith('## ')) out.push(`      <h2>${inline(line.slice(3))}</h2>`);
-    else out.push(`      <p>${inline(line)}</p>`);
+    else out.push(`      <p class="mb-5 leading-relaxed text-zinc-400 text-lg">${inline(line)}</p>`);
   }
   flush();
   return out.join('\n');
