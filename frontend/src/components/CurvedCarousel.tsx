@@ -3,23 +3,23 @@ import { motion, AnimatePresence } from 'framer-motion';
 
 const CAROUSEL_ITEMS = [
   {
-    image: 'https://i.pinimg.com/736x/bd/90/8d/bd908d55e7470836489830c877a98ba1.jpg',
+    image: 'https://i.pinimg.com/236x/bd/90/8d/bd908d55e7470836489830c877a98ba1.jpg',
     title: 'Match 1',
   },
   {
-    image: 'https://i.pinimg.com/736x/7d/8c/cd/7d8ccddd1a01cf6d00f9f653877a39dc.jpg',
+    image: 'https://i.pinimg.com/236x/7d/8c/cd/7d8ccddd1a01cf6d00f9f653877a39dc.jpg',
     title: 'Match 2',
   },
   {
-    image: 'https://i.pinimg.com/736x/2d/14/5a/2d145affbae44c262bca0710399d2891.jpg',
+    image: 'https://i.pinimg.com/236x/2d/14/5a/2d145affbae44c262bca0710399d2891.jpg',
     title: 'Match 3',
   },
   {
-    image: 'https://i.pinimg.com/736x/83/57/b6/8357b60aa4071d194bdadb935ef5db26.jpg',
+    image: 'https://i.pinimg.com/236x/83/57/b6/8357b60aa4071d194bdadb935ef5db26.jpg',
     title: 'Match 4',
   },
   {
-    image: 'https://i.pinimg.com/736x/0d/e0/27/0de0275fca2cf514d09ca6f64bf14c70.jpg',
+    image: 'https://i.pinimg.com/236x/0d/e0/27/0de0275fca2cf514d09ca6f64bf14c70.jpg',
     title: 'Match 5',
   }
 ];
