@@ -5,20 +5,33 @@ import Footer from '../components/Footer';
 import SEO from '../components/SEO';
 import { ArrowLeft } from 'lucide-react';
 import posts from '../content/blog-posts.json';
+import pages from '../content/pages.json';
+
+// Inline markdown: **bold** and [text](https://url). Mirrored by markdownToHtml in scripts/prerender.cjs.
+const renderInline = (text: string) =>
+  text.split(/(\*\*.*?\*\*|\[[^\]]+\]\([^)\s]+\))/g).map((p, j) => {
+    if (p.startsWith('**')) return <strong key={j} className="text-white font-semibold">{p.slice(2, -2)}</strong>;
+    const link = p.match(/^\[([^\]]+)\]\(([^)\s]+)\)$/);
+    if (link) {
+      return link[2].startsWith('/')
+        ? <Link key={j} to={link[2]} className="underline hover:text-white">{link[1]}</Link>
+        : <a key={j} href={link[2]} target="_blank" rel="noopener noreferrer" className="underline hover:text-white">{link[1]}</a>;
+    }
+    return p;
+  });
 
 const renderMarkdown = (content: string) => {
   return content.split('\n').map((line, i) => {
     const trimmed = line.trim();
     if (trimmed.startsWith('### ')) return <h3 key={i} className="text-2xl font-bold mt-10 mb-4 text-white" style={{ fontFamily: 'Georgia, serif' }}>{trimmed.slice(4)}</h3>;
     if (trimmed.startsWith('## ')) return <h2 key={i} className="text-3xl font-bold mt-12 mb-6 text-white" style={{ fontFamily: 'Georgia, serif' }}>{trimmed.slice(3)}</h2>;
-    if (trimmed.startsWith('- ')) return <li key={i} className="ml-6 list-disc mb-2 text-zinc-300">{trimmed.slice(2)}</li>;
+    if (trimmed.startsWith('- ')) return <li key={i} className="ml-6 list-disc mb-2 text-zinc-300">{renderInline(trimmed.slice(2))}</li>;
     if (trimmed.match(/^[0-9]+\.\s/)) return <h3 key={i} className="text-xl font-semibold mt-8 mb-4 text-white">{trimmed}</h3>;
     if (trimmed === '') return null;
     
-    const parts = trimmed.split(/(\*\*.*?\*\*)/g);
     return (
       <p key={i} className="mb-5 leading-relaxed text-zinc-400 text-lg">
-        {parts.map((p, j) => p.startsWith('**') ? <strong key={j} className="text-white font-semibold">{p.slice(2, -2)}</strong> : p)}
+        {renderInline(trimmed)}
       </p>
     );
   });
@@ -60,7 +73,7 @@ export default function BlogPost() {
           </Link>
 
           <div>
-            <div className="text-zinc-500 font-medium mb-4">{post.date} • By {post.author}</div>
+            <div className="text-zinc-500 font-medium mb-4">{post.date} • By <Link to="/about" className="underline hover:text-white">{post.author}</Link></div>
             <h1 className="text-4xl md:text-5xl font-normal leading-tight mb-8" style={{ fontFamily: '"Playfair Display", "Merriweather", "Lora", ui-serif, Georgia, Cambria, "Times New Roman", Times, serif' }}>
               {post.title}
             </h1>
@@ -71,6 +84,12 @@ export default function BlogPost() {
               {renderMarkdown(post.content)}
             </div>
             
+            <div className="mt-16 p-6 rounded-2xl bg-white/5 border border-white/10">
+              <p className="text-white font-semibold">{pages.author.name}</p>
+              <p className="text-zinc-500 text-sm mb-2">{pages.author.role}</p>
+              <p className="text-zinc-400 text-sm leading-relaxed">{pages.author.bio}</p>
+            </div>
+
             {/* Related Posts Section */}
             {relatedPosts.length > 0 && (
               <div className="mt-20 pt-12 border-t border-white/10">

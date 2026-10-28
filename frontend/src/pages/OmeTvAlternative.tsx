@@ -17,7 +17,7 @@ const features = [
   {
     icon: Lock,
     title: 'No Social Login Required',
-    desc: 'Unlike OmeTV which forces you to use Facebook or VK, Vibelly is 100% anonymous.',
+    desc: 'No account, email, or social login needed. Vibelly is anonymous by default.',
   },
   {
     icon: Shield,
@@ -56,8 +56,8 @@ export default function OmeTvAlternative() {
   return (
     <div className="min-h-screen bg-[#15171B] text-white flex flex-col font-sans">
       <SEO 
-        title="The Best OmeTV Alternative Without Facebook Login | Vibelly" 
-        description="Looking for an OmeTV alternative that doesn't require a Facebook account? Vibelly is 100% anonymous, free, and features free random video chat."
+        title="OmeTV Alternative: Random Video Chat With No Account | Vibelly" 
+        description="Looking for an OmeTV alternative? Vibelly is free, adults-only random video chat with no account, email, or social login needed to start."
         canonicalUrl="/ometv-alternative"
       />
       <BlinkingDotsGrid />
@@ -82,7 +82,7 @@ export default function OmeTvAlternative() {
             className="text-4xl md:text-6xl font-normal tracking-tight leading-[1.1] mb-8"
             style={{ fontFamily: '"Playfair Display", "Merriweather", "Lora", ui-serif, Georgia, Cambria, "Times New Roman", Times, serif' }}
           >
-            Tired of Facebook Logins?<br />
+            No Account Needed.<br />
             Meet Vibelly.
           </motion.h1>
 
@@ -92,8 +92,8 @@ export default function OmeTvAlternative() {
             transition={{ delay: 0.2 }}
             className="text-lg md:text-xl text-zinc-400 mb-10 max-w-2xl leading-relaxed"
           >
-            OmeTV forces you to link your social media. We don't. 
-            Experience true random video chat with complete anonymity and no social login.
+            No email, no phone number, no social login.
+            Free, adults-only random video chat that starts in your browser.
           </motion.p>
 
           <motion.div
@@ -156,16 +156,15 @@ export default function OmeTvAlternative() {
             {
               heading: 'Why people look for an OmeTV alternative',
               paragraphs: [
-                'OmeTV remains one of the most popular random video chat apps, but it is far from perfect. The biggest complaint by far is that it forces you to log in with your personal Facebook or VK account before you can start chatting. For people who value privacy, that single requirement is a dealbreaker.',
-                'There are other frustrations too: frequent bans, an aggressive verification flow, and an experience that increasingly nudges you toward in-app purchases. When your "anonymous video chat" app demands your real identity, it stops feeling anonymous.',
-                'That is why so many users search for an OmeTV alternative that keeps the good parts — random video chat with people around the world — and drops the social-media login requirement entirely.',
+                'OmeTV is one of the most popular random video chat apps. If you want an alternative where you can start without any account, inside an adults-only community with reports reviewed by a real team, Vibelly is built for exactly that.',
+                'Vibelly asks for no email, no phone number, and no social media account before you chat. Privacy is the default, not an upgrade.',
               ],
             },
             {
               heading: 'OmeTV vs Vibelly: the real differences',
               paragraphs: ['The differences between OmeTV and Vibelly come down to privacy, bans, and how the free random video chat actually works:'],
               bullets: [
-                'No Facebook or VK login — Vibelly is 100% anonymous with no account required',
+                'No account, email, or social login needed to start chatting',
                 'No surprise bans: skip the next stranger freely without fear of a penalty',
                 'Free video chat with no pay-to-talk walls on the core experience',
                 'One-tap reporting that protects you without tying chats to your social identity',
@@ -202,8 +201,8 @@ export default function OmeTvAlternative() {
 
         <FAQSection faqs={[
           {
-            question: "Why is Vibelly better than OmeTV?",
-            answer: "Unlike OmeTV, Vibelly does not force you to log in with Facebook or VK. We prioritize your privacy and offer complete anonymity while maintaining a safe, moderated environment."
+            question: "How is Vibelly different from OmeTV?",
+            answer: "Vibelly needs no account or social login to start chatting, is strictly 18+, and every call has a one-tap Report button reviewed by our team. For a sourced, side-by-side look at OmeTV and others, read our Omegle alternatives comparison on the blog."
           },
           {
             question: "Do I need a Facebook account to use Vibelly?",
@@ -220,8 +219,8 @@ export default function OmeTvAlternative() {
         ]} />
 
         <ShareButtons
-          title="The Best OmeTV Alternative Without Facebook Login | Vibelly"
-          description="Video chat online without a Facebook login — the free, anonymous OmeTV alternative that works right in your browser."
+          title="OmeTV Alternative: Random Video Chat With No Account | Vibelly"
+          description="Video chat online with no account or social login: a free, adults-only OmeTV alternative that works right in your browser."
         />
 
         <Footer />

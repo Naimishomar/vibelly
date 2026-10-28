@@ -40,6 +40,15 @@ const SITE_GRAPH = [
     logo: `${siteUrl}/favicon.jpg`,
     email: 'vibellyofficial@gmail.com',
     sameAs: ['https://instagram.com/vibelly.official'],
+    founder: { '@id': `${siteUrl}/about#founder` },
+  },
+  {
+    '@type': 'Person',
+    '@id': `${siteUrl}/about#founder`,
+    name: PAGES.author.name,
+    jobTitle: PAGES.author.role,
+    description: PAGES.author.bio,
+    url: `${siteUrl}/about`,
   },
   {
     '@type': 'WebSite',
@@ -128,6 +137,14 @@ const APP_PAGES = {
     lead: PAGES.terms.intro,
     sections: PAGES.terms.sections,
   },
+  about: {
+    title: 'About Vibelly | Who Runs Vibelly',
+    description:
+      'Vibelly is a free, adults-only random video chat built and run by Naimish Omar. Who runs it, how it is funded, and how we approach safety.',
+    h1: 'About Vibelly',
+    pageType: 'AboutPage',
+    sections: PAGES.about.sections,
+  },
   safety: {
     title: 'Safety & Community Rules | Vibelly',
     description:
@@ -182,24 +199,24 @@ const CORE_COPY = {
     ],
   },
   'ometv-alternative': {
-    title: 'The Best OmeTV Alternative Without Facebook Login | Vibelly',
+    title: 'OmeTV Alternative: Random Video Chat With No Account | Vibelly',
     description:
-      "Looking for an OmeTV alternative that doesn't require a Facebook account? Vibelly is 100% anonymous, free, and features free random video chat.",
-    h1: 'The Best OmeTV Alternative Without Facebook Login',
-    lead: 'OmeTV forces you to link your social media. Vibelly is a truly anonymous OmeTV alternative with no login required.',
+      'Looking for an OmeTV alternative? Vibelly is free, adults-only random video chat with no account, email, or social login needed to start.',
+    h1: 'OmeTV Alternative: Random Video Chat With No Account Needed',
+    lead: 'No email, no phone number, no social login. Vibelly is a free, adults-only OmeTV alternative that starts in your browser.',
     sections: [
       {
         h2: 'Why people look for an OmeTV alternative',
         paragraphs: [
-          'OmeTV is popular, but it forces you to log in with your personal Facebook or VK account before you can start chatting. For anyone who wants a private, anonymous video chat, that requirement is a dealbreaker.',
-          'There are also frequent bans and verification walls. Vibelly keeps the good parts of OmeTV — random video chat worldwide — and removes the social-media login entirely.',
+          'OmeTV is one of the most popular random video chat apps. If you want an alternative where you can start without any account, inside an adults-only community with reports reviewed by a real team, Vibelly is built for exactly that.',
+          'Vibelly asks for no email, no phone number, and no social media account before you chat. Privacy is the default, not an upgrade.',
         ],
       },
       {
-        h2: 'OmeTV vs Vibelly: the real differences',
-        paragraphs: ['The differences come down to privacy, bans, and how the free video chat actually works:'],
+        h2: 'What Vibelly offers',
+        paragraphs: ['Here is what you get with Vibelly:'],
         bullets: [
-          'No Facebook or VK login — Vibelly is 100% anonymous with no account required',
+          'No account, email, or social login needed to start chatting',
           'No surprise bans: skip the next stranger freely without penalty',
           'Free video chat with no pay-to-talk walls on the core experience',
           'Optional gender and country filters with Vibelly Premium',
@@ -208,13 +225,13 @@ const CORE_COPY = {
       {
         h2: 'How to use Vibelly without logging in',
         paragraphs: [
-          'Open the site in any browser, choose video or text, and press start. You are matched with a stranger in seconds — no email, no phone number, and no Facebook account.',
+          'Open the site in any browser, choose video or text, and press start. You are matched with a stranger in seconds, with no email, phone number, or social account.',
           'Calls run over encrypted WebRTC streams directly between browsers, so conversations are private and low-latency. Calls are never recorded, and chat messages are not kept after the call ends.',
         ],
       },
     ],
     faqs: [
-      { q: 'Why is Vibelly better than OmeTV?', a: 'Unlike OmeTV, Vibelly does not force you to log in with Facebook or VK. We prioritize privacy and complete anonymity while keeping a safe, moderated environment.' },
+      { q: 'How is Vibelly different from OmeTV?', a: 'Vibelly needs no account or social login to start chatting, is strictly 18+, and every call has a one-tap Report button reviewed by our team. For a sourced, side-by-side look at OmeTV and others, read our Omegle alternatives comparison on the blog.' },
       { q: 'Do I need a Facebook account to use Vibelly?', a: 'No. Vibelly is 100% login-free for random video chats.' },
       { q: 'Is the video quality good?', a: 'Free calls run at 480p, and Premium unlocks 720p HD. Video adapts automatically to your connection.' },
       { q: 'Is Vibelly free to use?', a: 'Yes, the core random video chat experience is completely free for everyone.' },
@@ -388,12 +405,12 @@ function headBlock({ title, description, url, robots = INDEX_ROBOTS, graph = [] 
   return `<!-- seo:start -->\n    ${tags.join('\n    ')}\n    <!-- seo:end -->`;
 }
 
-function pageGraph(slug, title, description, faqs, crumbs = []) {
+function pageGraph(slug, title, description, faqs, crumbs = [], pageType = 'WebPage') {
   const url = `${siteUrl}/${slug}`;
   const graph = [
     ...SITE_GRAPH,
     {
-      '@type': 'WebPage',
+      '@type': pageType,
       '@id': `${url}#webpage`,
       url,
       name: title,
@@ -428,6 +445,7 @@ function pageGraph(slug, title, description, faqs, crumbs = []) {
 const NAV_LINKS = [
   ...Object.entries(CORE_COPY).map(([slug, c]) => [`/${slug}`, c.h1]),
   ['/safety', 'Safety & Community Rules'],
+  ['/about', 'About Vibelly'],
   ['/blog', 'Vibelly Blog: tips & guides'],
 ];
 
@@ -470,7 +488,12 @@ ${linkHtml}
 
 // Same markdown subset BlogPost.tsx renders: ##, ###, "- " lists, **bold**, paragraphs.
 function markdownToHtml(md) {
-  const inline = (t) => esc(t).replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>');
+  const inline = (t) =>
+    esc(t)
+      .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
+      .replace(/\[([^\]]+)\]\(([^)\s]+)\)/g, (_, text, href) =>
+        href.startsWith('/') ? `<a href="${href}">${text}</a>` : `<a href="${href}" rel="noopener">${text}</a>`
+      );
   const out = [];
   let list = [];
   const flush = () => {
@@ -539,7 +562,7 @@ for (const [slug, page] of Object.entries(APP_PAGES)) {
   write(
     `${slug}/index.html`,
     render(
-      headBlock({ title: page.title, description: page.description, url, graph: pageGraph(slug, page.title, page.description) }),
+      headBlock({ title: page.title, description: page.description, url, graph: pageGraph(slug, page.title, page.description, null, [], page.pageType) }),
       buildBody({ h1: page.h1, lead: page.lead || page.description, sections: page.sections }, `/${slug}`)
     )
   );
@@ -573,13 +596,14 @@ for (const post of BLOG_POSTS) {
     image: `${siteUrl}/og-image.png`,
     datePublished: post.date,
     dateModified: post.date,
-    author: { '@type': 'Organization', name: post.author, url: `${siteUrl}/` },
+    author: { '@id': `${siteUrl}/about#founder` },
     publisher: { '@id': `${siteUrl}/#org` },
     mainEntityOfPage: { '@id': `${url}#webpage` },
   });
+  const authorBox = `      <aside>\n        <p><strong>${esc(PAGES.author.name)}</strong>, ${esc(PAGES.author.role)}</p>\n        <p>${esc(PAGES.author.bio)} <a href="/about">About Vibelly</a></p>\n      </aside>`;
   const body = buildBody({ h1: post.title, lead: `${post.date} · By ${post.author}` }, `/${slug}`).replace(
     '      <h2>Explore Vibelly</h2>',
-    `${markdownToHtml(post.content)}\n      <h2>Explore Vibelly</h2>`
+    `${markdownToHtml(post.content)}\n${authorBox}\n      <h2>Explore Vibelly</h2>`
   );
   write(`${slug}/index.html`, render(headBlock({ title, description: post.description, url, graph }), body));
   sitemapPaths.push(`/${slug}`);

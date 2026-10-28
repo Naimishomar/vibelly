@@ -96,7 +96,7 @@ const faqs = [
   },
   {
     question: 'Is this random video chat app truly anonymous?',
-    answer: 'Absolutely. Unlike OmeTV which requires social logins, Vibe is 100% anonymous. You do not need to create a profile, give your email, or download any app. Just open your browser and start chatting.'
+    answer: 'Yes. Vibelly is anonymous by design. You do not need to create a profile, give your email, or download any app. Just open your browser and start chatting.'
   },
   {
     question: 'Can I choose who I match with?',
@@ -133,15 +133,6 @@ const blogPosts = [
     image: 'https://images.unsplash.com/photo-1573164713988-8665fc963095?w=600&h=400&fit=crop',
     link: '/blog/random-video-chat-safety-checklist'
   }
-];
-
-const comparisonFeatures = [
-  { feature: 'Text chat', vibelly: true, ometv: true, chitchat: true, chatroulette: true },
-  { feature: 'Video chat', vibelly: true, ometv: true, chitchat: true, chatroulette: true },
-  { feature: 'Voice chat', vibelly: true, ometv: false, chitchat: true, chatroulette: false },
-  { feature: 'Anonymous (No Login)', vibelly: true, ometv: true, chitchat: false, chatroulette: true },
-  { feature: 'Gender Filter', vibelly: true, ometv: true, chitchat: false, chatroulette: true },
-  { feature: 'Country Filter', vibelly: true, ometv: true, chitchat: false, chatroulette: false },
 ];
 
 function FAQItem({ question, answer, isLast }: { question: string, answer: string, isLast?: boolean }) {
@@ -569,59 +560,25 @@ export default function Home() {
         {/* ══════════════════════════════════════════
             SECTION 5.3 — HOW WE COMPARE (SEO)
         ══════════════════════════════════════════ */}
-        <section className="px-6 pb-28 max-w-5xl mx-auto w-full">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            className="text-center mb-12"
+        <section className="px-6 pb-28 max-w-3xl mx-auto w-full text-center">
+          <p className="text-[11px] tracking-[0.2em] text-zinc-500 font-semibold uppercase mb-4">
+            How we compare
+          </p>
+          <h2
+            className="text-3xl md:text-4xl font-semibold mb-4"
+            style={{ fontFamily: 'Georgia, serif' }}
           >
-            <p className="text-[11px] tracking-[0.2em] text-zinc-500 font-semibold uppercase mb-4">
-              How we compare
-            </p>
-            <h2
-              className="text-3xl md:text-4xl font-semibold mb-4"
-              style={{ fontFamily: 'Georgia, serif' }}
-            >
-              The #1 Omegle alternative - with everything Omegle never had
-            </h2>
-            <p className="text-zinc-500 text-sm max-w-2xl mx-auto leading-relaxed">
-              Omegle shut down in 2023. Millions moved to OmeTV, Chitchat.gg, and Chatroulette. Vibelly was built to be faster, more secure, and entirely anonymous.
-            </p>
-          </motion.div>
-
-          <div className="bg-[#1A1C20] border border-white/10 rounded-2xl overflow-x-auto shadow-2xl">
-            <table className="w-full min-w-[600px] text-left border-collapse">
-              <thead>
-                <tr className="border-b border-white/10 text-sm">
-                  <th className="py-5 px-6 text-zinc-400 font-semibold">Feature</th>
-                  <th className="py-5 px-6 font-semibold text-white bg-white/5 text-center">Vibelly ★</th>
-                  <th className="py-5 px-6 text-zinc-400 font-semibold text-center">OmeTV</th>
-                  <th className="py-5 px-6 text-zinc-400 font-semibold text-center">Chitchat.gg</th>
-                  <th className="py-5 px-6 text-zinc-400 font-semibold text-center">Chatroulette</th>
-                </tr>
-              </thead>
-              <tbody className="text-sm">
-                {comparisonFeatures.map((row, idx) => (
-                  <tr key={row.feature} className={`border-b border-white/5 ${idx % 2 === 0 ? 'bg-transparent' : 'bg-white/[0.02]'}`}>
-                    <td className="py-4 px-6 text-zinc-300 font-medium">{row.feature}</td>
-                    <td className="py-4 px-6 text-center bg-white/5">
-                      {row.vibelly ? <span className="inline-flex bg-green-500/20 text-green-400 px-3 py-1 rounded-full text-xs font-bold">✓</span> : <span className="inline-flex bg-red-500/20 text-red-400 px-3 py-1 rounded-full text-xs font-bold">✗</span>}
-                    </td>
-                    <td className="py-4 px-6 text-center">
-                      {row.ometv ? <span className="inline-flex bg-green-500/10 text-green-400/70 px-3 py-1 rounded-full text-xs font-bold">✓</span> : <span className="inline-flex bg-red-500/10 text-red-400/70 px-3 py-1 rounded-full text-xs font-bold">✗</span>}
-                    </td>
-                    <td className="py-4 px-6 text-center">
-                      {row.chitchat ? <span className="inline-flex bg-green-500/10 text-green-400/70 px-3 py-1 rounded-full text-xs font-bold">✓</span> : <span className="inline-flex bg-red-500/10 text-red-400/70 px-3 py-1 rounded-full text-xs font-bold">✗</span>}
-                    </td>
-                    <td className="py-4 px-6 text-center">
-                      {row.chatroulette ? <span className="inline-flex bg-green-500/10 text-green-400/70 px-3 py-1 rounded-full text-xs font-bold">✓</span> : <span className="inline-flex bg-red-500/10 text-red-400/70 px-3 py-1 rounded-full text-xs font-bold">✗</span>}
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
+            Omegle alternatives, compared honestly
+          </h2>
+          <p className="text-zinc-500 text-sm max-w-2xl mx-auto leading-relaxed mb-6">
+            Omegle shut down in 2023. We compared nine random video chat sites, including Vibelly, on age rules, accounts, cost, and safety, using each service&apos;s own pages as sources.
+          </p>
+          <button
+            onClick={() => navigate('/blog/omegle-alternatives-compared')}
+            className="inline-flex items-center gap-2 bg-white/5 border border-white/10 text-white px-6 py-2.5 rounded-full font-medium hover:bg-white/10 transition-colors"
+          >
+            Read the comparison <ArrowRight size={16} />
+          </button>
         </section>
 
         {/* ══════════════════════════════════════════

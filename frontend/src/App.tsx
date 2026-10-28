@@ -32,6 +32,7 @@ const RandomVideoChat = lazy(() => import('./pages/RandomVideoChat'));
 const TalkToStrangers = lazy(() => import('./pages/TalkToStrangers'));
 const AnonymousChat = lazy(() => import('./pages/AnonymousChat'));
 const Safety = lazy(() => import('./pages/Safety'));
+const About = lazy(() => import('./pages/About'));
 const NotFound = lazy(() => import('./pages/NotFound'));
 const LinkToUs = lazy(() => import('./pages/LinkToUs'));
 
@@ -120,6 +121,7 @@ function App() {
             <Route path="/terms" element={<Terms />} />
             <Route path="/contact" element={<Contact />} />
             <Route path="/safety" element={<Safety />} />
+            <Route path="/about" element={<About />} />
             <Route path="/omegle-alternative" element={<OmegleAlternative />} />
             <Route path="/ometv-alternative" element={<OmeTvAlternative />} />
             <Route path="/chatroulette-alternative" element={<ChatrouletteAlternative />} />

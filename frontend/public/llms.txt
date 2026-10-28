@@ -11,6 +11,7 @@
 - [Random video chat](https://vibelly.fun/random-video-chat)
 - [Talk to strangers](https://vibelly.fun/talk-to-strangers)
 - [Safety & Community Rules](https://vibelly.fun/safety): 18+ policy, reporting, and bans
+- [About](https://vibelly.fun/about): who runs Vibelly (Naimish Omar) and how it is funded
 - [Pricing](https://vibelly.fun/pricing): Vibelly Premium
 - [Contact](https://vibelly.fun/contact): vibellyofficial@gmail.com
 

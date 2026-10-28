@@ -91,5 +91,44 @@
         ]
       }
     ]
+  },
+  "author": {
+    "name": "Naimish Omar",
+    "role": "Founder of Vibelly",
+    "bio": "Naimish Omar is the founder of Vibelly, building real-time video and chat apps with WebRTC and writing about online safety and talking to strangers."
+  },
+  "about": {
+    "sections": [
+      {
+        "h2": "Who runs Vibelly",
+        "paragraphs": [
+          "Vibelly is built and run by Naimish Omar, an independent developer. Naimish started Vibelly after Omegle shut down in November 2023, to offer random video chat that keeps the fun of meeting strangers while taking safety seriously."
+        ]
+      },
+      {
+        "h2": "What Vibelly is",
+        "paragraphs": [
+          "Vibelly is a free random video chat that runs in your browser. You press start and are matched with a stranger for a video or text chat, with no app to install and no account needed to chat.",
+          "Vibelly Premium is an optional paid plan. It adds gender and country filters, 720p HD video, and voice-only calls, and it is how Vibelly is funded."
+        ]
+      },
+      {
+        "h2": "How we approach safety",
+        "bullets": [
+          "Vibelly is strictly for adults. You confirm you are 18 or older before every chat.",
+          "Every call has a Report button, and reports are reviewed by the Vibelly team, who ban accounts that break the rules.",
+          "Calls connect directly between browsers over encrypted WebRTC and are never recorded."
+        ],
+        "paragraphs": [
+          "Read the Safety & Community Rules for the full details."
+        ]
+      },
+      {
+        "h2": "Contact",
+        "paragraphs": [
+          "Questions, feedback, press, or abuse reports: email vibellyofficial@gmail.com."
+        ]
+      }
+    ]
   }
 }

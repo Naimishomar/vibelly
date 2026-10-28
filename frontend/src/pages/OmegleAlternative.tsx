@@ -243,7 +243,8 @@ export default function OmegleAlternative() {
 
         <CompareAlternatives
           alternatives={[
-            { to: '/ometv-alternative', label: 'OmeTV Alternative', blurb: 'Video chat online without forcing a Facebook or VK login.' },
+            { to: '/blog/omegle-alternatives-compared', label: 'Omegle Alternatives Compared', blurb: 'Nine random video chat sites compared on age rules, accounts, cost, and safety.' },
+            { to: '/ometv-alternative', label: 'OmeTV Alternative', blurb: 'Random video chat with no account or social login needed.' },
             { to: '/chatroulette-alternative', label: 'Chatroulette Alternative', blurb: 'The modern successor to classic chat roulette.' },
             { to: '/random-video-chat', label: 'Random Video Chat', blurb: 'Free random video calls with strangers in seconds.' },
             { to: '/talk-to-strangers', label: 'Talk to Strangers', blurb: 'Instant stranger chat with video, voice, or text.' },
