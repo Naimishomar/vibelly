@@ -10,7 +10,7 @@ export default function KeywordBlock({ slug }: { slug: Slug }) {
   return (
     <section className="px-6 py-16 max-w-3xl mx-auto w-full text-zinc-300 leading-relaxed">
       <p className="text-sm text-zinc-500">Updated {block.updated}</p>
-      <ContentSections sections={[block]} />
+      <ContentSections sections={block.sections} />
       <p className="mt-6 text-sm text-zinc-400">
         Related: <Link to="/blog/omegle-alternatives-compared" className="underline hover:text-white">Omegle alternatives compared</Link>
         {' · '}<Link to="/blog/how-to-start-a-conversation-with-a-stranger" className="underline hover:text-white">How to start a conversation</Link>

@@ -55,7 +55,7 @@ export default function ChatrouletteAlternative() {
   return (
     <div className="min-h-screen bg-[#15171B] text-white flex flex-col font-sans">
       <SEO 
-        title="Chatroulette Alternative: Free Random Video Chat | Vibelly" 
+        title="Chatroulette Alternative for Adults (18+) | Vibelly" 
         description="Looking for a modern Chatroulette alternative? Vibelly offers free random video and text chat for adults 18+, with no account needed to start."
         canonicalUrl="/chatroulette-alternative"
       />
@@ -170,11 +170,11 @@ export default function ChatrouletteAlternative() {
           },
           {
             question: "Is it completely free?",
-            answer: "Absolutely. You can talk to random strangers online via video or voice completely for free, with no hidden charges or premium subscriptions required to use the core features."
+            answer: "Random video chat (480p) and text chat are free. Voice-only calls, gender and country filters, and 720p HD video are part of Vibelly Premium."
           },
           {
             question: "How does Vibelly handle bad behavior?",
-            answer: "One-tap reporting and team review keep spam and abusive users out, so you can focus on real conversations."
+            answer: "Every call has a Report button. Reporting requires signing in, every report is reviewed by hand, and users who break the rules are banned."
           },
           {
             question: "Do I need to download an app?",
@@ -183,7 +183,7 @@ export default function ChatrouletteAlternative() {
         ]} />
 
         <ShareButtons
-          title="Chatroulette Alternative: Free Random Video Chat | Vibelly"
+          title="Chatroulette Alternative for Adults (18+) | Vibelly"
           description="A modern alternative to classic chat roulette — free random cam chat with strangers, safe and anonymous."
         />
 

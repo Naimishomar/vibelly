@@ -364,6 +364,9 @@ export default function Pricing() {
             </motion.div>
           ))}
         </div>
+        <p className="max-w-2xl mx-auto mt-10 px-6 text-center text-sm text-zinc-500">
+          Each purchase is a one-time payment through Razorpay. Plans do not renew automatically: when your time runs out you go back to the free plan. Purchases are non-refundable except where required by law.
+        </p>
       </main>
 
       {/* Active Subscription Modal */}

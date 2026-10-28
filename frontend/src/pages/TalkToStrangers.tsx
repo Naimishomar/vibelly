@@ -155,15 +155,15 @@ export default function TalkToStrangers() {
         <FAQSection faqs={[
           {
             question: "Do I need to sign up?",
-            answer: "No, you don't need to sign up or provide any personal information to start using the random video chat. Just click start and instantly connect with strangers worldwide."
+            answer: "No, you don't need to sign up or provide any personal information to start using the random video chat. Just click start and instantly connect with strangers worldwide. Reporting, Premium, and direct messages use a Google or GitHub sign-in."
           },
           {
             question: "Is it safe to use?",
-            answer: "We prioritize user safety above all else. Vibelly is strictly 18+, every call has a one-tap Report button (sign-in required), every report is reviewed by hand, and users who break the rules are banned."
+            answer: "Vibelly is strictly 18+. Every call has a Report button; reporting requires signing in, every report is reviewed by hand, and users who break the rules are banned."
           },
           {
             question: "Can I use it on my phone?",
-            answer: "Absolutely. Our platform is fully optimized for mobile browsers, meaning you can enjoy seamless video chat on your iPhone or Android device without downloading any apps."
+            answer: "Yes. Vibelly works in any modern mobile browser, on iPhone or Android, with no app to download."
           }
         ]} />
 

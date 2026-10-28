@@ -57,7 +57,7 @@ export default function RandomVideoChat() {
   return (
     <div className="min-h-screen bg-[#15171B] text-white flex flex-col font-sans">
       <SEO 
-        title="Free Random Video Chat Online | Meet Strangers on Vibelly" 
+        title="What Is Random Video Chat? How It Works and Staying Safe | Vibelly" 
         description="Free random video chat in your browser for adults 18+. Meet strangers instantly with no login: what it is, how it works, and how to stay safe."
         canonicalUrl="/random-video-chat"
       />
@@ -83,8 +83,8 @@ export default function RandomVideoChat() {
             className="text-4xl md:text-6xl font-normal tracking-tight leading-[1.1] mb-8"
             style={{ fontFamily: '"Playfair Display", "Merriweather", "Lora", ui-serif, Georgia, Cambria, "Times New Roman", Times, serif' }}
           >
-            Free Random <br />
-            Video Chat
+            What Is Random <br />
+            Video Chat?
           </motion.h1>
 
           <motion.p
@@ -194,15 +194,15 @@ export default function RandomVideoChat() {
         <FAQSection faqs={[
           {
             question: "Do I need to sign up?",
-            answer: "No, you don't need to sign up or provide any personal information to start using the random video chat. Just click start and instantly connect with strangers worldwide."
+            answer: "No, you don't need to sign up or provide any personal information to start using the random video chat. Just click start and instantly connect with strangers worldwide. Reporting, Premium, and direct messages use a Google or GitHub sign-in."
           },
           {
             question: "Is it safe to use?",
-            answer: "We prioritize user safety above all else. Vibelly is strictly 18+, every call has a one-tap Report button (sign-in required), every report is reviewed by hand, and users who break the rules are banned."
+            answer: "Vibelly is strictly 18+. Every call has a Report button; reporting requires signing in, every report is reviewed by hand, and users who break the rules are banned."
           },
           {
             question: "Can I use it on my phone?",
-            answer: "Absolutely. Our platform is fully optimized for mobile browsers, meaning you can enjoy seamless video chat on your iPhone or Android device without downloading any apps."
+            answer: "Yes. Vibelly works in any modern mobile browser, on iPhone or Android, with no app to download."
           },
           {
             question: "Is random video chat really free?",
@@ -211,7 +211,7 @@ export default function RandomVideoChat() {
         ]} />
 
         <ShareButtons
-          title="Free Random Video Chat Online | Meet Strangers on Vibelly"
+          title="What Is Random Video Chat? How It Works and Staying Safe | Vibelly"
           description="Free random video chat online — meet strangers instantly with video, no sign-up, and no downloads."
         />
 

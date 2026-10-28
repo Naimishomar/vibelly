@@ -1,4 +1,5 @@
 import { Link, useNavigate } from 'react-router-dom';
+import pages from '../content/pages.json';
 import { motion } from 'framer-motion';
 import { useState } from 'react';
 import {
@@ -64,7 +65,7 @@ const steps = [
     body: 'Not feeling it? Skip and you\'re back in the queue instantly. The other person is automatically re-queued too. No awkward goodbyes — just move on.',
     bullets: [
       'Skip re-queues both users simultaneously',
-      'Report button for safety',
+      'Report button for safety (sign-in required)',
       'End call returns you cleanly to the home screen',
     ],
   },
@@ -85,24 +86,7 @@ const metrics = [
   },
 ];
 
-const faqs = [
-  {
-    question: 'Is Vibe a free alternative to Omegle and OmeTV?',
-    answer: 'Yes! Vibe is completely free to use. It is a modern alternative to Omegle, OmeTV, and Chatroulette for adults 18+: meet strangers over random video or text chat without registering. Voice calls and filters are part of Premium.'
-  },
-  {
-    question: 'How do I talk to strangers online safely?',
-    answer: 'Simply click "Start Video Call" and you will be instantly matched with a random stranger. We prioritize your privacy: video and voice calls are encrypted peer-to-peer (WebRTC), chats are ephemeral, and no chat content is stored once you skip or end the call.'
-  },
-  {
-    question: 'Is this random video chat app anonymous?',
-    answer: 'You do not need to create a profile, give your email, or download any app to chat. As with any peer-to-peer video call, the other person can see your IP address, which can reveal your approximate location.'
-  },
-  {
-    question: 'Can I choose who I match with?',
-    answer: 'Yes! While basic random video chat is completely free, we offer premium features allowing you to filter your matches by gender (Opposite Gender or Same Gender) or specific countries for a highly tailored matchmaking experience.'
-  }
-];
+const faqs = pages.homeFaqs;
 
 const stats = [
   { value: 'Free', label: 'Video & text chat' },
@@ -326,10 +310,10 @@ export default function Home() {
               className="text-3xl md:text-4xl font-semibold mb-3"
               style={{ fontFamily: 'Georgia, serif' }}
             >
-              Talk to Strangers Instantly with Video Calling
+              Video Calls With People Around the World
             </h2>
             <p className="text-zinc-500 text-sm max-w-2xl mx-auto leading-relaxed">
-              Everything is built for speed and security. Meet new people without login, enjoy anonymous text chat, and skip to the next stranger in milliseconds.
+              Meet new people without creating an account, switch to text chat whenever you like, and skip to someone new at any time. Tips for great conversations are on our <Link to="/talk-to-strangers" className="underline hover:text-white">talk to strangers</Link> page.
             </p>
           </motion.div>
 
@@ -460,10 +444,10 @@ export default function Home() {
               className="text-3xl md:text-4xl font-semibold mb-4"
               style={{ fontFamily: 'Georgia, serif' }}
             >
-              What Makes Vibelly Different from Chatroulette
+              Built for Adults, With Safety in Mind
             </h2>
             <p className="text-zinc-500 text-sm max-w-lg mx-auto leading-relaxed">
-              Unlike other free video call apps, every conversation on Vibelly starts with speed and ends with complete privacy. We never store your data or chat history.
+              Vibelly is 18+ only, calls are never recorded, and random chats are not stored. Comparing options? See how Vibelly differs from <Link to="/chatroulette-alternative" className="underline hover:text-white">Chatroulette</Link>.
             </p>
           </motion.div>
 

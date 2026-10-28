@@ -44,7 +44,7 @@ export default function Footer() {
           <Link to="/omegle-alternative" className="text-zinc-400 hover:text-white transition-colors">Omegle Alternative</Link>
           <Link to="/ometv-alternative" className="text-zinc-400 hover:text-white transition-colors">OmeTV Alternative</Link>
           <Link to="/chatroulette-alternative" className="text-zinc-400 hover:text-white transition-colors">Chatroulette Alternative</Link>
-          <Link to="/backlinks" className="text-zinc-400 hover:text-white transition-colors">Link to Vibelly</Link>
+          <Link to="/backlinks" className="text-zinc-400 hover:text-white transition-colors">Link to us</Link>
         </div>
 
         {/* Guides */}

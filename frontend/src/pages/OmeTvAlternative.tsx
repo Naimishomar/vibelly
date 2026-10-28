@@ -168,7 +168,7 @@ export default function OmeTvAlternative() {
                 'No account, email, or social login needed to start chatting',
                 'Skip to the next stranger as often as you like: skipping is never penalised',
                 'Free video chat with no pay-to-talk walls on the core experience',
-                'One-tap reporting that protects you without tying chats to your social identity',
+                'One-tap reporting for signed-in users, reviewed by hand',
                 'Optional gender and country filters with Vibelly Premium if you want them',
               ],
             },
@@ -211,7 +211,7 @@ export default function OmeTvAlternative() {
           },
           {
             question: "Do I need a Facebook account to use Vibelly?",
-            answer: "No! Vibelly is 100% login-free for random video chats. You do not need a Facebook, Google, or any social media account to connect with strangers."
+            answer: "No. You can start a random video or text chat without any account. Reporting, Premium, and direct messages use a Google or GitHub sign-in."
           },
           {
             question: "Is the video quality good?",
