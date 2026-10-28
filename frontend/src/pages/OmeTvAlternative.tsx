@@ -22,7 +22,7 @@ const features = [
   {
     icon: Shield,
     title: 'One-Tap Reporting',
-    desc: 'Report inappropriate behavior in one tap. Our team reviews every report.',
+    desc: 'Report inappropriate behavior in one tap. Every report is reviewed by hand.',
   },
   {
     icon: Video,
@@ -32,7 +32,7 @@ const features = [
   {
     icon: MessageSquare,
     title: 'Hidden Groups',
-    desc: 'Create private, code-only group chats that algorithms can never track.',
+    desc: 'Create private group chats that people can join only with a code.',
   },
 ];
 
@@ -175,7 +175,7 @@ export default function OmeTvAlternative() {
               heading: 'How to use Vibelly without logging in',
               paragraphs: [
                 'Using Vibelly is deliberately friction-free because we believe anonymous video chat should start the moment you want it to. Open the site in any browser, choose video or text, and press start. You are matched with a stranger in seconds — no email, no phone number, and definitely no Facebook account.',
-                'Everything runs over encrypted WebRTC streams directly between the two browsers, so your conversation is private and low-latency. When the call ends or you skip, the connection is gone. Calls are never recorded, and chat history is not kept.',
+                'Everything runs over encrypted WebRTC streams directly between the two browsers, so media is encrypted in transit and latency stays low. When the call ends or you skip, the connection is gone. Calls are never recorded, and chat history is not kept.',
                 'If you want more control, Vibelly Premium adds the ability to filter matches by gender or by country. The free anonymous video chat experience never requires any of that.',
               ],
             },
@@ -192,6 +192,7 @@ export default function OmeTvAlternative() {
 
         <CompareAlternatives
           alternatives={[
+            { to: '/blog/omegle-alternatives-compared', label: 'Omegle Alternatives Compared', blurb: 'Nine random video chat sites compared on age rules, accounts, cost, and safety.' },
             { to: '/omegle-alternative', label: 'Omegle Alternative', blurb: 'The free Omegle replacement for random video chat.' },
             { to: '/chatroulette-alternative', label: 'Chatroulette Alternative', blurb: 'A modern, moderated take on classic chat roulette.' },
             { to: '/random-video-chat', label: 'Random Video Chat', blurb: 'Meet strangers with instant video matching.' },
@@ -202,7 +203,7 @@ export default function OmeTvAlternative() {
         <FAQSection faqs={[
           {
             question: "How is Vibelly different from OmeTV?",
-            answer: "Vibelly needs no account or social login to start chatting, is strictly 18+, and every call has a one-tap Report button reviewed by our team. For a sourced, side-by-side look at OmeTV and others, read our Omegle alternatives comparison on the blog."
+            answer: "Vibelly needs no account or social login to start chatting, is strictly 18+, and every call has a one-tap Report button reviewed by hand. For a sourced, side-by-side look at OmeTV and others, read our Omegle alternatives comparison on the blog."
           },
           {
             question: "Do I need a Facebook account to use Vibelly?",

@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { Shield, Video, Zap, MessageSquare, ArrowRight, Lock, Headphones, CheckCircle2, XCircle } from 'lucide-react';
+import { Shield, Video, Zap, MessageSquare, ArrowRight, Lock, Headphones } from 'lucide-react';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
 import SEO from '../components/SEO';
@@ -17,11 +17,11 @@ const features = [
   {
     icon: Shield,
     title: 'Safe & Moderated',
-    desc: 'Vibelly is 18+ only, and every call has a one-tap Report button reviewed by our team.',
+    desc: 'Vibelly is 18+ only, and every call has a one-tap Report button reviewed by hand.',
   },
   {
     icon: Lock,
-    title: '100% Anonymous',
+    title: 'No Account Needed',
     desc: 'No account required. Connect instantly without giving up your email or phone number.',
   },
   {
@@ -32,7 +32,7 @@ const features = [
   {
     icon: MessageSquare,
     title: 'Hidden Groups',
-    desc: 'Create private, code-only group chats that algorithms can never track.',
+    desc: 'Create private group chats that people can join only with a code.',
   },
 ];
 
@@ -123,7 +123,7 @@ export default function OmegleAlternative() {
         <section className="px-6 py-20 max-w-6xl mx-auto w-full">
           <div className="text-center mb-16">
             <h2 className="text-3xl md:text-4xl font-normal mb-4" style={{ fontFamily: 'Georgia, serif' }}>
-              Why choose Vibelly over OmeTV?
+              Why choose Vibelly as your Omegle alternative?
             </h2>
             <p className="text-zinc-500 text-base max-w-xl mx-auto">
               We took everything you loved about random video chat and fixed everything you hated.
@@ -150,51 +150,18 @@ export default function OmegleAlternative() {
           </div>
         </section>
 
-        {/* Comparison Table */}
-        <section className="px-6 py-20 max-w-4xl mx-auto w-full">
-          <div className="bg-white/[0.02] border border-white/10 rounded-3xl p-8 md:p-12 overflow-hidden relative">
-            <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-white/5 blur-[100px] rounded-full pointer-events-none translate-x-1/2 -translate-y-1/2" />
-            
-            <h2 className="text-2xl md:text-3xl font-semibold mb-10 text-center z-10 relative">
-              The Ultimate Showdown
-            </h2>
-
-            <div className="relative z-10 overflow-x-auto">
-              <table className="w-full text-left border-collapse min-w-[600px]">
-                <thead>
-                  <tr>
-                    <th className="p-4 border-b border-white/10 text-zinc-500 font-medium">Feature</th>
-                    <th className="p-4 border-b border-white/10 text-white font-semibold text-center text-lg">Vibelly</th>
-                    <th className="p-4 border-b border-white/10 text-zinc-500 font-medium text-center">Omegle</th>
-                    <th className="p-4 border-b border-white/10 text-zinc-500 font-medium text-center">OmeTV</th>
-                  </tr>
-                </thead>
-                <tbody className="text-sm">
-                  {[
-                    { label: "Account Required", v: true, o: true, t: false },
-                    { label: "Smooth WebRTC Video", v: true, o: false, t: false },
-                    { label: "Dark Mode Aesthetic", v: true, o: false, t: false },
-                    { label: "Hidden Group Chats", v: true, o: false, t: false },
-                    { label: "Active Moderation", v: true, o: false, t: true },
-                    { label: "Mobile Optimized", v: true, o: false, t: true },
-                  ].map((row, i) => (
-                    <tr key={i} className="hover:bg-white/5 transition-colors">
-                      <td className="p-4 border-b border-white/5 text-zinc-300 font-medium">{row.label}</td>
-                      <td className="p-4 border-b border-white/5 text-center bg-white/5">
-                        {row.v ? <CheckCircle2 className="mx-auto text-green-400" size={20} /> : <XCircle className="mx-auto text-red-400" size={20} />}
-                      </td>
-                      <td className="p-4 border-b border-white/5 text-center">
-                        {row.o ? <CheckCircle2 className="mx-auto text-zinc-600" size={20} /> : <XCircle className="mx-auto text-zinc-600" size={20} />}
-                      </td>
-                      <td className="p-4 border-b border-white/5 text-center">
-                        {row.t ? <CheckCircle2 className="mx-auto text-zinc-600" size={20} /> : <XCircle className="mx-auto text-zinc-600" size={20} />}
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          </div>
+        {/* Comparison: sourced, on the blog */}
+        <section className="px-6 py-20 max-w-3xl mx-auto w-full text-center">
+          <h2 className="text-2xl md:text-3xl font-semibold mb-4">How does Vibelly compare?</h2>
+          <p className="text-zinc-400 mb-6">
+            We compared nine random video chat sites, including Vibelly, on age rules, accounts, cost, and safety, using each service&apos;s own pages as sources.
+          </p>
+          <Link
+            to="/blog/omegle-alternatives-compared"
+            className="inline-flex items-center gap-2 bg-white/5 border border-white/10 text-white px-6 py-2.5 rounded-full font-medium hover:bg-white/10 transition-colors"
+          >
+            Read the comparison
+          </Link>
         </section>
 
         {/* SEO Article for Keyword Depth */}
@@ -205,7 +172,7 @@ export default function OmegleAlternative() {
               paragraphs: [
                 "Omegle was one of the internet's most famous places to talk to strangers. For more than a decade, millions of users opened their browsers to be matched randomly with someone on the other side of the world. In November 2023, the site went dark: the founder said the platform had become unsustainable to run, largely because of the cost of keeping the community safe.",
                 "The shutdown left a huge gap. People who grew up using free random video chat were suddenly looking for an Omegle alternative that keeps the same magic — meeting someone completely new with one click — without the moderation problems that killed the original. That is exactly the gap Vibelly was built to fill.",
-                "A good Omegle alternative today needs three things: it must be free, it must be anonymous, and it must be actively moderated. Vibelly was built around all three from day one.",
+                "A good Omegle alternative today needs three things: it must be free, it must not demand an account, and it must act on reports. Vibelly was built around all three from day one.",
               ],
             },
             {
@@ -216,8 +183,8 @@ export default function OmegleAlternative() {
               bullets: [
                 'Free random video chat with no sign-up, no email, and no app to download',
                 'Video calls powered by low-latency WebRTC, with voice-only calls on Premium',
-                'One-tap reporting, with every report reviewed by our team',
-                'Fully anonymous — your identity stays private until you choose to share it',
+                'One-tap reporting, with every report reviewed by hand',
+                'No account needed: you choose what to share about yourself',
                 'Instant matching: you are connected to a new stranger in seconds',
                 'Works on any phone, tablet, or desktop browser without installing anything',
               ],
@@ -234,7 +201,7 @@ export default function OmegleAlternative() {
               heading: 'Omegle vs Vibelly: what actually changed',
               paragraphs: [
                 'When people ask "is there anything like Omegle anymore?", what they usually mean is: can I still click one button and talk to a stranger? Yes — but the modern version is safer and better built.',
-                'Omegle had no reliable identity system and famously struggled with trolls and bad actors. Vibelly is 18+ only, gives you a one-click report button reviewed by our team, and makes every conversation ephemeral: when you skip or end a call, the chat is gone. It keeps the thrill of meeting a random stranger while removing the reasons the original platform was forced offline.',
+                'Omegle had no reliable identity system and famously struggled with trolls and bad actors. Vibelly is 18+ only, gives you a one-click report button reviewed by hand, and makes every conversation ephemeral: when you skip or end a call, the chat is gone. It keeps the thrill of meeting a random stranger while removing the reasons the original platform was forced offline.',
                 'If you miss Omegle, or if you have never used it and want to know what the hype is about, Vibelly is the closest thing to the classic experience — free, anonymous, and ready in a single click.',
               ],
             },
@@ -245,7 +212,7 @@ export default function OmegleAlternative() {
           alternatives={[
             { to: '/blog/omegle-alternatives-compared', label: 'Omegle Alternatives Compared', blurb: 'Nine random video chat sites compared on age rules, accounts, cost, and safety.' },
             { to: '/ometv-alternative', label: 'OmeTV Alternative', blurb: 'Random video chat with no account or social login needed.' },
-            { to: '/chatroulette-alternative', label: 'Chatroulette Alternative', blurb: 'The modern successor to classic chat roulette.' },
+            { to: '/chatroulette-alternative', label: 'Chatroulette Alternative', blurb: 'A modern alternative to classic chat roulette.' },
             { to: '/random-video-chat', label: 'Random Video Chat', blurb: 'Free random video calls with strangers in seconds.' },
             { to: '/talk-to-strangers', label: 'Talk to Strangers', blurb: 'Instant stranger chat with video, voice, or text.' },
           ]}
@@ -262,7 +229,7 @@ export default function OmegleAlternative() {
           },
           {
             question: "Is Vibelly safe to use?",
-            answer: "We prioritize user safety above all else. Vibelly is strictly 18+, every call has a one-tap Report button, and our team reviews every report and bans users who break the rules."
+            answer: "We prioritize user safety above all else. Vibelly is strictly 18+, every call has a one-tap Report button, every report is reviewed by hand, and users who break the rules are banned."
           },
           {
             question: "Can I use Vibelly on my phone?",

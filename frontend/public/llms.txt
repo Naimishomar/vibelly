@@ -1,24 +1,28 @@
 # Vibelly
 
-> Vibelly (https://vibelly.fun) is a free, browser-based random video chat for adults 18+. Users are matched with strangers worldwide for video or text chat, with no sign-up required. Voice-only calls and gender/country filters are part of Vibelly Premium.
+> Vibelly (https://vibelly.fun) is a free, browser-based random video chat for adults 18+, run by Naimish Omar. Users are matched with strangers worldwide for video or text chat, with no account needed to chat. Free video is 480p. Vibelly Premium (from ₹49/month) adds gender and country filters, 720p HD video, and voice-only calls. Every call has a Report button; reports are reviewed by hand and rule-breakers are banned. Calls are encrypted in transit and never recorded.
 
 ## Pages
 
-- [Home](https://vibelly.fun/): start a random video, voice, or text chat
+- [Home](https://vibelly.fun/): start a random video or text chat
 - [Omegle alternative](https://vibelly.fun/omegle-alternative): why Omegle shut down and how Vibelly differs
-- [OmeTV alternative](https://vibelly.fun/ometv-alternative): random video chat without a Facebook or VK login
+- [OmeTV alternative](https://vibelly.fun/ometv-alternative): random video chat with no account needed
 - [Chatroulette alternative](https://vibelly.fun/chatroulette-alternative)
 - [Random video chat](https://vibelly.fun/random-video-chat)
-- [Talk to strangers](https://vibelly.fun/talk-to-strangers)
-- [Safety & Community Rules](https://vibelly.fun/safety): 18+ policy, reporting, and bans
-- [About](https://vibelly.fun/about): who runs Vibelly (Naimish Omar) and how it is funded
-- [Pricing](https://vibelly.fun/pricing): Vibelly Premium
+- [Talk to strangers](https://vibelly.fun/talk-to-strangers): plus tips for starting a conversation
+- [Anonymous chat](https://vibelly.fun/anonymous-chat): what anonymous means on Vibelly, including IP address visibility
+- [Pricing](https://vibelly.fun/pricing): free plan and Vibelly Premium
+- [Safety & Community Rules](https://vibelly.fun/safety): 18+ policy, reporting, bans, and what is stored
+- [About](https://vibelly.fun/about): who runs Vibelly and how it is funded
+- [Terms & Privacy Policy](https://vibelly.fun/terms)
 - [Contact](https://vibelly.fun/contact): vibellyofficial@gmail.com
 
 ## Guides
 
-- [What Happened to Omegle? Why It Shut Down and What Came Next](https://vibelly.fun/blog/what-happened-to-omegle): Omegle went offline in November 2023 after 14 years. Here is why it closed, what made it so popular, and what to look for in a random video chat site today.
-- [How to Stay Safe on Random Video Chat: A Practical Checklist](https://vibelly.fun/blog/random-video-chat-safety-checklist): A practical safety checklist for random video chat: what never to share, how scams usually start, how to handle uncomfortable moments, and how to report people.
-- [How to Choose an Omegle Alternative: 7 Things That Actually Matter](https://vibelly.fun/blog/how-to-choose-an-omegle-alternative): Not all Omegle alternatives are equal. Seven practical criteria for comparing random video chat sites, from age policy and reporting to privacy, cost, and login requirements.
-- [How to Start a Conversation With a Stranger on Video Chat](https://vibelly.fun/blog/how-to-start-a-conversation-with-a-stranger): Opening lines, questions that work, and how to keep a conversation with a stranger going on random video chat without it feeling awkward.
-- [How to Practice a Language With Native Speakers on Random Video Chat](https://vibelly.fun/blog/practice-a-language-on-video-chat): Random video chat is an underrated way to practice speaking a new language. How to find native speakers, what to say, and how to turn short chats into real progress.
+- [Omegle Alternatives in 2026: 9 Random Video Chat Sites Compared](https://vibelly.fun/blog/omegle-alternatives-compared): age rules, accounts, cost, and safety, with sources
+- [What Happened to Omegle?](https://vibelly.fun/blog/what-happened-to-omegle)
+- [How to Stay Safe on Random Video Chat](https://vibelly.fun/blog/random-video-chat-safety-checklist)
+- [How to Choose an Omegle Alternative](https://vibelly.fun/blog/how-to-choose-an-omegle-alternative)
+- [How to Start a Conversation With a Stranger](https://vibelly.fun/blog/how-to-start-a-conversation-with-a-stranger)
+- [How to Practice a Language on Random Video Chat](https://vibelly.fun/blog/practice-a-language-on-video-chat)
+- [All guides](https://vibelly.fun/blog)

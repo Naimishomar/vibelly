@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { Shield, Video, Zap, MessageSquare, Lock, Headphones} from 'lucide-react';
 import Navbar from '../components/Navbar';
@@ -15,11 +15,11 @@ const features = [
   {
     icon: Shield,
     title: 'Safe & Moderated',
-    desc: 'Vibelly is 18+ only, and every call has a one-tap Report button reviewed by our team.',
+    desc: 'Vibelly is 18+ only, and every call has a one-tap Report button reviewed by hand.',
   },
   {
     icon: Lock,
-    title: '100% Anonymous',
+    title: 'No Account Needed',
     desc: 'No account required. Connect instantly without giving up your email or phone number.',
   },
   {
@@ -30,7 +30,7 @@ const features = [
   {
     icon: MessageSquare,
     title: 'Hidden Groups',
-    desc: 'Create private, code-only group chats that algorithms can never track.',
+    desc: 'Create private group chats that people can join only with a code.',
   },
 ];
 
@@ -133,6 +133,20 @@ export default function TalkToStrangers() {
           </div>
         </section>
 
+        {/* Conversation advice */}
+        <section className="px-6 py-20 max-w-3xl mx-auto w-full">
+          <h2 className="text-2xl md:text-3xl font-semibold mb-6">How to start a good conversation with a stranger</h2>
+          <ul className="list-disc pl-6 space-y-3 text-zinc-400 mb-6">
+            <li>Open with a specific, easy question: &quot;Where are you calling from?&quot; works better than &quot;hi&quot;.</li>
+            <li>Ask open questions that start with what, how, or why, then follow up on the answer.</li>
+            <li>Share a little about yourself too, so it feels like a conversation, not an interview.</li>
+            <li>If it is not clicking, say &quot;nice talking to you&quot; and skip. No hard feelings.</li>
+          </ul>
+          <p className="text-zinc-400">
+            More opening lines and questions in our guide: <Link to="/blog/how-to-start-a-conversation-with-a-stranger" className="underline hover:text-white">How to Start a Conversation With a Stranger</Link>. Staying safe matters too: read the <Link to="/blog/random-video-chat-safety-checklist" className="underline hover:text-white">random video chat safety checklist</Link>.
+          </p>
+        </section>
+
         {/* FAQ Section */}
         <FAQSection faqs={[
           {
@@ -141,7 +155,7 @@ export default function TalkToStrangers() {
           },
           {
             question: "Is it safe to use?",
-            answer: "We prioritize user safety above all else. Vibelly is strictly 18+, every call has a one-tap Report button, and our team reviews every report and bans users who break the rules."
+            answer: "We prioritize user safety above all else. Vibelly is strictly 18+, every call has a one-tap Report button, every report is reviewed by hand, and users who break the rules are banned."
           },
           {
             question: "Can I use it on my phone?",

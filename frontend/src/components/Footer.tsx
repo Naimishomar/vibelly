@@ -47,14 +47,14 @@ export default function Footer() {
           <Link to="/backlinks" className="text-zinc-400 hover:text-white transition-colors">Link to Vibelly</Link>
         </div>
 
-        {/* Global Chat (SEO Silo) */}
+        {/* Guides */}
         <div className="flex flex-col gap-4">
-          <h4 className="text-white font-semibold mb-2">Global Chat</h4>
-          <Link to="/chat/usa" className="text-zinc-400 hover:text-white transition-colors">Chat in USA</Link>
-          <Link to="/chat/uk" className="text-zinc-400 hover:text-white transition-colors">Chat in UK</Link>
-          <Link to="/chat/india" className="text-zinc-400 hover:text-white transition-colors">Chat in India</Link>
-          <Link to="/chat/canada" className="text-zinc-400 hover:text-white transition-colors">Chat in Canada</Link>
-          <Link to="/chat/australia" className="text-zinc-400 hover:text-white transition-colors">Chat in Australia</Link>
+          <h4 className="text-white font-semibold mb-2">Guides</h4>
+          <Link to="/random-video-chat" className="text-zinc-400 hover:text-white transition-colors">Random Video Chat</Link>
+          <Link to="/talk-to-strangers" className="text-zinc-400 hover:text-white transition-colors">Talk to Strangers</Link>
+          <Link to="/anonymous-chat" className="text-zinc-400 hover:text-white transition-colors">Anonymous Chat</Link>
+          <Link to="/blog/omegle-alternatives-compared" className="text-zinc-400 hover:text-white transition-colors">Omegle Alternatives Compared</Link>
+          <Link to="/blog/random-video-chat-safety-checklist" className="text-zinc-400 hover:text-white transition-colors">Safety Checklist</Link>
         </div>
 
         {/* Contact info */}

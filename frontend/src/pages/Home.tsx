@@ -1,4 +1,4 @@
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { useState } from 'react';
 import {
@@ -95,8 +95,8 @@ const faqs = [
     answer: 'Simply click "Start Video Call" and you will be instantly matched with a random stranger. We prioritize your privacy: video and voice calls are encrypted peer-to-peer (WebRTC), chats are ephemeral, and no chat content is stored once you skip or end the call.'
   },
   {
-    question: 'Is this random video chat app truly anonymous?',
-    answer: 'Yes. Vibelly is anonymous by design. You do not need to create a profile, give your email, or download any app. Just open your browser and start chatting.'
+    question: 'Is this random video chat app anonymous?',
+    answer: 'You do not need to create a profile, give your email, or download any app to chat. As with any peer-to-peer video call, the other person can see your IP address, which can reveal your approximate location.'
   },
   {
     question: 'Can I choose who I match with?',
@@ -177,7 +177,7 @@ export default function Home() {
   return (
     <main className="min-h-screen bg-[#15171B] text-white flex flex-col font-sans">
       <SeoMarkup 
-        title="Vibelly | The Best Free Omegle Alternative & Random Video Chat" 
+        title="Vibelly | Free Random Video Chat With Strangers (18+)" 
         description="Free random video chat for adults 18+. Meet strangers worldwide over video or text in your browser. A modern Omegle alternative with no sign-up."
         url="https://vibelly.fun/"
       />
@@ -338,9 +338,9 @@ export default function Home() {
                 <div className="w-12 h-12 rounded-full bg-white/5 flex items-center justify-center mb-6">
                   <Shield className="text-white" size={24} />
                 </div>
-                <h3 className="text-xl font-semibold mb-3">100% Anonymous Chat</h3>
+                <h3 className="text-xl font-semibold mb-3">Anonymous Chat</h3>
                 <p className="text-zinc-400 text-sm leading-relaxed">
-                  No profile and no account needed to chat. Your identity is completely hidden until you choose to share it. Talk to strangers safely and securely.
+                  No profile and no account needed to chat. You decide what to share about yourself.
                 </p>
               </div>
               <div className="bg-[#1A1C20] border border-white/5 rounded-2xl p-8 hover:bg-[#1C1F24] transition-colors h-full">
@@ -573,12 +573,12 @@ export default function Home() {
           <p className="text-zinc-500 text-sm max-w-2xl mx-auto leading-relaxed mb-6">
             Omegle shut down in 2023. We compared nine random video chat sites, including Vibelly, on age rules, accounts, cost, and safety, using each service&apos;s own pages as sources.
           </p>
-          <button
-            onClick={() => navigate('/blog/omegle-alternatives-compared')}
+          <Link
+            to="/blog/omegle-alternatives-compared"
             className="inline-flex items-center gap-2 bg-white/5 border border-white/10 text-white px-6 py-2.5 rounded-full font-medium hover:bg-white/10 transition-colors"
           >
             Read the comparison <ArrowRight size={16} />
-          </button>
+          </Link>
         </section>
 
         {/* ══════════════════════════════════════════

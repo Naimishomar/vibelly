@@ -1,6 +1,6 @@
 {
   "safety": {
-    "updated": "2026-10-28",
+    "updated": "2026-10-29",
     "sections": [
       {
         "h2": "Adults only (18+)",
@@ -22,14 +22,15 @@
         "h2": "How reporting and bans work",
         "paragraphs": [
           "You can start a video or text chat without creating an account. Reporting someone requires you to be signed in, so that reports are tied to real accounts and cannot be abused anonymously.",
-          "Every call has a Report button. Reports go to the Vibelly team, who review them and ban accounts that break these rules. Bans apply to the account, and serious cases can lead to a permanent ban.",
+          "Every call has a Report button. Reports are reviewed by hand, and accounts that break these rules are banned. Bans apply to the account, and serious cases can lead to a permanent ban.",
           "You can also email reports to vibellyofficial@gmail.com with the time of the call and what happened."
         ]
       },
       {
         "h2": "What we store",
         "paragraphs": [
-          "Video and voice calls connect directly between browsers using WebRTC, which encrypts media in transit. When a direct connection is not possible, media passes through a relay server, which forwards it without being able to read it. Vibelly does not record calls, and chat messages are not kept after a chat ends.",
+          "Video and voice calls connect directly between browsers using WebRTC, which encrypts media in transit. When a direct connection is not possible, media passes through a relay server, which forwards it without being able to read it. As with any peer-to-peer video call, the other person can see your IP address, which can reveal your approximate location.",
+          "Vibelly does not record calls, and random chat messages are not stored. Direct messages between signed-in users are kept for up to 24 hours (the last 25 per conversation) so you can read them, then deleted.",
           "If you sign in, we store your account details, your Premium status, and the details of any reports you make or receive, so that we can enforce these rules. See the Terms & Privacy Policy for more."
         ]
       },
@@ -57,7 +58,7 @@
       {
         "h2": "2. Premium Subscriptions",
         "paragraphs": [
-          "Premium subscriptions are billed as specified at the time of purchase. All sales are final and non-refundable unless required by law. Subscriptions automatically grant access to premium features (like location selection and exclusive UI borders) for the precise duration of the billing cycle. If you purchase additional time while active, the remaining days will be mathematically added to your new expiry date."
+          "Premium subscriptions are billed as specified at the time of purchase. All sales are final and non-refundable unless required by law. Premium unlocks gender and country filters, 720p HD video, and voice calls for the duration of the billing period. If you purchase additional time while active, the remaining days are added to your new expiry date."
         ]
       },
       {
@@ -67,9 +68,18 @@
         ]
       },
       {
-        "h2": "4. Ephemeral Data & Privacy",
+        "h2": "4. Privacy & Data",
         "paragraphs": [
-          "By default, Vibelly operates as an anonymous communication tool. Your peer-to-peer video streams and socket-based text chats are ephemeral. We do not record or retain chat history or video feeds after the session is terminated. However, we do store account identifiers, premium status, and reporting metadata to enforce community safety."
+          "Vibelly is run by Naimish Omar, an individual, who is responsible for the data described here. Questions or requests: vibellyofficial@gmail.com."
+        ],
+        "bullets": [
+          "Accounts: you can sign in with Google or GitHub. We store your name, username, email address, and profile image from that provider, the gender and country you choose, your Premium status and expiry date, referral details, and any reports you make or receive.",
+          "Random chats: video and voice calls connect directly between browsers over WebRTC, encrypted in transit, and are never recorded. Random text chat messages are relayed and not stored.",
+          "Direct messages between signed-in users: the last 25 messages of each conversation are kept for up to 24 hours, then deleted.",
+          "IP addresses: As with any peer-to-peer video call, the other person can see your IP address, which can reveal your approximate location.",
+          "Payments: Premium payments are processed by Razorpay. We do not receive or store your card or bank details; we store only your Premium status and expiry date.",
+          "Analytics: a random visitor ID is saved in your browser so we can count visits. It is not linked to your name.",
+          "Your choices: email vibellyofficial@gmail.com to request a copy of your account data or to have your account deleted."
         ]
       },
       {
@@ -81,7 +91,7 @@
       {
         "h2": "6. Limitation of Liability",
         "paragraphs": [
-          "In no event shall Vibelly, nor its directors, employees, or partners, be liable for any indirect, incidental, special, consequential or punitive damages, including without limitation, loss of profits, data, use, goodwill, or other intangible losses, resulting from your access to or use of or inability to access or use the Service."
+          "In no event shall Vibelly or its operator be liable for any indirect, incidental, special, consequential or punitive damages, including without limitation, loss of profits, data, use, goodwill, or other intangible losses, resulting from your access to or use of or inability to access or use the Service."
         ]
       },
       {
@@ -90,7 +100,8 @@
           "Any disputes arising out of or related to these Terms or the Service will be governed by the laws of the State of California, United States, without regard to its conflict of law provisions. You agree to submit to the personal jurisdiction of the courts located within Silicon Valley, California for the purpose of litigating all such claims or disputes."
         ]
       }
-    ]
+    ],
+    "updated": "2026-10-29"
   },
   "author": {
     "name": "Naimish Omar",
@@ -116,7 +127,7 @@
         "h2": "How we approach safety",
         "bullets": [
           "Vibelly is strictly for adults. You confirm you are 18 or older before every chat.",
-          "Every call has a Report button, and reports are reviewed by the Vibelly team, who ban accounts that break the rules.",
+          "Every call has a Report button, and reports are reviewed by hand, and accounts that break the rules are banned.",
           "Calls connect directly between browsers over encrypted WebRTC and are never recorded."
         ],
         "paragraphs": [

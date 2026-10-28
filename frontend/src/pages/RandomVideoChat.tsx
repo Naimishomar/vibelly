@@ -17,11 +17,11 @@ const features = [
   {
     icon: Shield,
     title: 'Safe & Moderated',
-    desc: 'Vibelly is 18+ only, and every call has a one-tap Report button reviewed by our team.',
+    desc: 'Vibelly is 18+ only, and every call has a one-tap Report button reviewed by hand.',
   },
   {
     icon: Lock,
-    title: '100% Anonymous',
+    title: 'No Account Needed',
     desc: 'No account required. Connect instantly without giving up your email or phone number.',
   },
   {
@@ -32,7 +32,7 @@ const features = [
   {
     icon: MessageSquare,
     title: 'Hidden Groups',
-    desc: 'Create private, code-only group chats that algorithms can never track.',
+    desc: 'Create private group chats that people can join only with a code.',
   },
 ];
 
@@ -161,7 +161,7 @@ export default function RandomVideoChat() {
               heading: 'How to stay safe during random video chat',
               paragraphs: [
                 'Safety is the number one concern with any random video chat platform, and it is the reason Vibelly was built with moderation as a first-class feature rather than an afterthought.',
-                'Every call has a one-tap Report button, and reported users are reviewed by our team. All conversations are ephemeral: the moment you skip or end a call, the chat is gone and the conversation is not stored.',
+                'Every call has a one-tap Report button, and reports are reviewed by hand. All conversations are ephemeral: the moment you skip or end a call, the chat is gone and the conversation is not stored.',
                 'As with any stranger chat, the golden rules are simple: never share personal financial information, keep your location vague, and trust your instincts — if a conversation feels wrong, skip to the next person. Vibelly makes that a single click.',
               ],
             },
@@ -177,6 +177,7 @@ export default function RandomVideoChat() {
 
         <CompareAlternatives
           alternatives={[
+            { to: '/blog/omegle-alternatives-compared', label: 'Omegle Alternatives Compared', blurb: 'Nine random video chat sites compared on age rules, accounts, cost, and safety.' },
             { to: '/omegle-alternative', label: 'Omegle Alternative', blurb: 'The free Omegle replacement for talking to strangers.' },
             { to: '/ometv-alternative', label: 'OmeTV Alternative', blurb: 'Video chat online without forcing a Facebook login.' },
             { to: '/talk-to-strangers', label: 'Talk to Strangers', blurb: 'Instant stranger chat with video, voice, or text.' },
@@ -193,7 +194,7 @@ export default function RandomVideoChat() {
           },
           {
             question: "Is it safe to use?",
-            answer: "We prioritize user safety above all else. Vibelly is strictly 18+, every call has a one-tap Report button, and our team reviews every report and bans users who break the rules."
+            answer: "We prioritize user safety above all else. Vibelly is strictly 18+, every call has a one-tap Report button, every report is reviewed by hand, and users who break the rules are banned."
           },
           {
             question: "Can I use it on my phone?",

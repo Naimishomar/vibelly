@@ -212,7 +212,6 @@ export default function Pricing() {
         'Random audio calling',
         'Real-time chat',
         'Country filters',
-        'Interest matching',
         'Unlimited skips',
       ],
     },

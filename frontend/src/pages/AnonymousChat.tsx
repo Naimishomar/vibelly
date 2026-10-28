@@ -15,11 +15,11 @@ const features = [
   {
     icon: Shield,
     title: 'Safe & Moderated',
-    desc: 'Vibelly is 18+ only, and every call has a one-tap Report button reviewed by our team.',
+    desc: 'Vibelly is 18+ only, and every call has a one-tap Report button reviewed by hand.',
   },
   {
     icon: Lock,
-    title: '100% Anonymous',
+    title: 'No Account Needed',
     desc: 'No account required. Connect instantly without giving up your email or phone number.',
   },
   {
@@ -30,7 +30,7 @@ const features = [
   {
     icon: MessageSquare,
     title: 'Hidden Groups',
-    desc: 'Create private, code-only group chats that algorithms can never track.',
+    desc: 'Create private group chats that people can join only with a code.',
   },
 ];
 
@@ -55,7 +55,7 @@ export default function AnonymousChat() {
     <div className="min-h-screen bg-[#15171B] text-white flex flex-col font-sans">
       <SEO 
         title="Anonymous Chat Website | Free Private Chat Rooms" 
-        description="Looking for an anonymous chat website? Vibelly offers free, secure, and fully anonymous chat rooms and random video calls to keep your identity private."
+        description="Looking for an anonymous chat website? Vibelly offers free random video and text chat with no account, email, or phone number needed."
         canonicalUrl="/anonymous-chat"
       />
       <BlinkingDotsGrid />
@@ -141,7 +141,11 @@ export default function AnonymousChat() {
           },
           {
             question: "Is it safe to use?",
-            answer: "We prioritize user safety above all else. Vibelly is strictly 18+, every call has a one-tap Report button, and our team reviews every report and bans users who break the rules."
+            answer: "We prioritize user safety above all else. Vibelly is strictly 18+, every call has a one-tap Report button, every report is reviewed by hand, and users who break the rules are banned."
+          },
+          {
+            question: "Can the other person see my IP address?",
+            answer: "As with any peer-to-peer video call, the other person can see your IP address, which can reveal your approximate location. Share only what you are comfortable with, and never share personal details with strangers."
           },
           {
             question: "Can I use it on my phone?",
@@ -151,7 +155,7 @@ export default function AnonymousChat() {
 
         <ShareButtons
           title="Anonymous Chat Website | Free Private Chat Rooms"
-          description="The best anonymous chat website — private, free, and secure. Talk to strangers without revealing who you are."
+          description="Anonymous chat with no account needed: free random video and text chat with strangers, right in your browser."
         />
 
         <div className="mt-auto relative z-20">

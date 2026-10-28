@@ -20,17 +20,17 @@ const features = [
   {
     icon: Shield,
     title: 'One-Tap Reporting',
-    desc: 'Report inappropriate behavior in one tap. Our team reviews every report.',
+    desc: 'Report inappropriate behavior in one tap. Every report is reviewed by hand.',
   },
   {
     icon: Lock,
-    title: '100% Free & Anonymous',
+    title: 'Free, No Account Needed',
     desc: 'No complicated currency systems or account requirements. Just click and talk.',
   },
   {
     icon: MessageSquare,
     title: 'Hidden Groups',
-    desc: 'Create private, code-only group chats that algorithms can never track.',
+    desc: 'Create private group chats that people can join only with a code.',
   },
 ];
 
@@ -162,7 +162,7 @@ export default function ChatrouletteAlternative() {
         <FAQSection faqs={[
           {
             question: "Is Vibelly a good Chatroulette alternative?",
-            answer: "Yes, Vibelly was built to be the modern successor to Chatroulette. We offer instant matching, WebRTC video, and a sleek dark-mode interface that doesn't feel like it was built in 2009."
+            answer: "Vibelly is an independent, modern alternative to Chatroulette. We offer instant matching, WebRTC video, and a sleek dark-mode interface that doesn't feel like it was built in 2009."
           },
           {
             question: "Is it completely free?",
@@ -180,7 +180,7 @@ export default function ChatrouletteAlternative() {
 
         <ShareButtons
           title="The Best Chatroulette Alternative in 2026 | Vibelly"
-          description="The modern successor to classic chat roulette — free random cam chat with strangers, safe and anonymous."
+          description="A modern alternative to classic chat roulette — free random cam chat with strangers, safe and anonymous."
         />
 
         <Footer />

@@ -580,7 +580,7 @@ export default function CreatorProfile() {
                     )}
                   </div>
                   <p className="text-xs text-zinc-400 leading-normal mb-3">
-                    Unlocks HD video calls, opposite gender matching, country filters, interest matchmaking, and unlimited skips.
+                    Unlocks HD video calls, opposite gender matching, and country filters.
                   </p>
                   <div className="bg-zinc-950/40 rounded-xl p-3 text-xs space-y-1.5 border border-white/5 mb-3">
                     <div className="flex justify-between">
