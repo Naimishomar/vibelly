@@ -1,0 +1,15 @@
+# Vibelly
+
+> Vibelly (https://vibelly.fun) is a free, browser-based random video chat for adults 18+. Users are matched with strangers worldwide for video or text chat, with no sign-up required. Voice-only calls and gender/country filters are part of Vibelly Premium.
+
+## Pages
+
+- [Home](https://vibelly.fun/): start a random video, voice, or text chat
+- [Omegle alternative](https://vibelly.fun/omegle-alternative): why Omegle shut down and how Vibelly differs
+- [OmeTV alternative](https://vibelly.fun/ometv-alternative): random video chat without a Facebook or VK login
+- [Chatroulette alternative](https://vibelly.fun/chatroulette-alternative)
+- [Random video chat](https://vibelly.fun/random-video-chat)
+- [Talk to strangers](https://vibelly.fun/talk-to-strangers)
+- [Safety & Community Rules](https://vibelly.fun/safety): 18+ policy, reporting, and bans
+- [Pricing](https://vibelly.fun/pricing): Vibelly Premium
+- [Contact](https://vibelly.fun/contact): vibellyofficial@gmail.com

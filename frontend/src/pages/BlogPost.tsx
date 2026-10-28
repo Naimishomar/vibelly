@@ -89,6 +89,7 @@ export default function BlogPost() {
         title={`${post.title} | Vibelly Blog`}
         description={post.description}
         canonicalUrl={`/blog/${post.slug}`}
+        noindex
         type="article"
       />
       <div className="relative z-10 flex flex-col min-h-screen">

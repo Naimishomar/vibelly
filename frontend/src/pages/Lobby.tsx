@@ -345,7 +345,7 @@ export default function Lobby() {
                 {agreed && <CheckCircle2 size={14} className="text-black" />}
               </div>
               <span className="text-sm text-zinc-300 select-none group-hover:text-white transition-colors">
-                I agree to be respectful and follow the rules
+                I confirm I am 18 or older and agree to the <a href="/terms" target="_blank" rel="noopener" className="underline">Terms</a> and <a href="/safety" target="_blank" rel="noopener" className="underline">Safety rules</a>
               </span>
               <input 
                 type="checkbox" 

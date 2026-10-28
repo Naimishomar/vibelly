@@ -19,8 +19,8 @@ const features = [
   },
   {
     icon: Shield,
-    title: 'AI Moderation',
-    desc: 'No more unexpected inappropriate content. Our AI screening keeps the chat clean.',
+    title: 'One-Tap Reporting',
+    desc: 'Report inappropriate behavior in one tap. Our team reviews every report.',
   },
   {
     icon: Lock,
@@ -55,7 +55,7 @@ export default function ChatrouletteAlternative() {
     <div className="min-h-screen bg-[#15171B] text-white flex flex-col font-sans">
       <SEO 
         title="The Best Chatroulette Alternative in 2026 | Vibelly" 
-        description="Looking for a modern Chatroulette alternative? Vibelly offers HD random video chat, voice calls, and safe AI moderation for free."
+        description="Looking for a modern Chatroulette alternative? Vibelly offers HD random video chat, voice calls, and one-tap reporting for free."
         canonicalUrl="/chatroulette-alternative"
       />
       <BlinkingDotsGrid />
@@ -169,8 +169,8 @@ export default function ChatrouletteAlternative() {
             answer: "Absolutely. You can talk to random strangers online via video or voice completely for free, with no hidden charges or premium subscriptions required to use the core features."
           },
           {
-            question: "Are there bots on Vibelly?",
-            answer: "We use advanced AI screening to filter out bots, spam, and inappropriate content, ensuring you actually match with real humans."
+            question: "How does Vibelly handle bad behavior?",
+            answer: "One-tap reporting and team review keep spam and abusive users out, so you can focus on real conversations."
           },
           {
             question: "Do I need to download an app?",

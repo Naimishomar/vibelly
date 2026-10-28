@@ -15,7 +15,7 @@ const features = [
   {
     icon: Shield,
     title: 'Safe & Moderated',
-    desc: 'Unlike Omegle, Vibelly uses AI moderation and user reporting to keep the community safe.',
+    desc: 'Vibelly is 18+ only, and every call has a one-tap Report button reviewed by our team.',
   },
   {
     icon: Lock,
@@ -141,7 +141,7 @@ export default function ChatWithGirls() {
           },
           {
             question: "Is it safe to use?",
-            answer: "We prioritize user safety above all else. We use advanced moderation tools and allow users to report inappropriate behavior instantly, ensuring a safe and clean environment."
+            answer: "We prioritize user safety above all else. Vibelly is strictly 18+, every call has a one-tap Report button, and our team reviews every report and bans users who break the rules."
           },
           {
             question: "Can I use it on my phone?",

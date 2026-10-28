@@ -17,7 +17,7 @@ const features = [
   {
     icon: Shield,
     title: 'Safe & Moderated',
-    desc: 'Unlike Omegle, Vibelly uses AI moderation and user reporting to keep the community safe.',
+    desc: 'Vibelly is 18+ only, and every call has a one-tap Report button reviewed by our team.',
   },
   {
     icon: Lock,
@@ -143,7 +143,7 @@ export default function RandomVideoChat() {
               paragraphs: [
                 'Random video chat is exactly what it sounds like: you press a button and are instantly connected over video to a stranger you have never met. There is no friend list, no matchmaking algorithm curating your feed, and no profile to build. Every conversation is a genuine surprise.',
                 'The concept was made famous by Omegle and Chatroulette, and it remains one of the most exciting ways to meet people online. Random video chat platforms match two anonymous users, let them talk for as long as they like, and let either person skip to a new stranger at any moment.',
-                'Vibelly keeps that core idea but rebuilds the technology around it: modern WebRTC video, AI moderation, and an interface that starts a free video chat in under a second.',
+                'Vibelly keeps that core idea but rebuilds the technology around it: modern WebRTC video, one-tap reporting, and an interface that starts a free video chat in under a second.',
               ],
             },
             {
@@ -161,7 +161,7 @@ export default function RandomVideoChat() {
               heading: 'How to stay safe during random video chat',
               paragraphs: [
                 'Safety is the number one concern with any random video chat platform, and it is the reason Vibelly was built with moderation as a first-class feature rather than an afterthought.',
-                'Every room is protected by AI screening and a one-tap report button, so inappropriate behavior can be removed instantly. All conversations are ephemeral: the moment you skip or end a call, the chat is gone and nothing is stored.',
+                'Every call has a one-tap Report button, and reported users are reviewed by our team. All conversations are ephemeral: the moment you skip or end a call, the chat is gone and nothing is stored.',
                 'As with any stranger chat, the golden rules are simple: never share personal financial information, keep your location vague, and trust your instincts — if a conversation feels wrong, skip to the next person. Vibelly makes that a single click.',
               ],
             },
@@ -194,7 +194,7 @@ export default function RandomVideoChat() {
           },
           {
             question: "Is it safe to use?",
-            answer: "We prioritize user safety above all else. We use advanced moderation tools and allow users to report inappropriate behavior instantly, ensuring a safe and clean environment."
+            answer: "We prioritize user safety above all else. Vibelly is strictly 18+, every call has a one-tap Report button, and our team reviews every report and bans users who break the rules."
           },
           {
             question: "Can I use it on my phone?",

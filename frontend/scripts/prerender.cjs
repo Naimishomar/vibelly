@@ -1,11 +1,13 @@
 const fs = require('fs');
 const path = require('path');
 
+// Writes static HTML for every indexable page, plus:
+//   dist/app.html  – bare SPA shell for client-only routes (see vercel.json rewrites)
+//   dist/404.html  – served by Vercel with a real 404 for any unknown URL
+//   dist/sitemap.xml – exactly the pages written here, nothing else
 const siteUrl = 'https://vibelly.fun';
 const distPath = path.resolve(__dirname, '../dist');
-const publicDir = path.resolve(__dirname, '../public');
 const indexPath = path.join(distPath, 'index.html');
-const MAX_ROUTE_SEGMENT_LENGTH = 120;
 
 if (!fs.existsSync(indexPath)) {
   console.error('dist/index.html not found! Run build first.');
@@ -13,29 +15,10 @@ if (!fs.existsSync(indexPath)) {
 }
 
 const template = fs.readFileSync(indexPath, 'utf-8');
-
-// ─── Deterministic PRNG so every page gets stable, unique content ───
-function hashString(str) {
-  let h = 2166136261;
-  for (let i = 0; i < str.length; i++) {
-    h ^= str.charCodeAt(i);
-    h = Math.imul(h, 16777619);
-  }
-  return h >>> 0;
-}
-
-function mulberry32(seed) {
-  return function () {
-    seed |= 0;
-    seed = (seed + 0x6d2b79f5) | 0;
-    let t = Math.imul(seed ^ (seed >>> 15), 1 | seed);
-    t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
-    return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
-  };
-}
-
-function pick(rng, arr) {
-  return arr[Math.floor(rng() * arr.length)];
+const SEO_BLOCK = /<!-- seo:start -->[\s\S]*?<!-- seo:end -->/;
+if (!SEO_BLOCK.test(template)) {
+  console.error('index.html is missing the <!-- seo:start --> / <!-- seo:end --> markers.');
+  process.exit(1);
 }
 
 const esc = (str) =>
@@ -45,242 +28,93 @@ const esc = (str) =>
     .replace(/>/g, '&gt;')
     .replace(/"/g, '&quot;');
 
-const titleCase = (words) =>
-  words.map((w) => (w === 'in' ? w : w.charAt(0).toUpperCase() + w.slice(1))).join(' ');
-
-// ─── Data sources ───
-const keywords = [
-  'omegle-alternative', 'random-video-chat', 'talk-to-strangers', 'anonymous-chat',
-  'video-chat-with-girls', 'free-cam-chat', 'stranger-cam', 'chat-roulette-free',
-  'omegle-unbanned', 'video-call-app', 'chat-with-strangers-online', 'random-cam',
-  'free-video-chat-rooms', 'meet-new-people', 'stranger-video-call', 'live-video-chat',
-  'cam-to-cam-chat', 'anonymous-video-chat', 'chat-random', 'omegle-app',
+const SITE_GRAPH = [
+  {
+    '@type': 'Organization',
+    '@id': `${siteUrl}/#org`,
+    name: 'Vibelly',
+    url: `${siteUrl}/`,
+    logo: `${siteUrl}/favicon.jpg`,
+    email: 'vibellyofficial@gmail.com',
+  },
+  {
+    '@type': 'WebSite',
+    '@id': `${siteUrl}/#website`,
+    name: 'Vibelly',
+    url: `${siteUrl}/`,
+    inLanguage: 'en',
+    publisher: { '@id': `${siteUrl}/#org` },
+  },
+  {
+    '@type': 'WebApplication',
+    '@id': `${siteUrl}/#app`,
+    name: 'Vibelly',
+    url: `${siteUrl}/`,
+    applicationCategory: 'SocialNetworkingApplication',
+    operatingSystem: 'Any (web browser)',
+    browserRequirements: 'Requires JavaScript and WebRTC',
+    offers: { '@type': 'Offer', price: '0', priceCurrency: 'USD' },
+    publisher: { '@id': `${siteUrl}/#org` },
+  },
 ];
 
-const cities = [
-  'new-york', 'los-angeles', 'chicago', 'houston', 'miami', 'san-francisco',
-  'seattle', 'boston', 'austin', 'denver', 'las-vegas', 'atlanta',
-  'london', 'manchester', 'birmingham', 'paris', 'berlin', 'madrid',
-  'toronto', 'vancouver', 'montreal', 'sydney', 'melbourne', 'brisbane',
-  'tokyo', 'osaka', 'mumbai', 'delhi', 'bangalore', 'hyderabad',
-  'dubai', 'singapore', 'bangkok', 'kuala-lumpur', 'jakarta', 'manila',
-  'sao-paulo', 'mexico-city', 'buenos-aires', 'nairobi', 'lagos', 'cairo',
-];
-
-const competitors = [
-  'omegle', 'ometv', 'chatroulette', 'monkey-app', 'emerald-chat',
-  'bazoocam', 'chatrandom', 'camsurf', 'coomeet', 'tinychat',
-  'shagle', 'chathub', 'camfrog', 'joingy', 'flingster',
-];
-
-const competitorModifiers = [
-  'alternative', 'alternative-free', 'alternative-no-login', 'alternative-for-girls',
-  'unbanned', 'app', 'app-download', 'website-like', 'better-than', 'for-mobile',
-];
-
-// Real React app routes that serve their own SPA + Helmet SEO (skip prerendering)
-const APP_ROUTE_SKIP = new Set([
-  '', 'pricing', 'contact', 'terms', 'blog', 'chat', 'groups', 'setup', 'call', 'mcp', 'admin', 'oauth-callback',
-]);
-
-// ─── Page discovery ───
-function extractSitemapUrls() {
-  const sitemapFiles = ['sitemap-core.xml', 'sitemap-cities.xml', 'sitemap-competitors.xml', 'sitemap-trends.xml'];
-  const urls = [];
-  for (const file of sitemapFiles) {
-    const filePath = path.join(publicDir, file);
-    if (!fs.existsSync(filePath)) continue;
-    const xml = fs.readFileSync(filePath, 'utf-8');
-    for (const m of xml.matchAll(/<loc>(.*?)<\/loc>/g)) {
-      const raw = m[1];
-      if (!raw || raw === `${siteUrl}/`) continue;
-      urls.push(raw.replace(siteUrl, '').replace(/^\/+/, ''));
-    }
-  }
-  return [...new Set(urls)];
-}
-
-function fallbackPages() {
-  const pages = [];
-  for (const kw of keywords) pages.push({ slug: kw });
-  for (const kw of keywords) {
-    for (const city of cities) pages.push({ slug: `${kw}-in-${city}`, city });
-  }
-  for (const comp of competitors) {
-    pages.push({ slug: `${comp}-alternative` });
-    for (const mod of competitorModifiers) pages.push({ slug: `${comp}-${mod}` });
-  }
-  for (const trendPath of extractTrendUrls()) {
-    pages.push({ slug: trendPath.replace(/^\/+/, '') });
-  }
-  return pages;
-}
-
-function buildPages() {
-  const fromSitemaps = extractSitemapUrls();
-  const sources = fromSitemaps.length > 0 ? fromSitemaps : fallbackPages().map((p) => p.slug);
-
-  const pages = [];
-  for (const slug of sources) {
-    if (APP_ROUTE_SKIP.has(slug)) continue;
-    const cityMatch = slug.match(/-in-([a-z-]+)$/);
-    pages.push({ slug, city: cityMatch ? cityMatch[1] : undefined });
-  }
-
-  const seen = new Set();
-  return pages.filter((p) => {
-    if (seen.has(p.slug)) return false;
-    seen.add(p.slug);
-    return true;
-  });
-}
-
-// ─── Content generation ───
-const features = [
-  '100% free with no sign-up, no email, and no app to download',
-  'HD video and crisp voice powered by low-latency WebRTC',
-  'fully anonymous — your identity stays private until you choose to share it',
-  'AI moderation plus one-tap reporting to keep every room safe',
-  'instant skip that re-queues both people in under a second',
-  'works beautifully on mobile, tablet, and desktop browsers',
-  'connections with strangers from 190+ countries around the world',
-  'encrypted, ephemeral conversations that leave no trace',
-  'gender and country filters available with Vibelly Premium',
-  'a clean, modern interface with no intrusive ads or pop-ups',
-];
-
-function analyzeSlug(slug, city) {
-  const words = slug.split('-');
-  const compWord = competitors.find((c) => slug.includes(c));
-  const isCity = Boolean(city);
-  const isCompetitor = Boolean(compWord);
-
-  const cityWords = city ? new Set(city.split('-')) : new Set();
-  const cleanWords = words.filter((w) => w !== 'in' && !cityWords.has(w));
-  const phrase = titleCase(cleanWords);
-
-  let comp = null;
-  if (isCompetitor) {
-    comp = titleCase(compWord.split('-'));
-  }
-
-  return { words, phrase, isCity, isCompetitor, comp, compWord, cityName: city ? titleCase(city.split('-')) : null };
-}
-
-function buildDescription(info) {
-  const where = info.cityName ? ` in ${info.cityName}` : '';
-  return `Looking for ${info.phrase}${where}? Vibelly is the free, anonymous alternative to Omegle and OmeTV. Start ${info.phrase.toLowerCase()}${where} instantly with HD video and no sign-up.`;
-}
-
-function buildTitle(info) {
-  const where = info.cityName ? ` in ${info.cityName}` : '';
-  return `${info.phrase}${where} | Free Random Video Chat & Stranger Chat | Vibelly`;
-}
-
-function makeContent(info, rng) {
-  const { phrase, cityName } = info;
-  const where = cityName ? ` in ${cityName}` : '';
-  const low = phrase.toLowerCase();
-
-  const f = () => pick(rng, features);
-  const fSet = (n) => {
-    const set = new Set();
-    while (set.size < n) set.add(pick(rng, features));
-    return [...set];
-  };
-  const fList = (n, joiner = ', ') => fSet(n).join(joiner);
-
-  const openers = info.isCompetitor
-    ? [
-        `Since Omegle shut down, ${low}${where} has been broken, buggy, or full of bots. Vibelly fixed all of it.`,
-        `If you are tired of ${low}${where} that demands logins or leaves you staring at a loading spinner, Vibelly is the upgrade you have been waiting for.`,
-        `${phrase}${where} should feel instant and safe — Vibelly is exactly that.`,
-      ]
-    : [
-        `Looking for ${low}${where}? Vibelly is the modern home of ${low}.`,
-        `${phrase}${where} should feel instant, anonymous, and genuinely fun — that is exactly what Vibelly delivers.`,
-        `Whether you are at home or out in the world, ${low}${where} on Vibelly connects you with strangers in seconds.`,
-      ];
-
-  if (info.isCompetitor && info.comp) {
-    openers.push(
-      `${info.comp} has its share of problems — bans, bots, and paywalls. Vibelly is the ${info.comp} alternative built to solve every one of them.`
-    );
-  }
-
-  const opener = pick(rng, openers);
-
-  const citySentence = cityName
-    ? ` From ${cityName} to the rest of the planet, the queue is always moving.`
-    : '';
-
-  const lead = `${opener} You will find ${f()}${citySentence}`;
-
-  const sectionWhy = [
-    `Vibelly was rebuilt from the ground up to make ${low} effortless. The experience is built on ${fList(3)}.`,
-    `Most platforms that claim to offer ${low} bury you behind logins, paywalls, and pop-ups. Vibelly does the opposite: ${f()}. Everything is one click away.`,
-  ];
-
-  const sectionHow = [
-    `Getting started with ${low} takes exactly one click. Open the site, press Start, and you are matched with a stranger in under a second. No setup wizard, no profile to fill in, no waiting list.`,
-    `There is nothing to install and nothing to configure. ${fList(2)}. You can switch between video, voice, and text chat without leaving the page.`,
-  ];
-
-  const sectionSafe = [
-    `Safety is the number one concern with ${low}, and it is the reason Vibelly is built the way it is. Every room is protected by ${fList(2, ' and ')}.`,
-    `If you ever feel uncomfortable, skip to the next person or tap Report — ${f()}. Our moderation team reviews flags around the clock so the community stays friendly.`,
-  ];
-
-  const sectionStart = [
-    `Ready to try ${low}? ${f()}. The next stranger is one click away${cityName ? ` — and yes, there are plenty of people in ${cityName} waiting too` : ''}.`,
-  ];
-
-  const paragraphs = [lead, ...sectionWhy, ...sectionHow, ...sectionSafe, ...sectionStart];
-
-  const faqs = [
+const HOME = {
+  title: 'Vibelly | The Best Free Omegle Alternative & Random Video Chat',
+  description:
+    'Vibelly is a free alternative to Omegle and OmeTV for adults 18+. Connect with strangers worldwide through HD random video calls, voice and text chat. No sign-up required.',
+  h1: 'The Best Free Omegle Alternative & Random Video Chat',
+  lead: 'Talk to strangers online instantly with free random video calls and text chat, right in your browser. No sign-up required. Vibelly is for adults 18+ only.',
+  sections: [
     {
-      q: `Is ${low} on Vibelly really free?`,
-      a: `Yes. ${phrase}${where} on Vibelly is completely free — no credit card, no sign-up, and no hidden fees. Premium upgrades are optional and never required to chat.`,
+      h2: 'How Vibelly works',
+      paragraphs: [
+        'Press Start Video Call, allow camera and microphone access, confirm you are 18 or older, and you are matched with a random stranger. Skip to someone new at any time.',
+      ],
     },
     {
-      q: `Do I need to download an app for ${low}?`,
-      a: `No. ${phrase}${where} works directly in any modern browser on mobile and desktop, so there is nothing to install.`,
+      h2: 'Video, voice, and text chat',
+      bullets: [
+        'Free random video chat in any browser, with no app to download',
+        'Text chat with strangers when you would rather not be on camera',
+        'Voice-only calls plus gender and country filters with Vibelly Premium',
+        'Group chats and live streams with the Vibelly community',
+      ],
     },
     {
-      q: `Is ${low} on Vibelly anonymous and safe?`,
-      a: `Yes. Your identity stays private, conversations are ephemeral, and ${fList(2, ' plus ')} keep ${low} rooms clean and safe.`,
+      h2: 'Safety on Vibelly',
+      paragraphs: [
+        'Vibelly is strictly 18+. Every call has a Report button, and our team reviews reports and bans users who break the community rules. Video and voice calls connect directly between browsers over encrypted WebRTC, and calls are never recorded.',
+      ],
     },
-    {
-      q: `Can I use ${low}${where} right now?`,
-      a: `Absolutely. Vibelly matches you with a stranger in under a second, and you can even filter by country or gender with Premium.`,
-    },
-  ];
+  ],
+};
 
-  return { paragraphs, faqs };
-}
+// Real React pages that only need correct head tags (their body is rendered by React).
+const APP_PAGES = {
+  pricing: {
+    title: 'Vibelly Premium | Enhance Your Random Chat Experience',
+    description: 'Upgrade to Vibelly Premium for an ad-free experience, priority matchmaking, and exclusive badges.',
+    h1: 'Vibelly Premium',
+  },
+  contact: {
+    title: 'Contact Us | Vibelly Support',
+    description: 'Need help? Email Vibelly support at vibellyofficial@gmail.com for enquiries, technical issues, abuse reports, or feedback.',
+    h1: 'Contact Us',
+  },
+  terms: {
+    title: 'Terms of Service & Privacy Policy | Vibelly',
+    description: 'Read the terms of service and privacy policy for Vibelly. We prioritize your anonymity and data protection.',
+    h1: 'Terms & Conditions',
+  },
+  safety: {
+    title: 'Safety & Community Rules | Vibelly',
+    description:
+      'Vibelly is for adults 18+. Read our community rules, how reporting and bans work, and how to stay safe when you talk to strangers.',
+    h1: 'Safety & Community Rules',
+  },
+};
 
-function relatedLinks(slug, rng) {
-  const pool = [
-    ...keywords.map((k) => `/${k}`),
-    ...competitors.map((c) => `/${c}-alternative`),
-    '/omegle-unbanned',
-    '/video-chat-online',
-    '/chat-with-girls',
-    '/talk-to-strangers',
-    ...keywords.slice(0, 6).map((k) => `/${k}-in-${pick(rng, cities)}`),
-  ];
-  const seen = new Set([`/${slug}`]);
-  const links = [];
-  while (links.length < 8) {
-    const link = pick(rng, pool);
-    if (seen.has(link)) continue;
-    seen.add(link);
-    links.push(link);
-  }
-  return links;
-}
-
-// ─── Hand-crafted flagship copy (mirrors the live React pages for top keywords) ───
+// ─── Hand-written pages (mirror the live React pages; slug = URL path) ───
 const CORE_COPY = {
   'omegle-alternative': {
     title: 'The Best Free Omegle Alternative in 2026 | Vibelly',
@@ -293,7 +127,7 @@ const CORE_COPY = {
         h2: 'Why Omegle shut down and what replaced it',
         paragraphs: [
           'Omegle was the internet\'s most famous random video chat site for more than a decade, but it went offline in November 2023 after the founder said the platform had become too costly to moderate safely. That left millions of users searching for a working Omegle alternative.',
-          'Vibelly was built to fill that gap: free random video chat that keeps the one-click magic of Omegle, but with modern WebRTC video, AI moderation, and real privacy protections that the original never had.',
+          'Vibelly was built to fill that gap: free random video chat that keeps the one-click magic of Omegle, but with modern WebRTC video, one-tap reporting, and real privacy protections that the original never had.',
         ],
       },
       {
@@ -304,7 +138,7 @@ const CORE_COPY = {
         bullets: [
           'Free random video chat with no sign-up, no email, and no app to download',
           'HD video calls and voice-only mode powered by low-latency WebRTC',
-          'AI moderation plus one-tap reporting to keep strangers respectful',
+          'One-tap reporting, with every report reviewed by our team',
           'Fully anonymous — your identity stays private until you choose to share it',
           'Instant matching in under a second, on any phone or desktop browser',
         ],
@@ -319,7 +153,7 @@ const CORE_COPY = {
     faqs: [
       { q: 'Is Vibelly a good alternative to Omegle?', a: 'Yes. Vibelly offers HD video quality, a clean design, and strict moderation without requiring an account, making it one of the best Omegle alternatives.' },
       { q: 'Do I need to sign up to use Vibelly?', a: 'No. You never need to sign up or share personal information. Just click start and connect with strangers worldwide.' },
-      { q: 'Is Vibelly safe to use?', a: 'Yes. Unlike Omegle, Vibelly uses advanced moderation tools and instant reporting, and every conversation is ephemeral.' },
+      { q: 'Is Vibelly safe to use?', a: 'Vibelly is 18+ only, every call has a one-tap Report button reviewed by our team, and every conversation is ephemeral.' },
       { q: 'Can I use Vibelly on my phone?', a: 'Absolutely. Vibelly works in any mobile browser with no app download required.' },
     ],
   },
@@ -373,7 +207,7 @@ const CORE_COPY = {
         h2: 'What is random video chat?',
         paragraphs: [
           'Random video chat connects you over video with a stranger you have never met — no friend list, no algorithm-curated feed, no profile. You press a button and are matched instantly.',
-          'The concept was made famous by Omegle and Chatroulette. Vibelly keeps that excitement and rebuilds the technology: modern WebRTC video, AI moderation, and matching in under a second.',
+          'The concept was made famous by Omegle and Chatroulette. Vibelly keeps that excitement and rebuilds the technology: modern WebRTC video, one-tap reporting, and matching in under a second.',
         ],
       },
       {
@@ -391,14 +225,14 @@ const CORE_COPY = {
       {
         h2: 'How to stay safe during random video chat',
         paragraphs: [
-          'Every room is protected by AI screening and a one-tap report button. Conversations are ephemeral: when you skip or end a call, nothing is stored.',
+          'Every call has a one-tap Report button, and our team reviews every report. Conversations are ephemeral: when you skip or end a call, nothing is stored.',
           'Never share personal financial information, keep your location vague, and trust your instincts. Skipping to a new person is always one click away.',
         ],
       },
     ],
     faqs: [
       { q: 'Do I need to sign up?', a: 'No. You never need to sign up or provide personal information to start random video chat.' },
-      { q: 'Is it safe to use?', a: 'Yes. Vibelly uses advanced moderation tools and instant reporting, and all conversations are ephemeral.' },
+      { q: 'Is it safe to use?', a: 'Vibelly is 18+ only, every call has a one-tap Report button reviewed by our team, and all conversations are ephemeral.' },
       { q: 'Can I use it on my phone?', a: 'Yes. Vibelly is fully optimized for mobile browsers with no app download required.' },
       { q: 'Is random video chat really free?', a: 'Yes. Core random video chat is completely free with no time limits or hidden charges.' },
     ],
@@ -441,20 +275,20 @@ const CORE_COPY = {
       { q: 'Are free online video calls really free?', a: 'Yes. Core random video chat on Vibelly is completely free with no time limits or hidden charges.' },
       { q: 'Do I need to sign up?', a: 'No. You never need to sign up or provide personal information to start a free online video call.' },
       { q: 'Can I use it on my phone?', a: 'Yes. Vibelly works in any mobile browser with no app download required.' },
-      { q: 'Is it safe to use?', a: 'Yes. Vibelly uses advanced moderation tools, instant reporting, and ephemeral conversations.' },
+      { q: 'Is it safe to use?', a: 'Vibelly is 18+ only, with one-tap reporting reviewed by our team and ephemeral conversations.' },
     ],
   },
   'chatroulette-alternative': {
     title: 'The Best Chatroulette Alternative in 2026 | Vibelly',
     description:
-      'Looking for a modern Chatroulette alternative? Vibelly offers HD random video chat, voice calls, and safe AI moderation for free.',
+      'Looking for a modern Chatroulette alternative? Vibelly offers HD random video chat, voice calls, and one-tap reporting for free.',
     h1: 'The Modern Chatroulette Alternative',
     lead: 'Chatroulette was built in the flash era. Vibelly is the modern Chatroulette alternative: fast, moderated, and beautifully designed.',
     sections: [
       {
         h2: 'Why Vibelly is the modern Chatroulette upgrade',
         paragraphs: [
-          'Classic chat roulette sites struggle with bots, outdated technology, and unsafe content. Vibelly is built on modern WebRTC for instant, high-quality connections, with AI screening that filters bots and inappropriate content before you match.',
+          'Classic chat roulette sites struggle with bots, outdated technology, and unsafe content. Vibelly is built on modern WebRTC for instant, high-quality connections, plus one-tap reporting reviewed by our team.',
         ],
       },
       {
@@ -462,7 +296,7 @@ const CORE_COPY = {
         bullets: [
           'Instant random matching with HD video',
           'Voice-only and text chat modes',
-          'AI moderation and one-tap reporting',
+          'One-tap reporting reviewed by our team',
           '100% free with no account required',
         ],
         paragraphs: [
@@ -472,7 +306,7 @@ const CORE_COPY = {
     ],
     faqs: [
       { q: 'Is Vibelly a good Chatroulette alternative?', a: 'Yes. Vibelly offers instant matching, HD WebRTC video, and a modern interface built as a successor to Chatroulette.' },
-      { q: 'Are there bots on Vibelly?', a: 'No. Advanced AI screening filters out bots, spam, and inappropriate content so you match with real humans.' },
+      { q: 'How does Vibelly handle bad behavior?', a: 'Every call has a one-tap Report button. Our team reviews reports and bans users who break the rules.' },
       { q: 'Do I need to download an app?', a: 'No. Vibelly works right in your browser on desktop and mobile.' },
     ],
   },
@@ -498,12 +332,12 @@ const CORE_COPY = {
           'Report inappropriate behavior immediately',
         ],
         paragraphs: [
-          'Every Vibelly conversation is moderated by AI, and chat history disappears the moment the call ends.',
+          'Every Vibelly call has a one-tap Report button, and chat history disappears the moment the call ends.',
         ],
       },
     ],
     faqs: [
-      { q: 'Is talking to strangers online safe?', a: 'Vibelly prioritizes safety with AI moderation, one-tap reporting, and ephemeral conversations that leave no trace.' },
+      { q: 'Is talking to strangers online safe?', a: 'Vibelly is 18+ only and prioritizes safety with one-tap reporting, team review of every report, and ephemeral conversations.' },
       { q: 'Do I need to sign up?', a: 'No. You can talk to strangers instantly with no account and no email.' },
     ],
   },
@@ -524,7 +358,7 @@ const CORE_COPY = {
         h2: 'Anonymous chat you can trust',
         bullets: [
           'No social login, no tracking, no data retention',
-          'AI moderation keeps the community clean',
+          'One-tap reporting keeps the community clean',
           'Video, voice, and text modes',
           'Encrypted WebRTC connections',
         ],
@@ -535,7 +369,7 @@ const CORE_COPY = {
     ],
     faqs: [
       { q: 'Is Vibelly anonymous?', a: 'Yes. Vibelly requires no account and stores no chat history, keeping your identity completely private.' },
-      { q: 'Is anonymous chat safe?', a: 'Yes. AI moderation, one-tap reporting, and ephemeral conversations make Vibelly a safe place to chat anonymously.' },
+      { q: 'Is anonymous chat safe?', a: 'Yes. An 18+ policy, one-tap reporting, and ephemeral conversations make Vibelly a safe place to chat anonymously.' },
     ],
   },
   'omegle-unbanned': {
@@ -560,7 +394,7 @@ const CORE_COPY = {
         bullets: [
           'Skip to the next stranger freely, any number of times',
           'No IP bans for innocent browsing or skipping',
-          'AI moderation that filters content, not identities',
+          'Reports reviewed by people, not automated bans',
           'Fully anonymous with no account to be banned',
         ],
       },
@@ -590,7 +424,7 @@ const CORE_COPY = {
         bullets: [
           'HD video, voice-only, or text chat',
           'Instant matching with strangers worldwide',
-          'AI moderation and one-tap reporting',
+          'One-tap reporting reviewed by our team',
           'No app download required',
         ],
         paragraphs: [
@@ -607,176 +441,173 @@ const CORE_COPY = {
 };
 
 // ─── HTML generation ───
-function buildJsonLd(info, slug, faqs) {
+const INDEX_ROBOTS = 'index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1';
+
+function headBlock({ title, description, url, robots = INDEX_ROBOTS, graph = [] }) {
+  const tags = [`<title data-ssr>${esc(title)}</title>`];
+  if (description) tags.push(`<meta data-ssr name="description" content="${esc(description)}" />`);
+  tags.push(`<meta data-ssr name="robots" content="${robots}" />`);
+  if (url) {
+    tags.push(
+      `<link data-ssr rel="canonical" href="${url}" />`,
+      '<meta data-ssr property="og:type" content="website" />',
+      `<meta data-ssr property="og:url" content="${url}" />`,
+      `<meta data-ssr property="og:title" content="${esc(title)}" />`,
+      `<meta data-ssr property="og:description" content="${esc(description)}" />`,
+      `<meta data-ssr property="og:image" content="${siteUrl}/favicon.jpg" />`,
+      `<meta data-ssr property="twitter:title" content="${esc(title)}" />`,
+      `<meta data-ssr property="twitter:description" content="${esc(description)}" />`,
+      `<meta data-ssr property="twitter:image" content="${siteUrl}/favicon.jpg" />`
+    );
+  }
+  if (graph.length) {
+    // `<` escaped so page copy can never close the script tag
+    const json = JSON.stringify({ '@context': 'https://schema.org', '@graph': graph }).replace(/</g, '\\u003c');
+    tags.push(`<script data-ssr type="application/ld+json">${json}</script>`);
+  }
+  return `<!-- seo:start -->\n    ${tags.join('\n    ')}\n    <!-- seo:end -->`;
+}
+
+function pageGraph(slug, title, description, faqs) {
   const url = `${siteUrl}/${slug}`;
-  const schemas = [
+  const graph = [
+    ...SITE_GRAPH,
     {
-      '@context': 'https://schema.org',
-      '@type': 'SoftwareApplication',
-      name: 'Vibelly',
-      operatingSystem: 'Web, Android, iOS',
-      applicationCategory: 'SocialNetworkingApplication',
-      offers: { '@type': 'Offer', price: '0', priceCurrency: 'USD' },
-    },
-    {
-      '@context': 'https://schema.org',
       '@type': 'WebPage',
-      name: info.title,
+      '@id': `${url}#webpage`,
       url,
-      isPartOf: { '@type': 'WebSite', name: 'Vibelly', url: siteUrl },
+      name: title,
+      description,
+      isPartOf: { '@id': `${siteUrl}/#website` },
+      about: { '@id': `${siteUrl}/#app` },
+      breadcrumb: { '@id': `${url}#breadcrumb` },
     },
     {
-      '@context': 'https://schema.org',
+      '@type': 'BreadcrumbList',
+      '@id': `${url}#breadcrumb`,
+      itemListElement: [
+        { '@type': 'ListItem', position: 1, name: 'Home', item: `${siteUrl}/` },
+        { '@type': 'ListItem', position: 2, name: title.split(' | ')[0], item: url },
+      ],
+    },
+  ];
+  if (faqs && faqs.length) {
+    graph.push({
       '@type': 'FAQPage',
       mainEntity: faqs.map((faq) => ({
         '@type': 'Question',
         name: faq.q,
         acceptedAnswer: { '@type': 'Answer', text: faq.a },
       })),
-    },
-  ];
-  return schemas.map((s) => `<script type="application/ld+json">${JSON.stringify(s)}</script>`).join('\n    ');
+    });
+  }
+  return graph;
 }
 
-function buildBody(info, sections, faqs, links, h1Override) {
-  const { phrase, cityName } = info;
-  const where = cityName ? ` in ${cityName}` : '';
+const NAV_LINKS = [
+  ...Object.entries(CORE_COPY).map(([slug, c]) => [`/${slug}`, c.h1]),
+  ['/safety', 'Safety & Community Rules'],
+];
 
+function buildBody({ h1, lead, sections = [], faqs = [] }, selfPath) {
   const sectionsHtml = sections
-    .slice(1)
     .map((section) => {
-      const heading = section.h2 ? `      <h2>${esc(section.h2)}</h2>\n` : '';
-      const paras = section.paragraphs.map((p) => `      <p>${esc(p)}</p>`).join('\n');
-      const bullets = section.bullets && section.bullets.length > 0
-        ? `      <ul>\n${section.bullets.map((b) => `        <li>${esc(b)}</li>`).join('\n')}\n      </ul>`
-        : '';
-      return `${heading}${paras}${bullets ? `\n${bullets}` : ''}`;
+      const parts = [];
+      if (section.h2) parts.push(`      <h2>${esc(section.h2)}</h2>`);
+      for (const p of section.paragraphs || []) parts.push(`      <p>${esc(p)}</p>`);
+      if (section.bullets && section.bullets.length) {
+        parts.push(`      <ul>\n${section.bullets.map((b) => `        <li>${esc(b)}</li>`).join('\n')}\n      </ul>`);
+      }
+      return parts.join('\n');
     })
     .join('\n');
 
-  const faqHtml = faqs
-    .map(
-      (faq) =>
-        `      <details>\n        <summary>${esc(faq.q)}</summary>\n        <p>${esc(faq.a)}</p>\n      </details>`
-    )
-    .join('\n');
+  const faqHtml = faqs.length
+    ? `\n      <h2>Frequently Asked Questions</h2>\n${faqs
+        .map((faq) => `      <details>\n        <summary>${esc(faq.q)}</summary>\n        <p>${esc(faq.a)}</p>\n      </details>`)
+        .join('\n')}`
+    : '';
 
-  const linkHtml = links
-    .map((link) => `      <a href="${esc(link)}">${esc(link.replace(/\//g, '').replace(/-/g, ' '))}</a>`)
+  const linkHtml = NAV_LINKS.filter(([href]) => href !== selfPath)
+    .map(([href, text]) => `        <li><a href="${href}">${esc(text)}</a></li>`)
     .join('\n');
-
-  const h1 = h1Override || `${phrase}${where ? ` in ${cityName}` : ''}`;
-  const lead = sections[0] && sections[0].paragraphs[0] ? sections[0].paragraphs[0] : '';
 
   return `<div id="root">
     <main>
       <h1>${esc(h1)}</h1>
-      <p>${esc(lead)}</p>
-${sectionsHtml}
-      <h2>Frequently Asked Questions</h2>
-${faqHtml}
-      <h2>Explore more</h2>
+${lead ? `      <p>${esc(lead)}</p>\n` : ''}${sectionsHtml}${faqHtml}
+      <h2>Explore Vibelly</h2>
       <nav>
+        <ul>
 ${linkHtml}
+        </ul>
       </nav>
     </main>
   </div>`;
 }
 
-function renderPage(slug, city) {
-  const rng = mulberry32(hashString(slug));
-  const info = analyzeSlug(slug, city);
-  const core = CORE_COPY[slug];
-
-  let sections;
-  let faqs;
-  let h1Override = null;
-
-  if (core) {
-    info.title = core.title;
-    info.description = core.description;
-    h1Override = core.h1;
-    sections = [{ h2: null, paragraphs: [core.lead] }, ...core.sections];
-    faqs = core.faqs;
-  } else {
-    info.title = buildTitle(info);
-    info.description = buildDescription(info);
-    const made = makeContent(info, rng);
-    const where = info.cityName ? ` in ${info.cityName}` : '';
-    const low = info.phrase.toLowerCase();
-    const headings = [
-      `Why choose Vibelly for ${low}${where}?`,
-      `How to start ${low} right now`,
-      `Is ${low} on Vibelly safe?`,
-      `Start ${low} today`,
-    ];
-    sections = made.paragraphs.map((paragraph, i) => ({
-      h2: i > 0 && i - 1 < headings.length ? headings[i - 1] : null,
-      paragraphs: [paragraph],
-    }));
-    faqs = made.faqs;
-  }
-
-  const links = relatedLinks(slug, rng);
-
-  const url = `${siteUrl}/${slug}`;
-  const jsonLd = buildJsonLd(info, slug, faqs);
-  const body = buildBody(info, sections, faqs, links, h1Override);
-
-  let html = template;
-
-  html = html.replace(/<title>[\s\S]*?<\/title>/, `<title>${esc(info.title)}</title>`);
-  html = html.replace(
-    /<meta name="title" content="[\s\S]*?" \/>/,
-    `<meta name="title" content="${esc(info.title)}" />`
-  );
-  html = html.replace(
-    /<meta name="description" content="[\s\S]*?" \/>/,
-    `<meta name="description" content="${esc(info.description)}" />`
-  );
-  html = html.replace(/<link rel="canonical" href="[\s\S]*?" \/>/, `<link rel="canonical" href="${url}" />`);
-  html = html.replace(/<meta property="og:type" content="[\s\S]*?" \/>/, '<meta property="og:type" content="website" />');
-  html = html.replace(/<meta property="og:url" content="[\s\S]*?" \/>/, `<meta property="og:url" content="${url}" />`);
-  html = html.replace(
-    /<meta property="og:title" content="[\s\S]*?" \/>/,
-    `<meta property="og:title" content="${esc(info.title)}" />`
-  );
-  html = html.replace(
-    /<meta property="og:description" content="[\s\S]*?" \/>/,
-    `<meta property="og:description" content="${esc(info.description)}" />`
-  );
-  html = html.replace(/<meta property="twitter:url" content="[\s\S]*?" \/>/, `<meta property="twitter:url" content="${url}" />`);
-  html = html.replace(
-    /<meta property="twitter:title" content="[\s\S]*?" \/>/,
-    `<meta property="twitter:title" content="${esc(info.title)}" />`
-  );
-  html = html.replace(
-    /<meta property="twitter:description" content="[\s\S]*?" \/>/,
-    `<meta property="twitter:description" content="${esc(info.description)}" />`
-  );
-
-  html = html.replace('</head>', `    ${jsonLd}\n  </head>`);
-  html = html.replace('<div id="root"></div>', body);
-
+function render(head, body) {
+  let html = template.replace(SEO_BLOCK, head);
+  if (body) html = html.replace('<div id="root"></div>', body);
   return html;
 }
 
-// ─── Write all pages ───
-const pages = buildPages();
-console.log(`Generating ${pages.length} prerendered SEO pages...`);
-
-let count = 0;
-for (const page of pages) {
-  // Keep generated route directories below filesystem filename limits even if
-  // an upstream content source introduces an unexpectedly long slug.
-  const safeSlug = page.slug
-    .split('/')
-    .map((segment) => segment.slice(0, MAX_ROUTE_SEGMENT_LENGTH).replace(/-+$/, ''))
-    .join('/');
-  const routeDir = path.join(distPath, safeSlug);
-  if (!fs.existsSync(routeDir)) fs.mkdirSync(routeDir, { recursive: true });
-  fs.writeFileSync(path.join(routeDir, 'index.html'), renderPage(safeSlug, page.city));
-  count++;
+function write(relPath, html) {
+  const file = path.join(distPath, relPath);
+  fs.mkdirSync(path.dirname(file), { recursive: true });
+  fs.writeFileSync(file, html);
 }
 
-console.log(`✅ Prerendered ${count} unique SEO pages.`);
+// ─── Write all pages ───
+const sitemapPaths = [];
+
+// Shells first: both are built from the untouched template.
+write('app.html', render(headBlock({ title: 'Vibelly' })));
+write(
+  '404.html',
+  render(headBlock({ title: 'Page not found | Vibelly', robots: 'noindex, follow' }), buildBody({ h1: 'Page not found', lead: 'This page does not exist.' }, null))
+);
+
+write(
+  'index.html',
+  render(
+    headBlock({ title: HOME.title, description: HOME.description, url: `${siteUrl}/`, graph: SITE_GRAPH }),
+    buildBody(HOME, '/')
+  )
+);
+sitemapPaths.push('/');
+
+for (const [slug, core] of Object.entries(CORE_COPY)) {
+  const url = `${siteUrl}/${slug}`;
+  const page = { h1: core.h1, lead: core.lead, sections: core.sections, faqs: core.faqs };
+  write(
+    `${slug}/index.html`,
+    render(
+      headBlock({ title: core.title, description: core.description, url, graph: pageGraph(slug, core.title, core.description, core.faqs) }),
+      buildBody(page, `/${slug}`)
+    )
+  );
+  sitemapPaths.push(`/${slug}`);
+}
+
+for (const [slug, page] of Object.entries(APP_PAGES)) {
+  const url = `${siteUrl}/${slug}`;
+  write(
+    `${slug}/index.html`,
+    render(
+      headBlock({ title: page.title, description: page.description, url, graph: pageGraph(slug, page.title, page.description) }),
+      buildBody({ h1: page.h1, lead: page.description }, `/${slug}`)
+    )
+  );
+  sitemapPaths.push(`/${slug}`);
+}
+
+// No <lastmod>: we have no real per-page modified dates, and fake ones teach Google to ignore the field.
+const sitemap = `<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+${sitemapPaths.map((p) => `  <url><loc>${siteUrl}${p}</loc></url>`).join('\n')}
+</urlset>
+`;
+write('sitemap.xml', sitemap);
+
+console.log(`✅ Prerendered ${sitemapPaths.length} pages + app.html + 404.html, sitemap.xml written.`);

@@ -17,7 +17,7 @@ const features = [
   {
     icon: Shield,
     title: 'Safe & Moderated',
-    desc: 'Unlike Omegle, Vibelly uses AI moderation and user reporting to keep the community safe.',
+    desc: 'Vibelly is 18+ only, and every call has a one-tap Report button reviewed by our team.',
   },
   {
     icon: Lock,
@@ -216,7 +216,7 @@ export default function OmegleAlternative() {
               bullets: [
                 'Free random video chat with no sign-up, no email, and no app to download',
                 'HD video calls and voice-only mode powered by low-latency WebRTC',
-                'AI moderation plus one-tap reporting to keep strangers respectful',
+                'One-tap reporting, with every report reviewed by our team',
                 'Fully anonymous — your identity stays private until you choose to share it',
                 'Instant matching: you are connected to a new stranger in under a second',
                 'Works on any phone, tablet, or desktop browser without installing anything',
@@ -234,7 +234,7 @@ export default function OmegleAlternative() {
               heading: 'Omegle vs Vibelly: what actually changed',
               paragraphs: [
                 'When people ask "is there anything like Omegle anymore?", what they usually mean is: can I still click one button and talk to a stranger? Yes — but the modern version is safer and better built.',
-                'Omegle had no reliable identity system and famously struggled with trolls and bad actors. Vibelly layers AI screening on top of random matching, gives you a one-click report button, and makes every conversation ephemeral: when you skip or end a call, the chat is gone. It keeps the thrill of meeting a random stranger while removing the reasons the original platform was forced offline.',
+                'Omegle had no reliable identity system and famously struggled with trolls and bad actors. Vibelly is 18+ only, gives you a one-click report button reviewed by our team, and makes every conversation ephemeral: when you skip or end a call, the chat is gone. It keeps the thrill of meeting a random stranger while removing the reasons the original platform was forced offline.',
                 'If you miss Omegle, or if you have never used it and want to know what the hype is about, Vibelly is the closest thing to the classic experience — free, anonymous, and ready in a single click.',
               ],
             },
@@ -263,7 +263,7 @@ export default function OmegleAlternative() {
           },
           {
             question: "Is Vibelly safe to use?",
-            answer: "We prioritize user safety above all else. Unlike Omegle, Vibelly uses advanced moderation tools and allows users to report inappropriate behavior instantly, ensuring a safe and clean environment."
+            answer: "We prioritize user safety above all else. Vibelly is strictly 18+, every call has a one-tap Report button, and our team reviews every report and bans users who break the rules."
           },
           {
             question: "Can I use Vibelly on my phone?",

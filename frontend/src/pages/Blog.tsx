@@ -45,6 +45,7 @@ export default function Blog() {
         title="Vibelly Blog | Random Video Chat Tips & Guides" 
         description="Read the latest tips, guides, and news about random video chatting, online safety, and meeting strangers online."
         canonicalUrl="/blog"
+        noindex
       />
       <BlinkingDotsGrid />
       <div className="relative z-10 flex flex-col min-h-screen">

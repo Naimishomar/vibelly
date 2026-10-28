@@ -1,15 +1,30 @@
 {
+  "trailingSlash": false,
   "rewrites": [
     {
-      "source": "/sitemap-blog.xml",
-      "destination": "https://api.vibelly.fun/api/blogs/sitemap.xml"
+      "source": "/(chat|live|mcp|admin|oauth-callback|backlinks|blog|groups|call)",
+      "destination": "/app.html"
     },
     {
-      "source": "/(.*)",
-      "destination": "/index.html"
+      "source": "/(groups|creator|setup|call|blog)/(.*)",
+      "destination": "/app.html"
     }
   ],
   "headers": [
+    {
+      "source": "/(.*)",
+      "headers": [
+        { "key": "X-Content-Type-Options", "value": "nosniff" },
+        { "key": "Referrer-Policy", "value": "strict-origin-when-cross-origin" },
+        { "key": "Permissions-Policy", "value": "camera=(self), microphone=(self), geolocation=()" }
+      ]
+    },
+    {
+      "source": "/((?!embed\\.html).*)",
+      "headers": [
+        { "key": "X-Frame-Options", "value": "SAMEORIGIN" }
+      ]
+    },
     {
       "source": "/assets/(.*)",
       "headers": [
@@ -20,7 +35,7 @@
       ]
     },
     {
-      "source": "/sitemap(.*)\\.xml",
+      "source": "/sitemap.xml",
       "headers": [
         {
           "key": "Cache-Control",
@@ -34,15 +49,6 @@
     },
     {
       "source": "/robots.txt",
-      "headers": [
-        {
-          "key": "Cache-Control",
-          "value": "public, max-age=86400"
-        }
-      ]
-    },
-    {
-      "source": "/favicon.ico",
       "headers": [
         {
           "key": "Cache-Control",

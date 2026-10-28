@@ -1,3 +1,4 @@
+import { useEffect } from 'react';
 import { Helmet } from 'react-helmet-async';
 import { site, absoluteUrl, buildSeoJsonLd } from '../lib/seo';
 import type { SeoPageConfig } from '../lib/seo';
@@ -24,6 +25,12 @@ export default function SEO({
     includeOrganization,
     datePublished,
   });
+
+  // Drop the static/prerendered head tags (marked data-ssr) once Helmet's are mounted,
+  // otherwise the page ships two <title>s, two canonicals, etc.
+  useEffect(() => {
+    document.head.querySelectorAll('[data-ssr]').forEach((el) => el.remove());
+  }, []);
 
   return (
     <Helmet>

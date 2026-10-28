@@ -36,6 +36,7 @@ export function softwareAppSchema() {
     '@type': 'SoftwareApplication',
     name: site.name,
     operatingSystem: 'Web, Android, iOS',
+    url: site.url,
     applicationCategory: 'SocialNetworkingApplication',
     offers: {
       '@type': 'Offer',
@@ -108,7 +109,7 @@ export function articleSchema(config: SeoPageConfig) {
     '@type': 'Article',
     headline: config.title,
     image: [config.imageUrl ?? site.defaultImage],
-    datePublished: config.datePublished ?? new Date().toISOString(),
+    ...(config.datePublished ? { datePublished: config.datePublished } : {}),
     author: [
       {
         '@type': 'Organization',

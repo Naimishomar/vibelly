@@ -11,7 +11,6 @@ import Footer from '../components/Footer';
 import BlinkingDotsGrid from '../components/BlinkingDotsGrid';
 import InteractiveHeroCards from '../components/InteractiveHeroCards';
 import CurvedCarousel from '../components/CurvedCarousel';
-import HotModels from '../components/HotModels';
 import { useAuthStore } from '../store/useAuthStore';
 import LoginModal from '../components/LoginModal';
 
@@ -93,7 +92,7 @@ const faqs = [
   },
   {
     question: 'How do I talk to strangers online safely?',
-    answer: 'Simply click "Start Video Call" and you will be instantly matched with a random stranger. We prioritize your privacy—all chats are ephemeral, end-to-end encrypted, and no personal data is stored once you skip or end the call.'
+    answer: 'Simply click "Start Video Call" and you will be instantly matched with a random stranger. We prioritize your privacy: video and voice calls are encrypted peer-to-peer (WebRTC), chats are ephemeral, and no chat content is stored once you skip or end the call.'
   },
   {
     question: 'Is this random video chat app truly anonymous?',
@@ -109,7 +108,7 @@ const stats = [
   { value: '5M+', label: 'Conversations' },
   { value: '190+', label: 'Countries' },
   { value: '<1s', label: 'Match time' },
-  { value: '24/7', label: 'Moderation' },
+  { value: '18+', label: 'Adults only' },
 ];
 
 const blogPosts = [
@@ -213,7 +212,7 @@ export default function Home() {
             className="text-4xl sm:text-5xl lg:text-6xl font-normal tracking-tight leading-[1.1] mb-4"
             style={{ fontFamily: '"Playfair Display", "Merriweather", "Lora", ui-serif, Georgia, Cambria, "Times New Roman", Times, serif' }}
           >
-            The Best Free Omegle Alternative
+            The Best Free Omegle Alternative{' '}
             <br className="hidden sm:block" />
             &amp; Random Video Chat
           </h1>
@@ -300,11 +299,6 @@ export default function Home() {
             <CurvedCarousel />
           </div>
         </section>
-
-        {/* ══════════════════════════════════════════
-            SECTION 1.75 — HOT MODELS & TRENDING LIVE
-        ══════════════════════════════════════════ */}
-        <HotModels />
 
         {/* ══════════════════════════════════════════
             SECTION 2 — QUOTE CARD

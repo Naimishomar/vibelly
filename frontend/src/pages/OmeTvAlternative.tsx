@@ -21,8 +21,8 @@ const features = [
   },
   {
     icon: Shield,
-    title: 'AI Moderation',
-    desc: 'We use advanced AI to keep the platform safe without needing intrusive monitoring.',
+    title: 'One-Tap Reporting',
+    desc: 'Report inappropriate behavior in one tap. Our team reviews every report.',
   },
   {
     icon: Video,
@@ -168,7 +168,7 @@ export default function OmeTvAlternative() {
                 'No Facebook or VK login — Vibelly is 100% anonymous with no account required',
                 'No surprise bans: skip the next stranger freely without fear of a penalty',
                 'Free HD video chat with no pay-to-talk walls on the core experience',
-                'AI moderation that protects you instead of spying on your social identity',
+                'One-tap reporting that protects you without tying chats to your social identity',
                 'Optional gender and country filters with Vibelly Premium if you want them',
               ],
             },

@@ -10,6 +10,7 @@ export default defineConfig({
     tailwindcss(),
     VitePWA({
       registerType: 'autoUpdate',
+      manifest: false, // public/manifest.json is the real manifest (linked in index.html)
       workbox: {
         cleanupOutdatedCaches: true,
         globPatterns: ['**/*.{js,css,ico,png,svg,json}'],

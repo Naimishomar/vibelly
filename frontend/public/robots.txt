@@ -7,4 +7,3 @@ Disallow: /setup
 Disallow: /mcp
 
 Sitemap: https://vibelly.fun/sitemap.xml
-Sitemap: https://vibelly.fun/sitemap-blog.xml

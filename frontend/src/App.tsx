@@ -34,7 +34,8 @@ const TalkToStrangers = lazy(() => import('./pages/TalkToStrangers'));
 const AnonymousChat = lazy(() => import('./pages/AnonymousChat'));
 const ChatWithGirls = lazy(() => import('./pages/ChatWithGirls'));
 const VideoChatOnline = lazy(() => import('./pages/VideoChatOnline'));
-const DynamicSeoPage = lazy(() => import('./pages/DynamicSeoPage'));
+const Safety = lazy(() => import('./pages/Safety'));
+const NotFound = lazy(() => import('./pages/NotFound'));
 const LinkToUs = lazy(() => import('./pages/LinkToUs'));
 
 function ScrollToTop() {
@@ -121,6 +122,7 @@ function App() {
             <Route path="/oauth-callback" element={<OAuthCallback />} />
             <Route path="/terms" element={<Terms />} />
             <Route path="/contact" element={<Contact />} />
+            <Route path="/safety" element={<Safety />} />
             <Route path="/omegle-alternative" element={<OmegleAlternative />} />
             <Route path="/ometv-alternative" element={<OmeTvAlternative />} />
             <Route path="/chatroulette-alternative" element={<ChatrouletteAlternative />} />
@@ -133,7 +135,7 @@ function App() {
             <Route path="/backlinks" element={<LinkToUs />} />
             <Route path="/blog" element={<Blog />} />
             <Route path="/blog/:slug" element={<BlogPost />} />
-            <Route path="/:slug" element={<DynamicSeoPage />} />
+            <Route path="*" element={<NotFound />} />
           </Routes>
         </Suspense>
       </Router>

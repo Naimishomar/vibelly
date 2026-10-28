@@ -52,15 +52,15 @@ export default function Navbar() {
 
   return (
     <>
-      <nav id="main-header" className="flex items-center justify-between py-4 px-6 max-w-7xl mx-auto w-full text-sm text-zinc-400 relative z-50">
+      <nav id="main-header" className="flex items-center justify-between gap-2 py-4 px-4 sm:px-6 max-w-7xl mx-auto w-full text-sm text-zinc-400 relative z-50">
         {/* Logo */}
         <Link to="/" className="flex items-center gap-2 text-white font-bold text-base tracking-tight">
           <img 
             src="https://i.pinimg.com/736x/bf/f9/90/bff990bfc21bdc142b69c6ed28b53b6d.jpg" 
             alt="Vibelly Logo" 
-            className="w-12 h-12 rounded-full object-cover shadow-lg shadow-black/50" 
+            className="w-10 h-10 sm:w-12 sm:h-12 rounded-full object-cover shadow-lg shadow-black/50" 
           />
-          <span className='text-2xl font-serif font-black'>Vibelly</span>
+          <span className='text-xl sm:text-2xl font-serif font-black whitespace-nowrap'>Vibelly</span>
         </Link>
 
         {/* Nav Links */}
@@ -185,13 +185,13 @@ export default function Navbar() {
               <ThemeToggle />
               <button
                 onClick={() => setIsLoginModalOpen(true)}
-                className="text-zinc-300 font-medium hover:text-white transition-colors text-[14px] px-4 py-2 cursor-pointer"
+                className="hidden sm:inline-block whitespace-nowrap text-zinc-300 font-medium hover:text-white transition-colors text-[14px] px-4 py-2 cursor-pointer"
               >
                 Sign In
               </button>
               <button
                 onClick={() => setIsLoginModalOpen(true)}
-                className="bg-white text-black px-5 py-2 rounded-xl font-medium hover:bg-white/80 hover:text-black transition-colors text-[14px] cursor-pointer"
+                className="whitespace-nowrap bg-white text-black px-4 sm:px-5 py-2 rounded-xl font-medium hover:bg-white/80 hover:text-black transition-colors text-[14px] cursor-pointer"
               >
                 Sign Up
               </button>
