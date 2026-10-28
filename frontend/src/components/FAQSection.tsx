@@ -1,7 +1,6 @@
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ChevronDown } from 'lucide-react';
-import { Helmet } from 'react-helmet-async';
 
 export interface FAQ {
   question: string;
@@ -21,28 +20,9 @@ export default function FAQSection({ faqs, title = "Frequently Asked Questions",
     setOpenIndex(openIndex === index ? null : index);
   };
 
-  // Generate FAQ JSON-LD Schema
-  const faqSchema = {
-    "@context": "https://schema.org",
-    "@type": "FAQPage",
-    "mainEntity": faqs.map((faq) => ({
-      "@type": "Question",
-      "name": faq.question,
-      "acceptedAnswer": {
-        "@type": "Answer",
-        "text": faq.answer
-      }
-    }))
-  };
 
   return (
     <section className="py-24 bg-[#111316] relative border-t border-white/5">
-      {/* Inject FAQ Schema for SEO */}
-      <Helmet>
-        <script type="application/ld+json">
-          {JSON.stringify(faqSchema)}
-        </script>
-      </Helmet>
 
       <div className="max-w-4xl mx-auto px-6 relative z-10">
         <div className="text-center mb-16">

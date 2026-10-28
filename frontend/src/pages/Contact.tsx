@@ -10,7 +10,7 @@ export default function Contact() {
     <div className="min-h-screen bg-[#15171B] text-white flex flex-col font-sans relative">
       <SEO 
         title="Contact Us | Vibelly Support" 
-        description="Need help? Contact Vibelly support for any inquiries, technical issues, or feedback."
+        description="Need help? Email Vibelly support at vibellyofficial@gmail.com for questions, technical issues, abuse reports, or feedback."
         canonicalUrl="/contact"
       />
       {/* ─── Dot Grid ─── */}

@@ -127,22 +127,23 @@ export default function InteractiveHeroCards() {
           {/* Action Bar */}
           <div className="flex justify-between items-center">
             <div className="flex items-center gap-3 bg-white/5 rounded-lg p-1 border border-white/10">
-              <button className="w-10 h-10 rounded-md bg-white/10 flex items-center justify-center hover:bg-white/20 transition-colors">
+              <button aria-label="Video call" className="w-10 h-10 rounded-md bg-white/10 flex items-center justify-center hover:bg-white/20 transition-colors">
                 <Video size={16} className="text-white" />
               </button>
-              <button className="w-10 h-10 rounded-md flex items-center justify-center hover:bg-white/10 transition-colors">
+              <button aria-label="Voice call" className="w-10 h-10 rounded-md flex items-center justify-center hover:bg-white/10 transition-colors">
                 <Headphones size={16} className="text-zinc-400" />
               </button>
             </div>
             
             <div className="relative w-full max-w-[200px] ml-4">
               <input 
+                aria-label="Message"
                 type="text" 
                 placeholder="Type a message..." 
                 className="w-full bg-white/5 border border-white/10 rounded-full py-2.5 px-4 text-xs text-white placeholder:text-zinc-600 focus:outline-none focus:border-white/20 transition-colors"
                 readOnly
               />
-              <button className="absolute right-1 top-1/2 -translate-y-1/2 w-7 h-7 rounded-full bg-white text-black flex items-center justify-center">
+              <button aria-label="Send message" className="absolute right-1 top-1/2 -translate-y-1/2 w-7 h-7 rounded-full bg-white text-black flex items-center justify-center">
                 <ArrowRight size={12} />
               </button>
             </div>

@@ -1,0 +1,95 @@
+{
+  "safety": {
+    "updated": "2026-10-28",
+    "sections": [
+      {
+        "h2": "Adults only (18+)",
+        "paragraphs": [
+          "Vibelly is only for people aged 18 or older. You confirm you are 18+ before every chat. If you are under 18, do not use Vibelly. Accounts found to belong to minors are banned."
+        ]
+      },
+      {
+        "h2": "Community rules",
+        "bullets": [
+          "No nudity, sexual content, or sexual requests.",
+          "No harassment, hate speech, threats, or bullying.",
+          "No spam, scams, advertising, or links to other services.",
+          "No recording or screenshotting people without their consent.",
+          "No illegal activity of any kind."
+        ]
+      },
+      {
+        "h2": "How reporting and bans work",
+        "paragraphs": [
+          "You can start a video or text chat without creating an account. Reporting someone requires you to be signed in, so that reports are tied to real accounts and cannot be abused anonymously.",
+          "Every call has a Report button. Reports go to the Vibelly team, who review them and ban accounts that break these rules. Bans apply to the account, and serious cases can lead to a permanent ban.",
+          "You can also email reports to vibellyofficial@gmail.com with the time of the call and what happened."
+        ]
+      },
+      {
+        "h2": "What we store",
+        "paragraphs": [
+          "Video and voice calls connect directly between browsers using WebRTC, which encrypts media in transit. When a direct connection is not possible, media passes through a relay server, which forwards it without being able to read it. Vibelly does not record calls, and chat messages are not kept after a chat ends.",
+          "If you sign in, we store your account details, your Premium status, and the details of any reports you make or receive, so that we can enforce these rules. See the Terms & Privacy Policy for more."
+        ]
+      },
+      {
+        "h2": "Staying safe with strangers",
+        "bullets": [
+          "Never share your full name, address, school, workplace, or financial details.",
+          "Skip any conversation instantly. You never owe a stranger your time.",
+          "Be careful with requests to move to another app. That is a common scam pattern.",
+          "Assume anything you show on camera could be recorded by the other person.",
+          "If someone threatens or blackmails you, do not pay. Keep evidence, report the account, and contact your local police."
+        ]
+      }
+    ]
+  },
+  "terms": {
+    "intro": "Welcome to Vibelly. By accessing our application, you agree to be bound by these terms. Please read them carefully before using our anonymous communication services.",
+    "sections": [
+      {
+        "h2": "1. Acceptable Use",
+        "paragraphs": [
+          "You agree not to use the application for any unlawful purpose or any purpose prohibited under this clause. You agree not to use the application in any way that could damage the site, the services or the general business of Vibelly. You must be at least 18 years old to use our platform."
+        ]
+      },
+      {
+        "h2": "2. Premium Subscriptions",
+        "paragraphs": [
+          "Premium subscriptions are billed as specified at the time of purchase. All sales are final and non-refundable unless required by law. Subscriptions automatically grant access to premium features (like location selection and exclusive UI borders) for the precise duration of the billing cycle. If you purchase additional time while active, the remaining days will be mathematically added to your new expiry date."
+        ]
+      },
+      {
+        "h2": "3. User Conduct",
+        "paragraphs": [
+          "Vibelly is a platform for respectful communication. We reserve the right to ban users who exhibit inappropriate behavior, harassment, hate speech, or violate community guidelines on video and audio calls. Nudity and explicit content on camera are strictly forbidden."
+        ]
+      },
+      {
+        "h2": "4. Ephemeral Data & Privacy",
+        "paragraphs": [
+          "By default, Vibelly operates as an anonymous communication tool. Your peer-to-peer video streams and socket-based text chats are ephemeral. We do not record or retain chat history or video feeds after the session is terminated. However, we do store account identifiers, premium status, and reporting metadata to enforce community safety."
+        ]
+      },
+      {
+        "h2": "5. Account Termination",
+        "paragraphs": [
+          "We reserve the right to suspend or terminate your account without notice or liability for any reason, including if you breach the Terms. Upon termination, your right to use the Service will immediately cease. Premium subscription fees will not be refunded in the event of an account ban due to Terms of Service violations."
+        ]
+      },
+      {
+        "h2": "6. Limitation of Liability",
+        "paragraphs": [
+          "In no event shall Vibelly, nor its directors, employees, or partners, be liable for any indirect, incidental, special, consequential or punitive damages, including without limitation, loss of profits, data, use, goodwill, or other intangible losses, resulting from your access to or use of or inability to access or use the Service."
+        ]
+      },
+      {
+        "h2": "7. Dispute Resolution",
+        "paragraphs": [
+          "Any disputes arising out of or related to these Terms or the Service will be governed by the laws of the State of California, United States, without regard to its conflict of law provisions. You agree to submit to the personal jurisdiction of the courts located within Silicon Valley, California for the purpose of litigating all such claims or disputes."
+        ]
+      }
+    ]
+  }
+}

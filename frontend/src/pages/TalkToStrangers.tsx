@@ -24,8 +24,8 @@ const features = [
   },
   {
     icon: Video,
-    title: 'HD Video Quality',
-    desc: 'Powered by modern WebRTC technology for crystal clear video calls worldwide.',
+    title: 'Smooth WebRTC Video',
+    desc: 'Powered by modern WebRTC, with 720p HD video on Premium.',
   },
   {
     icon: MessageSquare,
@@ -90,7 +90,7 @@ export default function TalkToStrangers() {
             transition={{ delay: 0.2 }}
             className="text-lg md:text-xl text-zinc-400 mb-10 max-w-2xl leading-relaxed"
           >
-            Connect globally with the best random stranger chat platform. Vibelly is the safest, fastest, and most aesthetic platform on the internet.
+            Connect globally with the best random stranger chat platform. Vibelly is a free, adults-only random video chat that runs in your browser.
           </motion.p>
 
           <motion.div
@@ -151,7 +151,7 @@ export default function TalkToStrangers() {
 
         <ShareButtons
           title="Talk to Strangers | Random Stranger Chat Online"
-          description="Talk to strangers online with free random stranger chat — HD video, voice, or text, anonymous and instant."
+          description="Talk to strangers online with free random stranger chat — video or text, anonymous and instant."
         />
 
         <div className="mt-auto relative z-20">

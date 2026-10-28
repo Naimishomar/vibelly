@@ -1,5 +1,27 @@
 {
   "trailingSlash": false,
+  "redirects": [
+    {
+      "source": "/index.html",
+      "destination": "/",
+      "permanent": true
+    },
+    {
+      "source": "/omegle-unbanned",
+      "destination": "/omegle-alternative",
+      "permanent": true
+    },
+    {
+      "source": "/video-chat-online",
+      "destination": "/random-video-chat",
+      "permanent": true
+    },
+    {
+      "source": "/chat-with-girls",
+      "destination": "/random-video-chat",
+      "permanent": true
+    }
+  ],
   "rewrites": [
     {
       "source": "/(chat|live|mcp|admin|oauth-callback|backlinks|groups|call)",
@@ -11,6 +33,15 @@
     }
   ],
   "headers": [
+    {
+      "source": "/(chat|live|mcp|admin|oauth-callback|backlinks|groups|call|creator|setup)(/.*)?",
+      "headers": [
+        {
+          "key": "X-Robots-Tag",
+          "value": "noindex"
+        }
+      ]
+    },
     {
       "source": "/(.*)",
       "headers": [

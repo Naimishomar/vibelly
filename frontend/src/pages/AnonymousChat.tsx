@@ -24,8 +24,8 @@ const features = [
   },
   {
     icon: Video,
-    title: 'HD Video Quality',
-    desc: 'Powered by modern WebRTC technology for crystal clear video calls worldwide.',
+    title: 'Smooth WebRTC Video',
+    desc: 'Powered by modern WebRTC, with 720p HD video on Premium.',
   },
   {
     icon: MessageSquare,
@@ -80,8 +80,8 @@ export default function AnonymousChat() {
             className="text-4xl md:text-6xl font-normal tracking-tight leading-[1.1] mb-8"
             style={{ fontFamily: '"Playfair Display", "Merriweather", "Lora", ui-serif, Georgia, Cambria, "Times New Roman", Times, serif' }}
           >
-            The Most Secure Anonymous <br />
-            Chat Website
+            Anonymous Chat <br />
+            Without an Account
           </motion.h1>
 
           <motion.p
@@ -90,7 +90,7 @@ export default function AnonymousChat() {
             transition={{ delay: 0.2 }}
             className="text-lg md:text-xl text-zinc-400 mb-10 max-w-2xl leading-relaxed"
           >
-            Chat freely without giving up your email, phone, or identity. Vibelly is the safest, fastest, and most aesthetic platform on the internet.
+            Chat freely without giving up your email, phone, or identity. Vibelly is a free, adults-only random video chat that runs in your browser.
           </motion.p>
 
           <motion.div

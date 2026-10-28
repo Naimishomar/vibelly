@@ -208,7 +208,7 @@ export default function Pricing() {
       features: [
         'Everything in Free, plus:',
         'Opposite gender matching',
-        'HD video calls (720p & 1080p)',
+        'HD video calls (720p)',
         'Random audio calling',
         'Real-time chat',
         'Country filters',
@@ -236,7 +236,7 @@ export default function Pricing() {
     <div className="min-h-screen bg-[#15171B] text-white font-sans flex flex-col relative">
       <SEO 
         title="Vibelly Premium | Enhance Your Random Chat Experience" 
-        description="Upgrade to Vibelly Premium for an ad-free experience, priority matchmaking, and exclusive badges."
+        description="Vibelly Premium adds gender and country filters, 720p HD video, and voice calls. ₹49 a month, ₹499 a year, or ₹9 for a single day."
         canonicalUrl="/pricing"
       />
       {/* ─── Dot Grid ─── */}

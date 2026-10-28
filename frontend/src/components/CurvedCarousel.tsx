@@ -124,13 +124,13 @@ export default function CurvedCarousel() {
         <div className="text-center border p-4 border-white/10 rounded-2xl border-2 bg-white">
           <h3 className="text-black font-medium text-lg mb-2" style={{ fontFamily: 'Georgia, serif' }}>End-to-End<br/>Security</h3>
           <p className="text-zinc-600 text-sm leading-relaxed">
-            Your identity is anonymous and your video streams are strictly peer-to-peer and fully encrypted.
+            Your identity stays anonymous, and video streams connect directly between browsers where possible, encrypted in transit.
           </p>
         </div>
         <div className="text-center border p-4 border-white/10 rounded-2xl border-2">
           <h3 className="text-white font-medium text-lg mb-2" style={{ fontFamily: 'Georgia, serif' }}>High-Resolution<br/>Video</h3>
           <p className="text-zinc-500 text-sm leading-relaxed">
-            Experience face-to-face conversations in crisp 1080p without buffering or noticeable drops in frame rates.
+            Smooth WebRTC video that adapts to your connection, with 720p HD on Premium.
           </p>
         </div>
       </div>

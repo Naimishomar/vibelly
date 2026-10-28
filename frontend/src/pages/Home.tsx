@@ -72,8 +72,8 @@ const steps = [
 
 const metrics = [
   {
-    title: 'Matched in under 1 second',
-    body: 'Our Redis-backed queue pops users in real time. From pressing the button to live call — the fastest random chat on the web.',
+    title: 'Matched in seconds',
+    body: 'Our Redis-backed queue pops users in real time. From pressing the button to a live call takes seconds.',
   },
   {
     title: 'Zero data retained after the call',
@@ -106,7 +106,7 @@ const faqs = [
 
 const stats = [
   { value: 'Free', label: 'Video & text chat' },
-  { value: 'HD', label: 'WebRTC video' },
+  { value: 'P2P', label: 'Encrypted calls' },
   { value: '0', label: 'Apps to install' },
   { value: '18+', label: 'Adults only' },
 ];
@@ -187,9 +187,8 @@ export default function Home() {
     <main className="min-h-screen bg-[#15171B] text-white flex flex-col font-sans">
       <SeoMarkup 
         title="Vibelly | The Best Free Omegle Alternative & Random Video Chat" 
-        description="Vibelly is the ultimate free alternative to Omegle and OmeTV. Instantly connect with strangers worldwide through high-quality random video calling and chat."
+        description="Free random video chat for adults 18+. Meet strangers worldwide over video or text in your browser. A modern Omegle alternative with no sign-up."
         url="https://vibelly.fun/"
-        isHome={true}
       />
 
       {/* ─── Dot Grid ─── */}
@@ -220,7 +219,7 @@ export default function Home() {
           <p
             className="text-base sm:text-lg md:text-xl text-zinc-400 mb-6 max-w-2xl leading-relaxed mx-auto"
           >
-            Talk to strangers online instantly with our free random video call app. Enjoy 100% anonymous voice chat and HD video with people from around the world. No sign-up required.
+            Talk to strangers online instantly with our free random video call app. Enjoy anonymous video and text chat with people from around the world. No sign-up required.
           </p>
 
           <motion.div
@@ -317,7 +316,7 @@ export default function Home() {
               In a world of curated feeds and filtered connections, a random encounter with a stranger is not a distraction. It's a reminder that the world is bigger than your algorithm.
             </p>
             <p className="text-sm text-zinc-500 leading-relaxed max-w-xl mx-auto">
-              We built Vibelly to be the fastest <a href="/omegle-alternative" className="text-zinc-400 underline hover:text-black transition-colors">Omegle alternative</a> on the internet. Whether you want to talk to strangers, meet new friends, or just enjoy an anonymous random chat app, you've found your new home.
+              We built Vibelly to be a simple, fast <a href="/omegle-alternative" className="text-zinc-400 underline hover:text-black transition-colors">Omegle alternative</a>. Whether you want to talk to strangers, meet new friends, or just enjoy an anonymous random chat app, you've found your new home.
             </p>
           </motion.div>
         </section>
@@ -336,10 +335,10 @@ export default function Home() {
               className="text-3xl md:text-4xl font-semibold mb-3"
               style={{ fontFamily: 'Georgia, serif' }}
             >
-              Talk to Strangers Instantly with HD Video Calling
+              Talk to Strangers Instantly with Video Calling
             </h2>
             <p className="text-zinc-500 text-sm max-w-2xl mx-auto leading-relaxed">
-              Everything is built for speed and security. Meet new people without login, enjoy anonymous voice chat, and skip to the next stranger in milliseconds.
+              Everything is built for speed and security. Meet new people without login, enjoy anonymous text chat, and skip to the next stranger in milliseconds.
             </p>
           </motion.div>
 
@@ -350,7 +349,7 @@ export default function Home() {
                 </div>
                 <h3 className="text-xl font-semibold mb-3">100% Anonymous Chat</h3>
                 <p className="text-zinc-400 text-sm leading-relaxed">
-                  No profiles, no accounts, no trace. Your identity is completely hidden until you choose to share it. Talk to strangers safely and securely.
+                  No profile and no account needed to chat. Your identity is completely hidden until you choose to share it. Talk to strangers safely and securely.
                 </p>
               </div>
               <div className="bg-[#1A1C20] border border-white/5 rounded-2xl p-8 hover:bg-[#1C1F24] transition-colors h-full">
@@ -368,7 +367,7 @@ export default function Home() {
                 </div>
                 <h3 className="text-xl font-semibold mb-3">Instant Connections</h3>
                 <p className="text-zinc-400 text-sm leading-relaxed">
-                  Match with a new stranger in milliseconds. Our optimized signaling servers ensure the fastest peer-to-peer video chat experience on the internet.
+                  Match with a new stranger in seconds. Calls connect directly between browsers for low-latency video.
                 </p>
               </div>
           </div>
@@ -470,7 +469,7 @@ export default function Home() {
               className="text-3xl md:text-4xl font-semibold mb-4"
               style={{ fontFamily: 'Georgia, serif' }}
             >
-              Why Vibelly is the Safest Chatroulette Alternative
+              What Makes Vibelly Different from Chatroulette
             </h2>
             <p className="text-zinc-500 text-sm max-w-lg mx-auto leading-relaxed">
               Unlike other free video call apps, every conversation on Vibelly starts with speed and ends with complete privacy. We never store your data or chat history.
@@ -535,7 +534,7 @@ export default function Home() {
               
               <p className="text-zinc-400 text-base leading-relaxed mb-8 max-w-lg">
                 While random chat is free forever, Premium unlocks the power to filter your matches. 
-                Meet exactly who you want, where you want, in crystal clear high-definition.
+                Meet exactly who you want, where you want, in 720p HD.
               </p>
 
               <button 

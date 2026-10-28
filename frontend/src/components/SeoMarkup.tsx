@@ -6,14 +6,12 @@ interface SeoMarkupProps {
   title?: string;
   description?: string;
   url?: string;
-  isHome?: boolean;
 }
 
 export const SeoMarkup: React.FC<SeoMarkupProps> = ({
   title = 'Vibelly | The Best Free App For Random Video Chat',
   description = site.defaultDescription,
   url = `${site.url}/`,
-  isHome = false,
 }) => {
   let canonicalUrl: string | undefined;
   try {
@@ -23,7 +21,7 @@ export const SeoMarkup: React.FC<SeoMarkupProps> = ({
   }
 
   return (
-    <SEO title={title} description={description} canonicalUrl={canonicalUrl} includeOrganization={isHome} />
+    <SEO title={title} description={description} canonicalUrl={canonicalUrl} />
   );
 };
 

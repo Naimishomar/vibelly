@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
 import { Helmet } from 'react-helmet-async';
-import { site, absoluteUrl, buildSeoJsonLd } from '../lib/seo';
+import { site, absoluteUrl } from '../lib/seo';
 import type { SeoPageConfig } from '../lib/seo';
 
 export default function SEO({
@@ -9,27 +9,15 @@ export default function SEO({
   canonicalUrl,
   type = 'website',
   imageUrl = site.defaultImage,
-  faqs,
-  includeOrganization = false,
-  datePublished,
   noindex = false,
 }: SeoPageConfig) {
   const url = absoluteUrl(canonicalUrl);
-  const jsonLd = buildSeoJsonLd({
-    title,
-    description,
-    canonicalUrl,
-    type,
-    imageUrl,
-    faqs,
-    includeOrganization,
-    datePublished,
-  });
 
-  // Drop the static/prerendered head tags (marked data-ssr) once Helmet's are mounted,
-  // otherwise the page ships two <title>s, two canonicals, etc.
+  // Drop the static/prerendered meta tags (marked data-ssr) once Helmet's are mounted,
+  // otherwise the page ships two <title>s, two canonicals, etc. The prerendered JSON-LD
+  // is kept: it is the only structured data on the page.
   useEffect(() => {
-    document.head.querySelectorAll('[data-ssr]').forEach((el) => el.remove());
+    document.head.querySelectorAll('[data-ssr]:not(script)').forEach((el) => el.remove());
   }, []);
 
   return (
@@ -60,12 +48,6 @@ export default function SEO({
       <meta property="twitter:description" content={description} />
       <meta property="twitter:image" content={imageUrl} />
 
-      {/* JSON-LD Structured Data */}
-      {jsonLd.map((json, index) => (
-        <script type="application/ld+json" key={index}>
-          {json}
-        </script>
-      ))}
     </Helmet>
   );
 }

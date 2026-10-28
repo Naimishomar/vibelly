@@ -4,7 +4,6 @@ import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
 import SEO from '../components/SEO';
 import { ArrowLeft } from 'lucide-react';
-import { motion } from 'framer-motion';
 import posts from '../content/blog-posts.json';
 
 const renderMarkdown = (content: string) => {
@@ -50,7 +49,6 @@ export default function BlogPost() {
         description={post.description}
         canonicalUrl={`/blog/${post.slug}`}
         type="article"
-        datePublished={post.date}
       />
       <div className="relative z-10 flex flex-col min-h-screen">
         <Navbar />
@@ -61,10 +59,7 @@ export default function BlogPost() {
             Back to all articles
           </Link>
 
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-          >
+          <div>
             <div className="text-zinc-500 font-medium mb-4">{post.date} • By {post.author}</div>
             <h1 className="text-4xl md:text-5xl font-normal leading-tight mb-8" style={{ fontFamily: '"Playfair Display", "Merriweather", "Lora", ui-serif, Georgia, Cambria, "Times New Roman", Times, serif' }}>
               {post.title}
@@ -94,7 +89,7 @@ export default function BlogPost() {
                 </div>
               </div>
             )}
-          </motion.div>
+          </div>
         </main>
 
         <Footer />

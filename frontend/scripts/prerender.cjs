@@ -22,6 +22,7 @@ if (!SEO_BLOCK.test(template)) {
 }
 
 const BLOG_POSTS = require('../src/content/blog-posts.json');
+const PAGES = require('../src/content/pages.json');
 
 const esc = (str) =>
   String(str)
@@ -38,6 +39,7 @@ const SITE_GRAPH = [
     url: `${siteUrl}/`,
     logo: `${siteUrl}/favicon.jpg`,
     email: 'vibellyofficial@gmail.com',
+    sameAs: ['https://instagram.com/vibelly.official'],
   },
   {
     '@type': 'WebSite',
@@ -63,7 +65,7 @@ const SITE_GRAPH = [
 const HOME = {
   title: 'Vibelly | The Best Free Omegle Alternative & Random Video Chat',
   description:
-    'Vibelly is a free alternative to Omegle and OmeTV for adults 18+. Connect with strangers worldwide through HD random video calls, voice and text chat. No sign-up required.',
+    'Free random video chat for adults 18+. Meet strangers worldwide over video or text in your browser. A modern Omegle alternative with no sign-up.',
   h1: 'The Best Free Omegle Alternative & Random Video Chat',
   lead: 'Talk to strangers online instantly with free random video calls and text chat, right in your browser. No sign-up required. Vibelly is for adults 18+ only.',
   sections: [
@@ -95,24 +97,44 @@ const HOME = {
 const APP_PAGES = {
   pricing: {
     title: 'Vibelly Premium | Enhance Your Random Chat Experience',
-    description: 'Upgrade to Vibelly Premium for an ad-free experience, priority matchmaking, and exclusive badges.',
+    description: 'Vibelly Premium adds gender and country filters, 720p HD video, and voice calls. ₹49 a month, ₹499 a year, or ₹9 for a single day.',
     h1: 'Vibelly Premium',
+    sections: [
+      { h2: 'Free', bullets: ['Random video chat at 480p', 'Text chat with strangers', 'Unlimited sessions', 'One-tap reporting'] },
+      {
+        h2: 'Premium: ₹49 per month or ₹499 per year',
+        bullets: ['Opposite gender matching', 'HD video calls (720p)', 'Random voice calls', 'Country filters', 'Interest matching'],
+      },
+      { h2: 'Daily pass: ₹9', paragraphs: ['Everything in Premium for 24 hours, with no commitment.'] },
+    ],
   },
   contact: {
     title: 'Contact Us | Vibelly Support',
-    description: 'Need help? Email Vibelly support at vibellyofficial@gmail.com for enquiries, technical issues, abuse reports, or feedback.',
+    description: 'Need help? Email Vibelly support at vibellyofficial@gmail.com for questions, technical issues, abuse reports, or feedback.',
     h1: 'Contact Us',
+    sections: [
+      {
+        h2: 'Email us',
+        paragraphs: [
+          'Email vibellyofficial@gmail.com for support, feedback, business enquiries, and abuse reports. To report a user, include the time of the call and what happened.',
+        ],
+      },
+    ],
   },
   terms: {
     title: 'Terms of Service & Privacy Policy | Vibelly',
     description: 'Read the terms of service and privacy policy for Vibelly. We prioritize your anonymity and data protection.',
     h1: 'Terms & Conditions',
+    lead: PAGES.terms.intro,
+    sections: PAGES.terms.sections,
   },
   safety: {
     title: 'Safety & Community Rules | Vibelly',
     description:
       'Vibelly is for adults 18+. Read our community rules, how reporting and bans work, and how to stay safe when you talk to strangers.',
     h1: 'Safety & Community Rules',
+    lead: `Last updated ${PAGES.safety.updated}`,
+    sections: PAGES.safety.sections,
   },
 };
 
@@ -121,9 +143,9 @@ const CORE_COPY = {
   'omegle-alternative': {
     title: 'The Best Free Omegle Alternative in 2026 | Vibelly',
     description:
-      'Looking for an Omegle alternative? Vibelly is the best free random video call app. Meet strangers instantly with HD video, voice chat, and strict safety measures.',
-    h1: 'The Best Free Omegle Alternative',
-    lead: "Omegle shut down, but the need to talk to strangers didn't. Vibelly is the safest, fastest, and most aesthetic free Omegle alternative on the internet.",
+      'Looking for an Omegle alternative? Vibelly is free random video chat for adults 18+, with text chat, one-tap reporting, and no sign-up needed.',
+    h1: 'Omegle Alternative: Free Random Video Chat for Adults',
+    lead: "Omegle shut down, but the need to talk to strangers didn't. Vibelly is a free, adults-only Omegle alternative that runs in your browser.",
     sections: [
       {
         h2: 'Why Omegle shut down and what replaced it',
@@ -139,10 +161,10 @@ const CORE_COPY = {
         ],
         bullets: [
           'Free random video chat with no sign-up, no email, and no app to download',
-          'HD video calls and voice-only mode powered by low-latency WebRTC',
+          'Video calls powered by low-latency WebRTC, with voice-only calls on Premium',
           'One-tap reporting, with every report reviewed by our team',
           'Fully anonymous — your identity stays private until you choose to share it',
-          'Instant matching in under a second, on any phone or desktop browser',
+          'Instant matching on any phone or desktop browser',
         ],
       },
       {
@@ -153,7 +175,7 @@ const CORE_COPY = {
       },
     ],
     faqs: [
-      { q: 'Is Vibelly a good alternative to Omegle?', a: 'Yes. Vibelly offers HD video quality, a clean design, and strict moderation without requiring an account, making it one of the best Omegle alternatives.' },
+      { q: 'Is Vibelly a good alternative to Omegle?', a: 'Yes. Vibelly offers smooth video, a clean design, and one-tap reporting without requiring an account, making it one of the best Omegle alternatives.' },
       { q: 'Do I need to sign up to use Vibelly?', a: 'No. You never need to sign up or share personal information. Just click start and connect with strangers worldwide.' },
       { q: 'Is Vibelly safe to use?', a: 'Vibelly is 18+ only, every call has a one-tap Report button reviewed by our team, and every conversation is ephemeral.' },
       { q: 'Can I use Vibelly on my phone?', a: 'Absolutely. Vibelly works in any mobile browser with no app download required.' },
@@ -162,15 +184,15 @@ const CORE_COPY = {
   'ometv-alternative': {
     title: 'The Best OmeTV Alternative Without Facebook Login | Vibelly',
     description:
-      "Looking for an OmeTV alternative that doesn't require a Facebook account? Vibelly is 100% anonymous, free, and features HD random video chat.",
+      "Looking for an OmeTV alternative that doesn't require a Facebook account? Vibelly is 100% anonymous, free, and features free random video chat.",
     h1: 'The Best OmeTV Alternative Without Facebook Login',
-    lead: 'OmeTV forces you to link your social media. Vibelly is a truly anonymous OmeTV alternative with zero tracking and no login required.',
+    lead: 'OmeTV forces you to link your social media. Vibelly is a truly anonymous OmeTV alternative with no login required.',
     sections: [
       {
         h2: 'Why people look for an OmeTV alternative',
         paragraphs: [
           'OmeTV is popular, but it forces you to log in with your personal Facebook or VK account before you can start chatting. For anyone who wants a private, anonymous video chat, that requirement is a dealbreaker.',
-          'There are also frequent bans and verification walls. Vibelly keeps the good parts of OmeTV — HD random video chat worldwide — and removes the social-media login entirely.',
+          'There are also frequent bans and verification walls. Vibelly keeps the good parts of OmeTV — random video chat worldwide — and removes the social-media login entirely.',
         ],
       },
       {
@@ -179,37 +201,37 @@ const CORE_COPY = {
         bullets: [
           'No Facebook or VK login — Vibelly is 100% anonymous with no account required',
           'No surprise bans: skip the next stranger freely without penalty',
-          'Free HD video chat with no pay-to-talk walls on the core experience',
+          'Free video chat with no pay-to-talk walls on the core experience',
           'Optional gender and country filters with Vibelly Premium',
         ],
       },
       {
         h2: 'How to use Vibelly without logging in',
         paragraphs: [
-          'Open the site in any browser, choose video, voice, or text, and press start. You are matched with a stranger in under a second — no email, no phone number, and no Facebook account.',
-          'Calls run over encrypted WebRTC streams directly between browsers, so conversations are private and low-latency. When a call ends, it leaves no trace.',
+          'Open the site in any browser, choose video or text, and press start. You are matched with a stranger in seconds — no email, no phone number, and no Facebook account.',
+          'Calls run over encrypted WebRTC streams directly between browsers, so conversations are private and low-latency. Calls are never recorded, and chat messages are not kept after the call ends.',
         ],
       },
     ],
     faqs: [
       { q: 'Why is Vibelly better than OmeTV?', a: 'Unlike OmeTV, Vibelly does not force you to log in with Facebook or VK. We prioritize privacy and complete anonymity while keeping a safe, moderated environment.' },
       { q: 'Do I need a Facebook account to use Vibelly?', a: 'No. Vibelly is 100% login-free for random video chats.' },
-      { q: 'Is the video quality good?', a: 'Yes. Vibelly uses modern WebRTC technology for crystal clear HD video, assuming a stable connection.' },
+      { q: 'Is the video quality good?', a: 'Free calls run at 480p, and Premium unlocks 720p HD. Video adapts automatically to your connection.' },
       { q: 'Is Vibelly free to use?', a: 'Yes, the core random video chat experience is completely free for everyone.' },
     ],
   },
   'random-video-chat': {
     title: 'Free Random Video Chat Online | Meet Strangers on Vibelly',
     description:
-      'The best free random video chat website. Meet strangers instantly online without login. Vibelly provides anonymous chat with HD video and voice.',
+      'The best free random video chat website. Meet strangers instantly online without login. Vibelly provides anonymous video and text chat.',
     h1: 'Free Random Video Chat Online',
-    lead: 'Meet thousands of strangers instantly. No login required. Vibelly is the safest, fastest, and most aesthetic random video chat platform on the internet.',
+    lead: 'Meet strangers instantly. No login required. Vibelly is a free, adults-only random video chat that runs in your browser.',
     sections: [
       {
         h2: 'What is random video chat?',
         paragraphs: [
           'Random video chat connects you over video with a stranger you have never met — no friend list, no algorithm-curated feed, no profile. You press a button and are matched instantly.',
-          'The concept was made famous by Omegle and Chatroulette. Vibelly keeps that excitement and rebuilds the technology: modern WebRTC video, one-tap reporting, and matching in under a second.',
+          'The concept was made famous by Omegle and Chatroulette. Vibelly keeps that excitement and rebuilds the technology: modern WebRTC video, one-tap reporting, and matching in seconds.',
         ],
       },
       {
@@ -227,7 +249,7 @@ const CORE_COPY = {
       {
         h2: 'How to stay safe during random video chat',
         paragraphs: [
-          'Every call has a one-tap Report button, and our team reviews every report. Conversations are ephemeral: when you skip or end a call, nothing is stored.',
+          'Every call has a one-tap Report button, and our team reviews every report. Conversations are ephemeral: when you skip or end a call, the conversation is not stored.',
           'Never share personal financial information, keep your location vague, and trust your instincts. Skipping to a new person is always one click away.',
         ],
       },
@@ -239,51 +261,10 @@ const CORE_COPY = {
       { q: 'Is random video chat really free?', a: 'Yes. Core random video chat is completely free with no time limits or hidden charges.' },
     ],
   },
-  'video-chat-online': {
-    title: 'Free Online Video Call | Video Chat Online with Strangers | Vibelly',
-    description:
-      'Make a free online video call with strangers right in your browser. Vibelly is the fastest free video chat online — HD video, no sign-up, works on mobile and desktop.',
-    h1: 'Free Online Video Call with Strangers',
-    lead: 'Make a free online video call in one click — no app, no account, no download. Vibelly is the fastest way to video chat online with strangers.',
-    sections: [
-      {
-        h2: 'What is a free online video call?',
-        paragraphs: [
-          'A free online video call lets you see and talk to another person in real time using nothing more than your browser. Unlike apps that require an account or a download, Vibelly starts the moment you arrive.',
-          'You are matched with a random stranger from anywhere in the world, and the connection is built on WebRTC — fast, private, and free.',
-        ],
-      },
-      {
-        h2: 'Free video chat online vs video calling apps',
-        bullets: [
-          'No account, phone number, or app download required to start',
-          'Meet strangers instantly instead of adding contacts first',
-          'HD quality with automatic bandwidth adaptation',
-          'Anonymous by default — you control exactly what you reveal',
-        ],
-        paragraphs: [
-          'Video calling apps are great for people you already know, but browser-based free video chat is the right tool for meeting someone new.',
-        ],
-      },
-      {
-        h2: 'How to make a free online video call on Vibelly',
-        paragraphs: [
-          'Press "Video Chat", allow camera and microphone access, and you will be matched with a stranger in under a second. Toggle your camera or mic anytime, type in the live chat panel, or skip to the next person whenever you like.',
-          'There is no time limit on free calls and no credit card required. Optional Premium filters add gender and country controls.',
-        ],
-      },
-    ],
-    faqs: [
-      { q: 'Are free online video calls really free?', a: 'Yes. Core random video chat on Vibelly is completely free with no time limits or hidden charges.' },
-      { q: 'Do I need to sign up?', a: 'No. You never need to sign up or provide personal information to start a free online video call.' },
-      { q: 'Can I use it on my phone?', a: 'Yes. Vibelly works in any mobile browser with no app download required.' },
-      { q: 'Is it safe to use?', a: 'Vibelly is 18+ only, with one-tap reporting reviewed by our team and ephemeral conversations.' },
-    ],
-  },
   'chatroulette-alternative': {
     title: 'The Best Chatroulette Alternative in 2026 | Vibelly',
     description:
-      'Looking for a modern Chatroulette alternative? Vibelly offers HD random video chat, voice calls, and one-tap reporting for free.',
+      'Looking for a modern Chatroulette alternative? Vibelly offers random video chat, text chat, and one-tap reporting for free.',
     h1: 'The Modern Chatroulette Alternative',
     lead: 'Chatroulette was built in the flash era. Vibelly is the modern Chatroulette alternative: fast, moderated, and beautifully designed.',
     sections: [
@@ -296,18 +277,18 @@ const CORE_COPY = {
       {
         h2: 'Everything you loved, rebuilt',
         bullets: [
-          'Instant random matching with HD video',
-          'Voice-only and text chat modes',
+          'Instant random video matching',
+          'Text chat mode, plus voice-only calls on Premium',
           'One-tap reporting reviewed by our team',
           '100% free with no account required',
         ],
         paragraphs: [
-          'Whether you want to talk to strangers via video or use audio-only mode, Vibelly provides the safest and most aesthetic random chat experience online today.',
+          'Whether you want to talk to strangers over video or text, Vibelly gives you a clean, modern random chat experience.',
         ],
       },
     ],
     faqs: [
-      { q: 'Is Vibelly a good Chatroulette alternative?', a: 'Yes. Vibelly offers instant matching, HD WebRTC video, and a modern interface built as a successor to Chatroulette.' },
+      { q: 'Is Vibelly a good Chatroulette alternative?', a: 'Yes. Vibelly offers instant matching, WebRTC video, and a modern interface built as a successor to Chatroulette.' },
       { q: 'How does Vibelly handle bad behavior?', a: 'Every call has a one-tap Report button. Our team reviews reports and bans users who break the rules.' },
       { q: 'Do I need to download an app?', a: 'No. Vibelly works right in your browser on desktop and mobile.' },
     ],
@@ -347,19 +328,19 @@ const CORE_COPY = {
     title: 'Anonymous Chat Website | Free Private Chat Rooms',
     description:
       'Looking for an anonymous chat website? Vibelly offers free, secure, and fully anonymous chat rooms and random video calls to keep your identity private.',
-    h1: 'The Most Secure Anonymous Chat Website',
+    h1: 'Anonymous Chat Without an Account',
     lead: 'Chat freely without giving up your email, phone, or identity. Vibelly is anonymous chat done right.',
     sections: [
       {
         h2: 'What makes Vibelly truly anonymous',
         paragraphs: [
-          'Vibelly requires no account, no email, and no phone number. You connect as an anonymous user, and conversations are ephemeral — when the call ends, nothing is stored.',
+          'Vibelly requires no account, no email, and no phone number. You connect as an anonymous user, and conversations are ephemeral — when the call ends, the conversation is not stored.',
         ],
       },
       {
         h2: 'Anonymous chat you can trust',
         bullets: [
-          'No social login, no tracking, no data retention',
+          'No social login, and calls are never recorded',
           'One-tap reporting keeps the community clean',
           'Video, voice, and text modes',
           'Encrypted WebRTC connections',
@@ -370,74 +351,8 @@ const CORE_COPY = {
       },
     ],
     faqs: [
-      { q: 'Is Vibelly anonymous?', a: 'Yes. Vibelly requires no account and stores no chat history, keeping your identity completely private.' },
+      { q: 'Is Vibelly anonymous?', a: 'Yes. Vibelly requires no account to chat, and chat messages are not kept after a call ends.' },
       { q: 'Is anonymous chat safe?', a: 'Yes. An 18+ policy, one-tap reporting, and ephemeral conversations make Vibelly a safe place to chat anonymously.' },
-    ],
-  },
-  'omegle-unbanned': {
-    title: 'Omegle Unbanned: How to Avoid Random Chat Bans | Vibelly',
-    description:
-      'Tired of being banned from random video chat? Vibelly explains how Omegle bans work and why Vibelly is the unban-proof alternative for talking to strangers.',
-    h1: 'Omegle Unbanned — Chat Without the Ban Hammer',
-    lead: 'Omegle bans are strict, permanent, and frustrating. Vibelly is the unban-proof random video chat alternative where skip is a right, not a punishment.',
-    sections: [
-      {
-        h2: 'Why Omegle bans happen',
-        paragraphs: [
-          'Omegle bans users for many reasons — questionable activity, flagged reports, and even automated triggers you may never understand. Once banned, users are typically blocked by IP and face little recourse.',
-          'Because the ban system is opaque, countless users search for "Omegle unbanned" options that simply let them talk to strangers without the threat of a permanent ban.',
-        ],
-      },
-      {
-        h2: 'Why Vibelly never punishes you for skipping',
-        paragraphs: [
-          'On Vibelly there is no ban hammer for skipping. Pressing "Next" is a fundamental right, not a rule violation. Our moderation targets actual bad behavior instead of punishing users who simply want a new conversation.',
-        ],
-        bullets: [
-          'Skip to the next stranger freely, any number of times',
-          'No IP bans for innocent browsing or skipping',
-          'Reports reviewed by people, not automated bans',
-          'Fully anonymous with no account to be banned',
-        ],
-      },
-    ],
-    faqs: [
-      { q: 'Can I get banned on Vibelly for skipping?', a: 'No. Skipping to a new stranger is always allowed on Vibelly and never results in a ban.' },
-      { q: 'Is Vibelly truly an "Omegle unbanned" option?', a: 'Yes. With no account and no ban-based moderation, Vibelly is the unban-proof way to keep talking to strangers.' },
-      { q: 'Does Vibelly ban by IP?', a: 'No. Vibelly moderates actual behavior, not identities or IP addresses.' },
-    ],
-  },
-  'chat-with-girls': {
-    title: 'Random Video Chat Without Login | Vibelly',
-    description:
-      'Vibelly is the best platform for random video chat without login. Start connecting instantly in secure video rooms with strangers.',
-    h1: 'Random Video Chat Without Login',
-    lead: 'Skip the sign-up and jump straight into the action. Vibelly is random video chat without login, ready in one click.',
-    sections: [
-      {
-        h2: 'Why "without login" matters',
-        paragraphs: [
-          'Most chat platforms force you to create an account or link a social profile before you can talk to anyone. Vibelly throws that out: you open the site, press start, and you are matched instantly.',
-          'There is no email, no phone number, and no password to remember. Your privacy is protected by default because there is simply nothing to link to you.',
-        ],
-      },
-      {
-        h2: 'Start chatting in one click',
-        bullets: [
-          'HD video, voice-only, or text chat',
-          'Instant matching with strangers worldwide',
-          'One-tap reporting reviewed by our team',
-          'No app download required',
-        ],
-        paragraphs: [
-          'Whether you want video chat with a stranger or a quiet text conversation, Vibelly gives you the full experience with zero registration.',
-        ],
-      },
-    ],
-    faqs: [
-      { q: 'Do I need to create an account?', a: 'No. Vibelly is random video chat without login — you can start instantly with no email and no password.' },
-      { q: 'Is it really free?', a: 'Yes. Core random video chat on Vibelly is completely free, with no time limits or hidden charges.' },
-      { q: 'Can I use it on my phone?', a: 'Yes. Vibelly works in any mobile browser with no app download required.' },
     ],
   },
 };
@@ -446,6 +361,9 @@ const CORE_COPY = {
 const INDEX_ROBOTS = 'index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1';
 
 function headBlock({ title, description, url, robots = INDEX_ROBOTS, graph = [] }) {
+  if (url && (!description || description.length < 50 || description.length > 155)) {
+    throw new Error(`Meta description for ${url} is ${description ? description.length : 0} chars; keep it 50-155.`);
+  }
   const tags = [`<title data-ssr>${esc(title)}</title>`];
   if (description) tags.push(`<meta data-ssr name="description" content="${esc(description)}" />`);
   tags.push(`<meta data-ssr name="robots" content="${robots}" />`);
@@ -622,7 +540,7 @@ for (const [slug, page] of Object.entries(APP_PAGES)) {
     `${slug}/index.html`,
     render(
       headBlock({ title: page.title, description: page.description, url, graph: pageGraph(slug, page.title, page.description) }),
-      buildBody({ h1: page.h1, lead: page.description }, `/${slug}`)
+      buildBody({ h1: page.h1, lead: page.lead || page.description, sections: page.sections }, `/${slug}`)
     )
   );
   sitemapPaths.push(`/${slug}`);

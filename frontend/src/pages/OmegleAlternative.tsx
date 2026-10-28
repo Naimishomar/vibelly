@@ -26,8 +26,8 @@ const features = [
   },
   {
     icon: Video,
-    title: 'HD Video Quality',
-    desc: 'Powered by modern WebRTC technology for crystal clear video calls worldwide.',
+    title: 'Smooth WebRTC Video',
+    desc: 'Powered by modern WebRTC, with 720p HD video on Premium.',
   },
   {
     icon: MessageSquare,
@@ -57,7 +57,7 @@ export default function OmegleAlternative() {
     <div className="min-h-screen bg-[#15171B] text-white flex flex-col font-sans">
       <SEO 
         title="The Best Free Omegle Alternative in 2026 | Vibelly" 
-        description="Looking for an Omegle alternative? Vibelly is the best free random video call app. Meet strangers instantly with HD video, voice chat, and strict safety measures."
+        description="Looking for an Omegle alternative? Vibelly is free random video chat for adults 18+, with text chat, one-tap reporting, and no sign-up needed."
         canonicalUrl="/omegle-alternative"
       />
       <BlinkingDotsGrid />
@@ -93,7 +93,7 @@ export default function OmegleAlternative() {
             className="text-lg md:text-xl text-zinc-400 mb-10 max-w-2xl leading-relaxed"
           >
             Omegle shut down, but the need to talk to strangers didn't. 
-            Vibelly is the safest, fastest, and most aesthetic random video call app on the internet.
+            Vibelly is a free, adults-only random video call app that runs in your browser.
           </motion.p>
 
           <motion.div
@@ -172,7 +172,7 @@ export default function OmegleAlternative() {
                 <tbody className="text-sm">
                   {[
                     { label: "Account Required", v: true, o: true, t: false },
-                    { label: "HD Video Quality", v: true, o: false, t: false },
+                    { label: "Smooth WebRTC Video", v: true, o: false, t: false },
                     { label: "Dark Mode Aesthetic", v: true, o: false, t: false },
                     { label: "Hidden Group Chats", v: true, o: false, t: false },
                     { label: "Active Moderation", v: true, o: false, t: true },
@@ -205,7 +205,7 @@ export default function OmegleAlternative() {
               paragraphs: [
                 "Omegle was one of the internet's most famous places to talk to strangers. For more than a decade, millions of users opened their browsers to be matched randomly with someone on the other side of the world. In November 2023, the site went dark: the founder said the platform had become unsustainable to run, largely because of the cost of keeping the community safe.",
                 "The shutdown left a huge gap. People who grew up using free random video chat were suddenly looking for an Omegle alternative that keeps the same magic — meeting someone completely new with one click — without the moderation problems that killed the original. That is exactly the gap Vibelly was built to fill.",
-                "A good Omegle alternative today needs three things: it must be free, it must be anonymous, and it must be actively moderated. Vibelly delivers all three from day one, which is why it has become one of the fastest-growing free video chat platforms online.",
+                "A good Omegle alternative today needs three things: it must be free, it must be anonymous, and it must be actively moderated. Vibelly was built around all three from day one.",
               ],
             },
             {
@@ -215,17 +215,17 @@ export default function OmegleAlternative() {
               ],
               bullets: [
                 'Free random video chat with no sign-up, no email, and no app to download',
-                'HD video calls and voice-only mode powered by low-latency WebRTC',
+                'Video calls powered by low-latency WebRTC, with voice-only calls on Premium',
                 'One-tap reporting, with every report reviewed by our team',
                 'Fully anonymous — your identity stays private until you choose to share it',
-                'Instant matching: you are connected to a new stranger in under a second',
+                'Instant matching: you are connected to a new stranger in seconds',
                 'Works on any phone, tablet, or desktop browser without installing anything',
               ],
             },
             {
               heading: 'How to start a free random video call on Vibelly',
               paragraphs: [
-                'Getting started is the whole point of an Omegle alternative — it should take seconds, not a registration form. On Vibelly you simply open the site, press "Start Video Call" (or choose voice-only or text chat), and you are matched with a stranger immediately.',
+                'Getting started is the whole point of an Omegle alternative — it should take seconds, not a registration form. On Vibelly you simply open the site, press "Start Video Call" (or choose text chat), and you are matched with a stranger immediately.',
                 'The moment a match is found, WebRTC negotiates a direct, low-latency connection between the two browsers. Your camera and microphone stream straight to the other person, which keeps the video chat crisp and responsive. You can skip to the next stranger at any time, and both users are re-queued instantly.',
                 'There is no setup wizard, no profile to fill in, and no payment required for the core random video call experience. Premium filters for gender and country are entirely optional upgrades.',
               ],
@@ -245,17 +245,15 @@ export default function OmegleAlternative() {
           alternatives={[
             { to: '/ometv-alternative', label: 'OmeTV Alternative', blurb: 'Video chat online without forcing a Facebook or VK login.' },
             { to: '/chatroulette-alternative', label: 'Chatroulette Alternative', blurb: 'The modern successor to classic chat roulette.' },
-            { to: '/random-video-chat', label: 'Random Video Chat', blurb: 'Free random video calls with strangers in under a second.' },
+            { to: '/random-video-chat', label: 'Random Video Chat', blurb: 'Free random video calls with strangers in seconds.' },
             { to: '/talk-to-strangers', label: 'Talk to Strangers', blurb: 'Instant stranger chat with video, voice, or text.' },
-            { to: '/video-chat-online', label: 'Free Online Video Call', blurb: 'Make a free online video call right in your browser.' },
-            { to: '/omegle-unbanned', label: 'Omegle Unban Guide', blurb: 'Everything you need to know about Omegle bans and how to avoid them.' },
           ]}
         />
 
         <FAQSection faqs={[
           {
             question: "Is Vibelly a good alternative to Omegle?",
-            answer: "Yes! Vibelly is considered one of the best Omegle alternatives because it offers HD video quality, a clean dark-mode aesthetic, and strict moderation to keep the community safe, all without requiring an account."
+            answer: "Yes! Vibelly is considered one of the best Omegle alternatives because it offers smooth video, a clean dark-mode aesthetic, and one-tap reporting to keep the community safe, all without requiring an account."
           },
           {
             question: "Do I need to sign up to use Vibelly?",
@@ -273,7 +271,7 @@ export default function OmegleAlternative() {
 
         <ShareButtons
           title="The Best Free Omegle Alternative in 2026 | Vibelly"
-          description="Find out why Vibelly is the best free Omegle alternative — anonymous, HD, and ready in one click."
+          description="Find out why Vibelly is the best free Omegle alternative — anonymous and ready in one click."
         />
 
         <Footer />

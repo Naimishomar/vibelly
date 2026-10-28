@@ -98,6 +98,7 @@ export default function Navbar() {
 
               <div className="relative" ref={dropdownRef}>
                 <button 
+                  aria-label="Account menu"
                   onClick={() => setDropdownOpen(!dropdownOpen)}
                   className={`w-10 h-10 rounded-full bg-zinc-800 flex items-center justify-center hover:opacity-80 transition-all cursor-pointer ${
                     user?.premiumStatus 
