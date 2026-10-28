@@ -200,14 +200,14 @@ export default function Pricing() {
     },
     {
       name: 'Premium',
-      subtitle: 'For the ultimate experience',
+      subtitle: 'Filters, HD video, and voice calls',
       price: isAnnual ? '₹499' : '₹49',
       period: isAnnual ? '/year' : '/month',
       highlight: true,
       buttonText: 'Get started',
       features: [
         'Everything in Free, plus:',
-        'Opposite gender matching',
+        'Gender filters',
         'HD video calls (720p)',
         'Random audio calling',
         'Real-time chat',

@@ -88,7 +88,7 @@ const metrics = [
 const faqs = [
   {
     question: 'Is Vibe a free alternative to Omegle and OmeTV?',
-    answer: 'Yes! Vibe is completely free to use. It is designed as the ultimate modern alternative to Omegle, OmeTV, and Chatroulette, allowing you to meet strangers online via high-quality random video calling without any registration.'
+    answer: 'Yes! Vibe is completely free to use. It is a modern alternative to Omegle, OmeTV, and Chatroulette for adults 18+: meet strangers over random video or text chat without registering. Voice calls and filters are part of Premium.'
   },
   {
     question: 'How do I talk to strangers online safely?',
@@ -202,9 +202,9 @@ export default function Home() {
             className="text-4xl sm:text-5xl lg:text-6xl font-normal tracking-tight leading-[1.1] mb-4"
             style={{ fontFamily: '"Playfair Display", "Merriweather", "Lora", ui-serif, Georgia, Cambria, "Times New Roman", Times, serif' }}
           >
-            The Best Free Omegle Alternative{' '}
+            Free Random Video Chat{' '}
             <br className="hidden sm:block" />
-            &amp; Random Video Chat
+            With Strangers
           </h1>
 
           <p
@@ -275,7 +275,7 @@ export default function Home() {
             className="text-4xl md:text-6xl font-normal text-center max-w-4xl leading-tight mb-12 md:mb-20 z-20 relative"
             style={{ fontFamily: '"Playfair Display", "Merriweather", "Lora", ui-serif, Georgia, Cambria, "Times New Roman", Times, serif' }}
           >
-            The Ultimate Random Video Chat Platform
+            A Random Video Chat Built for Adults
           </motion.h2>
 
           <InteractiveHeroCards />
@@ -691,7 +691,7 @@ export default function Home() {
               Ready to talk to strangers online?
             </h2>
             <p className="text-zinc-500 text-sm mb-8">
-              Join the best OmeTV alternative. No account needed. Works in any modern browser.
+              Try a free OmeTV alternative. No account needed. Works in any modern browser.
             </p>
             <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
               <button

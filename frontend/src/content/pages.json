@@ -141,5 +141,70 @@
         ]
       }
     ]
+  },
+  "keywordBlocks": {
+    "omegle-alternative": {
+      "updated": "2026-10-29",
+      "h2": "Omegle alternative: quick answers",
+      "paragraphs": [
+        "Omegle closed in November 2023. Vibelly keeps the same idea, a random one-to-one chat with a stranger, and changes the rules around it.",
+        "You confirm you are 18 or older before every chat. You can start a video or text chat in your browser without an account. Free video runs at 480p; Vibelly Premium adds gender and country filters, 720p HD video, and voice-only calls.",
+        "Every call has a Report button. Reporting requires you to be signed in, so reports are tied to real accounts, and every report is reviewed by hand. Calls are encrypted in transit and never recorded, but as with any peer-to-peer call, the other person can see your IP address.",
+        "Want to compare options first? Our blog compares nine Omegle alternatives, including Vibelly, with sources for every claim."
+      ]
+    },
+    "ometv-alternative": {
+      "updated": "2026-10-29",
+      "h2": "Vibelly and OmeTV: what is different",
+      "paragraphs": [
+        "Both let you video chat with strangers for free. The differences are in the details. OmeTV's own FAQ says it has no gender filters; on Vibelly, gender and country filters are part of Premium. Vibelly runs only in the browser, with no app to install, and you can start a chat without creating an account.",
+        "On Vibelly you confirm you are 18 or older before every chat. Signed-in users can report anyone in one tap, and reports are reviewed by hand. Free video runs at 480p, and Premium unlocks 720p HD and voice-only calls.",
+        "Every service changes over time, so check each one's current rules before you decide. Our sourced comparison of Omegle alternatives covers OmeTV and seven other services."
+      ]
+    },
+    "chatroulette-alternative": {
+      "updated": "2026-10-29",
+      "h2": "Vibelly and Chatroulette compared",
+      "paragraphs": [
+        "Chatroulette launched in 2009 and is free, including a country filter. Vibelly is newer and smaller, so there may be fewer people online at quiet times.",
+        "What Vibelly offers: random video and text chat in your browser with no account needed, an age confirmation before every chat, and a Report button on every call. Reporting requires signing in, and reports are reviewed by hand. Vibelly does not use automated AI moderation.",
+        "On Vibelly, filters are paid: Premium adds gender and country filters, 720p HD video, and voice-only calls, from ₹49 a month. Free video runs at 480p.",
+        "For more options side by side, see our comparison of nine Omegle alternatives, which includes Chatroulette."
+      ]
+    },
+    "random-video-chat": {
+      "updated": "2026-10-29",
+      "h2": "How random video chat works on Vibelly",
+      "paragraphs": [
+        "Random video chat pairs you with a stranger for a live, one-to-one video call. On Vibelly, you open the site, confirm you are 18 or older, allow camera and microphone access, and press start. A matching server pairs you with someone who is waiting, then gets out of the way.",
+        "The call itself connects directly between the two browsers using WebRTC, which encrypts audio and video in transit. When a direct connection is not possible, a relay server forwards the call without being able to read it. Calls are never recorded.",
+        "You can skip to someone new at any time. Free video runs at 480p and adapts to your connection; Premium adds 720p HD, voice-only calls, and gender and country filters.",
+        "Ready to try it? Start a chat from the Vibelly homepage."
+      ]
+    },
+    "talk-to-strangers": {
+      "updated": "2026-10-29",
+      "h2": "When to skip, and when to report",
+      "bullets": [
+        "Skip whenever a conversation is not working for you. Skipping is never penalised.",
+        "Report anyone who is sexual, abusive, hateful, or appears to be under 18. Reporting requires signing in, and every report is reviewed by hand.",
+        "Be wary of anyone who quickly asks you to move to another app or asks for money, codes, or photos. Those are common scam patterns.",
+        "Remember the other person can see your IP address on a peer-to-peer call, so never share your full name, address, school, or workplace."
+      ]
+    },
+    "anonymous-chat": {
+      "updated": "2026-10-29",
+      "h2": "What is and is not stored",
+      "bullets": [
+        "Random chats: video and voice connect directly between browsers, encrypted in transit, and are never recorded. Random text chat messages are relayed and not stored.",
+        "If you sign in: your name, username, email, and profile image from Google or GitHub, the gender and country you choose, your Premium status, and any reports you make or receive.",
+        "Direct messages between signed-in users: the last 25 per conversation are kept for up to 24 hours, then deleted.",
+        "Payments are handled by Razorpay. Vibelly never sees your card or bank details.",
+        "Your IP address is visible to the other person during a peer-to-peer call."
+      ],
+      "paragraphs": [
+        "Full details are in the Terms & Privacy Policy."
+      ]
+    }
   }
 }

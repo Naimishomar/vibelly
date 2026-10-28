@@ -9,13 +9,14 @@ import BlinkingDotsGrid from '../components/BlinkingDotsGrid';
 import { useAuthStore } from '../store/useAuthStore';
 import LoginModal from '../components/LoginModal';
 import FAQSection from '../components/FAQSection';
+import KeywordBlock from '../components/KeywordBlock';
 import ShareButtons from '../components/ShareButtons';
 
 const features = [
   {
     icon: Shield,
-    title: 'Safe & Moderated',
-    desc: 'Vibelly is 18+ only, and every call has a one-tap Report button reviewed by hand.',
+    title: 'Adults Only (18+)',
+    desc: 'Vibelly is 18+ only, and every call has a one-tap Report button (sign-in required) reviewed by hand.',
   },
   {
     icon: Lock,
@@ -54,7 +55,7 @@ export default function AnonymousChat() {
   return (
     <div className="min-h-screen bg-[#15171B] text-white flex flex-col font-sans">
       <SEO 
-        title="Anonymous Chat Website | Free Private Chat Rooms" 
+        title="Anonymous Chat With No Account | Vibelly" 
         description="Looking for an anonymous chat website? Vibelly offers free random video and text chat with no account, email, or phone number needed."
         canonicalUrl="/anonymous-chat"
       />
@@ -133,6 +134,9 @@ export default function AnonymousChat() {
           </div>
         </section>
 
+        <KeywordBlock slug="anonymous-chat" />
+
+
         {/* FAQ Section */}
         <FAQSection faqs={[
           {
@@ -141,7 +145,7 @@ export default function AnonymousChat() {
           },
           {
             question: "Is it safe to use?",
-            answer: "We prioritize user safety above all else. Vibelly is strictly 18+, every call has a one-tap Report button, every report is reviewed by hand, and users who break the rules are banned."
+            answer: "We prioritize user safety above all else. Vibelly is strictly 18+, every call has a one-tap Report button (sign-in required), every report is reviewed by hand, and users who break the rules are banned."
           },
           {
             question: "Can the other person see my IP address?",
@@ -154,7 +158,7 @@ export default function AnonymousChat() {
         ]} />
 
         <ShareButtons
-          title="Anonymous Chat Website | Free Private Chat Rooms"
+          title="Anonymous Chat With No Account | Vibelly"
           description="Anonymous chat with no account needed: free random video and text chat with strangers, right in your browser."
         />
 

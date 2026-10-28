@@ -9,6 +9,7 @@ import BlinkingDotsGrid from '../components/BlinkingDotsGrid';
 import { useAuthStore } from '../store/useAuthStore';
 import LoginModal from '../components/LoginModal';
 import FAQSection from '../components/FAQSection';
+import KeywordBlock from '../components/KeywordBlock';
 import SeoArticle from '../components/SeoArticle';
 import CompareAlternatives from '../components/CompareAlternatives';
 import ShareButtons from '../components/ShareButtons';
@@ -16,8 +17,8 @@ import ShareButtons from '../components/ShareButtons';
 const features = [
   {
     icon: Shield,
-    title: 'Safe & Moderated',
-    desc: 'Vibelly is 18+ only, and every call has a one-tap Report button reviewed by hand.',
+    title: 'Adults Only (18+)',
+    desc: 'Vibelly is 18+ only, and every call has a one-tap Report button (sign-in required) reviewed by hand.',
   },
   {
     icon: Lock,
@@ -56,8 +57,8 @@ export default function OmegleAlternative() {
   return (
     <div className="min-h-screen bg-[#15171B] text-white flex flex-col font-sans">
       <SEO 
-        title="The Best Free Omegle Alternative in 2026 | Vibelly" 
-        description="Looking for an Omegle alternative? Vibelly is free random video chat for adults 18+, with text chat, one-tap reporting, and no sign-up needed."
+        title="Omegle Alternative: Free Random Video Chat for Adults | Vibelly" 
+        description="Looking for an Omegle alternative? Vibelly is free random video and text chat for adults 18+, with no account needed to start chatting."
         canonicalUrl="/omegle-alternative"
       />
       <BlinkingDotsGrid />
@@ -176,7 +177,7 @@ export default function OmegleAlternative() {
               ],
             },
             {
-              heading: 'What makes Vibelly the best Omegle alternative',
+              heading: 'What Vibelly offers as an Omegle alternative',
               paragraphs: [
                 'A random video chat site only earns the title of "best Omegle alternative" when it fixes everything the original got wrong. Here is what Vibelly does differently:',
               ],
@@ -218,10 +219,13 @@ export default function OmegleAlternative() {
           ]}
         />
 
+        <KeywordBlock slug="omegle-alternative" />
+
+
         <FAQSection faqs={[
           {
             question: "Is Vibelly a good alternative to Omegle?",
-            answer: "Yes! Vibelly is considered one of the best Omegle alternatives because it offers smooth video, a clean dark-mode aesthetic, and one-tap reporting to keep the community safe, all without requiring an account."
+            answer: "Vibelly offers free random video and text chat in your browser, an 18+ policy, and one-tap reporting (sign-in required), with no account needed to chat. For a side-by-side look at other options, read our sourced comparison of Omegle alternatives."
           },
           {
             question: "Do I need to sign up to use Vibelly?",
@@ -229,7 +233,7 @@ export default function OmegleAlternative() {
           },
           {
             question: "Is Vibelly safe to use?",
-            answer: "We prioritize user safety above all else. Vibelly is strictly 18+, every call has a one-tap Report button, every report is reviewed by hand, and users who break the rules are banned."
+            answer: "We prioritize user safety above all else. Vibelly is strictly 18+, every call has a one-tap Report button (sign-in required), every report is reviewed by hand, and users who break the rules are banned."
           },
           {
             question: "Can I use Vibelly on my phone?",
@@ -238,8 +242,8 @@ export default function OmegleAlternative() {
         ]} />
 
         <ShareButtons
-          title="The Best Free Omegle Alternative in 2026 | Vibelly"
-          description="Find out why Vibelly is the best free Omegle alternative — anonymous and ready in one click."
+          title="Omegle Alternative: Free Random Video Chat for Adults | Vibelly"
+          description="A free, adults-only Omegle alternative with no account needed to chat, ready in one click."
         />
 
         <Footer />

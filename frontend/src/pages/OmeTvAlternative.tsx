@@ -9,6 +9,7 @@ import BlinkingDotsGrid from '../components/BlinkingDotsGrid';
 import { useAuthStore } from '../store/useAuthStore';
 import LoginModal from '../components/LoginModal';
 import FAQSection from '../components/FAQSection';
+import KeywordBlock from '../components/KeywordBlock';
 import SeoArticle from '../components/SeoArticle';
 import CompareAlternatives from '../components/CompareAlternatives';
 import ShareButtons from '../components/ShareButtons';
@@ -22,7 +23,7 @@ const features = [
   {
     icon: Shield,
     title: 'One-Tap Reporting',
-    desc: 'Report inappropriate behavior in one tap. Every report is reviewed by hand.',
+    desc: 'Signed-in users can report inappropriate behavior in one tap. Every report is reviewed by hand.',
   },
   {
     icon: Video,
@@ -156,8 +157,8 @@ export default function OmeTvAlternative() {
             {
               heading: 'Why people look for an OmeTV alternative',
               paragraphs: [
-                'OmeTV is one of the most popular random video chat apps. If you want an alternative where you can start without any account, inside an adults-only community with reports reviewed by a real team, Vibelly is built for exactly that.',
-                'Vibelly asks for no email, no phone number, and no social media account before you chat. Privacy is the default, not an upgrade.',
+                'OmeTV is one of the most popular random video chat apps. If you want an alternative where you can start without any account, inside an adults-only community where reports are reviewed by hand, Vibelly is built for exactly that.',
+                'Vibelly asks for no email, no phone number, and no social media account before you chat.',
               ],
             },
             {
@@ -165,7 +166,7 @@ export default function OmeTvAlternative() {
               paragraphs: ['The differences between OmeTV and Vibelly come down to privacy, bans, and how the free random video chat actually works:'],
               bullets: [
                 'No account, email, or social login needed to start chatting',
-                'No surprise bans: skip the next stranger freely without fear of a penalty',
+                'Skip to the next stranger as often as you like: skipping is never penalised',
                 'Free video chat with no pay-to-talk walls on the core experience',
                 'One-tap reporting that protects you without tying chats to your social identity',
                 'Optional gender and country filters with Vibelly Premium if you want them',
@@ -194,16 +195,19 @@ export default function OmeTvAlternative() {
           alternatives={[
             { to: '/blog/omegle-alternatives-compared', label: 'Omegle Alternatives Compared', blurb: 'Nine random video chat sites compared on age rules, accounts, cost, and safety.' },
             { to: '/omegle-alternative', label: 'Omegle Alternative', blurb: 'The free Omegle replacement for random video chat.' },
-            { to: '/chatroulette-alternative', label: 'Chatroulette Alternative', blurb: 'A modern, moderated take on classic chat roulette.' },
+            { to: '/chatroulette-alternative', label: 'Chatroulette Alternative', blurb: 'A modern, 18+ take on classic chat roulette.' },
             { to: '/random-video-chat', label: 'Random Video Chat', blurb: 'Meet strangers with instant video matching.' },
             { to: '/talk-to-strangers', label: 'Talk to Strangers', blurb: 'Anonymous stranger chat with video, voice, and text.' },
           ]}
         />
 
+        <KeywordBlock slug="ometv-alternative" />
+
+
         <FAQSection faqs={[
           {
             question: "How is Vibelly different from OmeTV?",
-            answer: "Vibelly needs no account or social login to start chatting, is strictly 18+, and every call has a one-tap Report button reviewed by hand. For a sourced, side-by-side look at OmeTV and others, read our Omegle alternatives comparison on the blog."
+            answer: "Vibelly needs no account or social login to start chatting, is strictly 18+, and every call has a one-tap Report button (sign-in required) reviewed by hand. For a sourced, side-by-side look at OmeTV and others, read our Omegle alternatives comparison on the blog."
           },
           {
             question: "Do I need a Facebook account to use Vibelly?",

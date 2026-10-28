@@ -9,13 +9,14 @@ import BlinkingDotsGrid from '../components/BlinkingDotsGrid';
 import { useAuthStore } from '../store/useAuthStore';
 import LoginModal from '../components/LoginModal';
 import FAQSection from '../components/FAQSection';
+import KeywordBlock from '../components/KeywordBlock';
 import ShareButtons from '../components/ShareButtons';
 
 const features = [
   {
     icon: Shield,
-    title: 'Safe & Moderated',
-    desc: 'Vibelly is 18+ only, and every call has a one-tap Report button reviewed by hand.',
+    title: 'Adults Only (18+)',
+    desc: 'Vibelly is 18+ only, and every call has a one-tap Report button (sign-in required) reviewed by hand.',
   },
   {
     icon: Lock,
@@ -55,7 +56,7 @@ export default function TalkToStrangers() {
     <div className="min-h-screen bg-[#15171B] text-white flex flex-col font-sans">
       <SEO 
         title="Talk to Strangers | Random Stranger Chat Online" 
-        description="Talk to strangers from around the world on Vibelly. The ultimate random stranger chat app for instant connections, video, and anonymous messaging."
+        description="Talk to strangers from around the world on Vibelly. Free random video and text chat with strangers, plus tips for starting a good conversation."
         canonicalUrl="/talk-to-strangers"
       />
       <BlinkingDotsGrid />
@@ -90,7 +91,7 @@ export default function TalkToStrangers() {
             transition={{ delay: 0.2 }}
             className="text-lg md:text-xl text-zinc-400 mb-10 max-w-2xl leading-relaxed"
           >
-            Connect globally with the best random stranger chat platform. Vibelly is a free, adults-only random video chat that runs in your browser.
+            Connect with strangers from around the world. Vibelly is a free, adults-only random video chat that runs in your browser.
           </motion.p>
 
           <motion.div
@@ -147,6 +148,9 @@ export default function TalkToStrangers() {
           </p>
         </section>
 
+        <KeywordBlock slug="talk-to-strangers" />
+
+
         {/* FAQ Section */}
         <FAQSection faqs={[
           {
@@ -155,7 +159,7 @@ export default function TalkToStrangers() {
           },
           {
             question: "Is it safe to use?",
-            answer: "We prioritize user safety above all else. Vibelly is strictly 18+, every call has a one-tap Report button, every report is reviewed by hand, and users who break the rules are banned."
+            answer: "We prioritize user safety above all else. Vibelly is strictly 18+, every call has a one-tap Report button (sign-in required), every report is reviewed by hand, and users who break the rules are banned."
           },
           {
             question: "Can I use it on my phone?",

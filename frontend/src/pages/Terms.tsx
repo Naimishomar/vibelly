@@ -10,7 +10,7 @@ export default function Terms() {
     <div className="min-h-screen bg-[#15171B] text-white font-sans flex flex-col relative">
       <SEO 
         title="Terms of Service & Privacy Policy | Vibelly" 
-        description="Read the terms of service and privacy policy for Vibelly. We prioritize your anonymity and data protection."
+        description="Read the terms of service and privacy policy for Vibelly. See what we store and how we use it."
         canonicalUrl="/terms"
       />
       {/* ─── Dot Grid ─── */}

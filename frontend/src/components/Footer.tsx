@@ -81,8 +81,7 @@ export default function Footer() {
       <div className="max-w-7xl mx-auto mt-12 pt-8 border-t border-white/5 flex flex-col md:flex-row items-center justify-between gap-4 text-zinc-500">
         <p>© {new Date().getFullYear()} Vibelly Inc. All rights reserved.</p>
         <div className="flex gap-4">
-          <Link to="/terms" className="hover:text-white transition-colors">Privacy Policy</Link>
-          <Link to="/terms" className="hover:text-white transition-colors">Terms of Service</Link>
+          <Link to="/terms" className="hover:text-white transition-colors">Terms &amp; Privacy Policy</Link>
         </div>
         </div>
       </footer>

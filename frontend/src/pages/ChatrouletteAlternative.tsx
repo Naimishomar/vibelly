@@ -9,6 +9,7 @@ import BlinkingDotsGrid from '../components/BlinkingDotsGrid';
 import { useAuthStore } from '../store/useAuthStore';
 import LoginModal from '../components/LoginModal';
 import FAQSection from '../components/FAQSection';
+import KeywordBlock from '../components/KeywordBlock';
 import ShareButtons from '../components/ShareButtons';
 
 const features = [
@@ -20,7 +21,7 @@ const features = [
   {
     icon: Shield,
     title: 'One-Tap Reporting',
-    desc: 'Report inappropriate behavior in one tap. Every report is reviewed by hand.',
+    desc: 'Signed-in users can report inappropriate behavior in one tap. Every report is reviewed by hand.',
   },
   {
     icon: Lock,
@@ -54,8 +55,8 @@ export default function ChatrouletteAlternative() {
   return (
     <div className="min-h-screen bg-[#15171B] text-white flex flex-col font-sans">
       <SEO 
-        title="The Best Chatroulette Alternative in 2026 | Vibelly" 
-        description="Looking for a modern Chatroulette alternative? Vibelly offers random video chat, text chat, and one-tap reporting for free."
+        title="Chatroulette Alternative: Free Random Video Chat | Vibelly" 
+        description="Looking for a modern Chatroulette alternative? Vibelly offers free random video and text chat for adults 18+, with no account needed to start."
         canonicalUrl="/chatroulette-alternative"
       />
       <BlinkingDotsGrid />
@@ -152,12 +153,15 @@ export default function ChatrouletteAlternative() {
         <section className="px-6 py-20 max-w-3xl mx-auto w-full text-center">
           <h2 className="text-2xl font-bold mb-6 text-zinc-300">The Modern Chatroulette Alternative</h2>
           <p className="text-zinc-500 text-sm leading-relaxed mb-6">
-            If you are looking for a Chatroulette alternative that feels modern and fast, Vibelly is your answer. While classic platforms struggle with bots and outdated technology, Vibelly is built on modern WebRTC for instant, high-quality connections.
+            If you are looking for a Chatroulette alternative that feels modern and fast, Vibelly is worth a try. It is built on modern WebRTC for fast, direct video connections.
           </p>
           <p className="text-zinc-500 text-sm leading-relaxed">
             Whether you want to talk to strangers over video or text, Vibelly gives you a clean, modern random chat experience.
           </p>
         </section>
+
+        <KeywordBlock slug="chatroulette-alternative" />
+
 
         <FAQSection faqs={[
           {
@@ -179,7 +183,7 @@ export default function ChatrouletteAlternative() {
         ]} />
 
         <ShareButtons
-          title="The Best Chatroulette Alternative in 2026 | Vibelly"
+          title="Chatroulette Alternative: Free Random Video Chat | Vibelly"
           description="A modern alternative to classic chat roulette — free random cam chat with strangers, safe and anonymous."
         />
 
