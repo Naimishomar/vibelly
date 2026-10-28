@@ -62,7 +62,7 @@ export default function Navbar() {
         {/* Logo */}
         <Link to="/" className="flex items-center gap-2 text-white font-bold text-base tracking-tight">
           <img 
-            src="https://i.pinimg.com/736x/bf/f9/90/bff990bfc21bdc142b69c6ed28b53b6d.jpg" 
+            src="/logo-96.jpg" width={48} height={48} 
             alt="Vibelly Logo" 
             className="w-10 h-10 sm:w-12 sm:h-12 rounded-full object-cover shadow-lg shadow-black/50" 
           />

@@ -233,7 +233,7 @@ export default function Groups() {
 
               <div className="text-center mb-4">
                 <div className="w-14 h-14 rounded-full flex items-center justify-center mx-auto mb-2">
-                  <img src="https://i.pinimg.com/736x/bf/f9/90/bff990bfc21bdc142b69c6ed28b53b6d.jpg" alt="Vibelly_logo" className="w-14 h-14 rounded-full object-cover shadow-md" />
+                  <img src="/logo-96.jpg" alt="Vibelly_logo" className="w-14 h-14 rounded-full object-cover shadow-md" />
                 </div>
                 <h2 className="text-xl font-bold mb-1">Group Settings</h2>
                 <p className="text-xs text-zinc-400">Create a new group or join an existing one.</p>

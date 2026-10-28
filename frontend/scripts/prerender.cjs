@@ -472,10 +472,12 @@ function buildBody({ h1, lead, sections = [], faqs = [] }, selfPath) {
     .map(([href, text]) => `        <li><a href="${href}">${esc(text)}</a></li>`)
     .join('\n');
 
+  // The h1 uses the same size classes as the React hero, so React's re-render on mount is
+  // not a larger paint and LCP is recorded at first paint instead of after the JS loads.
   return `<div id="root">
-    <main>
-      <h1>${esc(h1)}</h1>
-${lead ? `      <p>${esc(lead)}</p>\n` : ''}${sectionsHtml}${faqHtml}
+    <main class="px-6 py-10 max-w-4xl mx-auto">
+      <h1 class="text-4xl sm:text-5xl lg:text-6xl font-normal tracking-tight leading-[1.1] mb-4" style="font-family: 'Playfair Display', Georgia, serif">${esc(h1)}</h1>
+${lead ? `      <p class="text-base sm:text-lg text-zinc-400 mb-6">${esc(lead)}</p>\n` : ''}${sectionsHtml}${faqHtml}
       <h2>Explore Vibelly</h2>
       <nav>
         <ul>
