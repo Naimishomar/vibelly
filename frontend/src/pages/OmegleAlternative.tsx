@@ -233,7 +233,7 @@ export default function OmegleAlternative() {
           },
           {
             question: "Is Vibelly safe to use?",
-            answer: "Vibelly is strictly 18+. Every call has a Report button; reporting requires signing in, every report is reviewed by hand, and users who break the rules are banned."
+            answer: "Vibelly is strictly 18+. Every call has a Report button; reporting requires signing in, every report is reviewed by hand, and signed-in accounts that break the rules are banned."
           },
           {
             question: "Can I use Vibelly on my phone?",

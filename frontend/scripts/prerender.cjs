@@ -41,8 +41,9 @@ const SITE_GRAPH = [
     '@id': `${siteUrl}/#org`,
     name: 'Vibelly',
     url: `${siteUrl}/`,
-    logo: `${siteUrl}/favicon.jpg`,
+    logo: { '@type': 'ImageObject', url: `${siteUrl}/favicon.jpg`, width: 440, height: 440 },
     email: 'vibellyofficial@gmail.com',
+    contactPoint: { '@type': 'ContactPoint', contactType: 'customer support', email: 'vibellyofficial@gmail.com' },
     sameAs: ['https://instagram.com/vibelly.official'],
     founder: { '@id': `${siteUrl}/about#founder` },
   },
@@ -67,6 +68,11 @@ const SITE_GRAPH = [
     '@id': `${siteUrl}/#app`,
     name: 'Vibelly',
     url: `${siteUrl}/`,
+    description: 'Free random video and text chat in the browser for adults 18+. No account needed to start.',
+    image: `${siteUrl}/og-image.png`,
+    featureList: ['Random video chat (480p)', 'Text chat', 'Gender and country filters (Premium)', '720p HD video (Premium)', 'Voice-only calls (Premium)'],
+    isAccessibleForFree: true,
+    audience: { '@type': 'PeopleAudience', suggestedMinAge: 18 },
     applicationCategory: 'SocialNetworkingApplication',
     operatingSystem: 'Any (web browser)',
     browserRequirements: 'Requires JavaScript and WebRTC',
@@ -105,7 +111,7 @@ const HOME = {
     {
       h2: 'Safety on Vibelly',
       paragraphs: [
-        'Vibelly is strictly 18+. Every call has a Report button; reporting requires signing in, reports are reviewed by hand, and users who break the community rules are banned. Video and voice calls connect directly between browsers over encrypted WebRTC, and calls are never recorded.',
+        'Vibelly is strictly 18+. Every call has a Report button; reporting requires signing in, reports are reviewed by hand, and signed-in accounts that break the community rules are banned. Video and voice calls connect directly between browsers over encrypted WebRTC, and calls are never recorded.',
       ],
     },
   ],
@@ -131,6 +137,8 @@ const APP_PAGES = {
         ],
       },
     ],
+    // Shown as questions on the page only; no FAQPage markup (Google retired FAQ rich results).
+    faqs: PAGES.pricingFaq.map((f) => ({ q: f.question, a: f.answer })),
   },
   contact: {
     title: 'Contact Us | Vibelly Support',
@@ -143,6 +151,7 @@ const APP_PAGES = {
           'Email vibellyofficial@gmail.com for support, feedback, business enquiries, and abuse reports. To report a user, include the time of the call and what happened.',
         ],
       },
+      ...PAGES.contact.sections,
     ],
   },
   terms: {
@@ -177,7 +186,7 @@ const CORE_COPY = {
     description:
       'Looking for an Omegle alternative? Vibelly is free random video and text chat for adults 18+, with no account needed to start chatting.',
     h1: 'Omegle Alternative for Adults, No Account Needed',
-    lead: 'Omegle closed in November 2023. Vibelly is a free random video and text chat for adults 18+ that runs in your browser with no account needed to chat. Free video is 480p; Premium adds 720p HD, voice calls, and gender and country filters from 49 rupees a month.',
+    lead: 'Omegle closed in November 2023. Vibelly is a free random video and text chat for adults 18+ that runs in your browser with no account needed to chat. Free video is 480p; Premium adds 720p HD, voice calls, and gender and country filters from ₹49 a month.',
     sections: [
       {
         h2: 'Why Omegle shut down and what replaced it',
@@ -209,7 +218,7 @@ const CORE_COPY = {
     faqs: [
       { q: 'Is Vibelly a good alternative to Omegle?', a: 'Vibelly offers free random video and text chat in your browser, an 18+ policy, and one-tap reporting (sign-in required), with no account needed to chat. Our blog has a sourced comparison of other options.' },
       { q: 'Do I need to sign up to use Vibelly?', a: 'No account is needed to chat. Just click start and connect with strangers worldwide. Reporting, Premium, and direct messages use a Google or GitHub sign-in.' },
-      { q: 'Is Vibelly safe to use?', a: 'Vibelly is 18+ only, every call has a one-tap Report button (sign-in required) reviewed by hand, and random chats are ephemeral.' },
+      { q: 'Is Vibelly safe to use?', a: 'Vibelly is 18+ only, every call has a one-tap Report button (sign-in required) reviewed by hand, and random chats are not stored.' },
       { q: 'Can I use Vibelly on my phone?', a: 'Yes. Vibelly works in any modern mobile browser, on iPhone or Android, with no app to download.' },
     ],
   },
@@ -275,20 +284,20 @@ const CORE_COPY = {
           'Share only what you are comfortable sharing, and keep personal details private',
         ],
         paragraphs: [
-          'Random video chat is also completely free on Vibelly, works on any browser, and requires no account.',
+          'Random video chat on Vibelly is free, works in any browser, and needs no account.',
         ],
       },
       {
         h2: 'How to stay safe during random video chat',
         paragraphs: [
-          'Every call has a one-tap Report button (sign-in required), and every report is reviewed by hand. Conversations are ephemeral: when you skip or end a call, the conversation is not stored.',
+          'Every call has a one-tap Report button (sign-in required), and every report is reviewed by hand. Random chats are not stored: when you skip or end a call, the conversation is gone.',
           'Never share personal financial information, keep your location vague, and trust your instincts. Skipping to a new person is always one click away.',
         ],
       },
     ],
     faqs: [
       { q: 'Do I need to sign up?', a: 'No account is needed to start a random video chat. Reporting, Premium, and direct messages use a Google or GitHub sign-in.' },
-      { q: 'Is it safe to use?', a: 'Vibelly is 18+ only, every call has a one-tap Report button (sign-in required) reviewed by hand, and all conversations are ephemeral.' },
+      { q: 'Is it safe to use?', a: 'Vibelly is 18+ only, every call has a one-tap Report button (sign-in required) reviewed by hand, and random chats are not stored.' },
       { q: 'Can I use it on my phone?', a: 'Yes. Vibelly works in any modern mobile browser, on iPhone or Android, with no app to download.' },
       { q: 'Is random video chat really free?', a: 'Yes. Core random video chat is completely free with no time limits or hidden charges.' },
     ],
@@ -321,48 +330,18 @@ const CORE_COPY = {
     ],
     faqs: [
       { q: 'Is Vibelly a good Chatroulette alternative?', a: 'Yes. Vibelly offers instant matching, WebRTC video, and a modern interface, as an independent alternative to Chatroulette.' },
-      { q: 'How does Vibelly handle bad behavior?', a: 'Every call has a one-tap Report button (sign-in required). Reports are reviewed by hand, and users who break the rules are banned.' },
+      { q: 'How does Vibelly handle bad behavior?', a: 'Every call has a one-tap Report button (sign-in required). Reports are reviewed by hand, and signed-in accounts that break the rules are banned.' },
       { q: 'Do I need to download an app?', a: 'No. Vibelly works right in your browser on desktop and mobile.' },
     ],
   },
   'talk-to-strangers': {
-    title: 'Talk to Strangers | Random Stranger Chat Online',
+    title: 'How to Talk to Strangers Online (18+) | Vibelly',
     description:
-      'Talk to strangers from around the world on Vibelly. Free random video and text chat with strangers, plus tips for starting a good conversation.',
-    h1: 'Talk to Strangers Instantly',
-    lead: 'Talk to strangers from around the world with free random video and text chat for adults 18+. No app to install and no account needed to chat. Below: why people do it, conversation starters that work, and when to skip or report.',
-    sections: [
-      {
-        h2: 'Why talk to strangers online?',
-        paragraphs: [
-          'Talking to strangers online is one of the easiest ways to meet new people, practice languages, and discover perspectives from around the world. Vibelly makes it instant: one click connects you to a random person anywhere.',
-        ],
-      },
-      {
-        h2: 'How to start a good conversation with a stranger',
-        bullets: [
-          "Open with a specific, easy question: \"Where are you calling from?\" works better than \"hi\".",
-          "Ask open questions that start with what, how, or why, then follow up on the answer.",
-          "Share a little about yourself too, so it feels like a conversation, not an interview.",
-          "If it is not clicking, say \"nice talking to you\" and skip. No hard feelings.",
-        ],
-        paragraphs: [
-          'More opening lines and questions: How to Start a Conversation With a Stranger, on the Vibelly blog.',
-        ],
-      },
-      {
-        h2: 'How to talk to strangers safely',
-        bullets: [
-          'Share only what you are comfortable with, and keep personal details private',
-          'Never share personal financial information',
-          'Skip any conversation instantly with one click',
-          'Report inappropriate behavior immediately',
-        ],
-        paragraphs: [
-          'Every Vibelly call has a one-tap Report button (sign-in required), and chat history disappears the moment the call ends.',
-        ],
-      },
-    ],
+      'How to talk to strangers online: conversation starters that work, when to skip or report, and free random video chat for adults 18+.',
+    h1: 'How to Talk to Strangers Online',
+    lead: 'Conversation starters that work, when to skip or report, and why people do it. When you are ready to try, Vibelly is free random video and text chat for adults 18+, with no app and no account needed.',
+    // Tips come first from the talk-to-strangers block in src/content/pages.json.
+    sections: [],
     faqs: [
       { q: 'Is talking to strangers online safe?', a: 'Vibelly is 18+ only. Signed-in users can report anyone in one tap, reports are reviewed by hand, and random chats are not stored. Never share personal details with strangers.' },
       { q: 'Do I need to sign up?', a: 'No. You can talk to strangers instantly with no account and no email.' },
@@ -376,15 +355,9 @@ const CORE_COPY = {
     lead: 'Vibelly lets adults 18+ chat with strangers over video or text without an account, email address, or phone number. This page explains exactly what anonymous means here, including what the other person can see and what Vibelly stores.',
     sections: [
       {
-        h2: 'What anonymous means on Vibelly',
-        paragraphs: [
-          'Vibelly requires no account, no email, and no phone number. You connect without a profile, and random chats are ephemeral: when the call ends, the conversation is not stored. As with any peer-to-peer video call, the other person can see your IP address, which can reveal your approximate location.',
-        ],
-      },
-      {
         h2: 'Anonymous chat on Vibelly',
         bullets: [
-          'No social login, and calls are never recorded',
+          'No social login needed to chat, and calls are never recorded',
           'One-tap reporting (sign-in required) keeps the community clean',
           'Video and text chat, plus voice calls on Premium',
           'Encrypted WebRTC connections',
@@ -478,14 +451,29 @@ const NAV_LINKS = [
   ['/blog', 'Vibelly Blog: tips & guides'],
 ];
 
+// Same inline subset as src/components/Inline.tsx: **bold** and [text](url).
+const inline = (t) =>
+  esc(t)
+    .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
+    .replace(/\[([^\]]+)\]\(([^)\s]+)\)/g, (_, text, href) =>
+      href.startsWith('/') ? `<a href="${href}">${text}</a>` : `<a href="${href}" rel="noopener">${text}</a>`
+    );
+
+// First row is the header, as in the React <Table>.
+const tableHtml = ([head, ...body]) =>
+  `      <table>\n        <thead><tr>${head.map((h) => `<th>${inline(h)}</th>`).join('')}</tr></thead>\n        <tbody>\n${body
+    .map((r) => `          <tr>${r.map((c) => `<td>${inline(c)}</td>`).join('')}</tr>`)
+    .join('\n')}\n        </tbody>\n      </table>`;
+
 function buildBody({ h1, lead, sections = [], faqs = [] }, selfPath) {
   const sectionsHtml = sections
     .map((section) => {
       const parts = [];
       if (section.h2) parts.push(`      <h2>${esc(section.h2)}</h2>`);
-      for (const p of section.paragraphs || []) parts.push(`      <p>${esc(p)}</p>`);
+      if (section.table) parts.push(tableHtml(section.table));
+      for (const p of section.paragraphs || []) parts.push(`      <p>${inline(p)}</p>`);
       if (section.bullets && section.bullets.length) {
-        parts.push(`      <ul>\n${section.bullets.map((b) => `        <li>${esc(b)}</li>`).join('\n')}\n      </ul>`);
+        parts.push(`      <ul>\n${section.bullets.map((b) => `        <li>${inline(b)}</li>`).join('\n')}\n      </ul>`);
       }
       return parts.join('\n');
     })
@@ -508,7 +496,7 @@ function buildBody({ h1, lead, sections = [], faqs = [] }, selfPath) {
   return `<div id="prerender" data-path="${selfPath || ''}" class="min-h-screen bg-[#15171B] text-white">
     <main class="px-6 py-10 max-w-4xl mx-auto">
       <h1 class="text-4xl sm:text-5xl lg:text-6xl font-normal tracking-tight leading-[1.1] mb-4" style="font-family: 'Playfair Display', Georgia, serif">${esc(h1)}</h1>
-${lead ? `      <p class="text-base sm:text-lg text-zinc-400 mb-6">${esc(lead)}</p>\n` : ''}${sectionsHtml}${faqHtml}
+${lead ? `      <p class="text-base sm:text-lg text-zinc-400 mb-6">${esc(lead)}</p>\n` : ''}${selfPath ? `      <p class="mb-10"><a href="/setup/video" class="inline-flex px-8 py-4 rounded-xl bg-white text-black font-semibold">Start Video Chat (18+)</a></p>\n` : ''}${sectionsHtml}${faqHtml}
       <h2>Explore Vibelly</h2>
       <nav>
         <ul>
@@ -520,23 +508,25 @@ ${linkHtml}
     <div id="root"></div>`;
 }
 
-// Same markdown subset BlogPost.tsx renders: ##, ###, "- " lists, **bold**, paragraphs.
+// Same markdown subset BlogPost.tsx renders: ##, ###, "- " lists, "| a | b |" tables, **bold**, links, paragraphs.
 function markdownToHtml(md) {
-  const inline = (t) =>
-    esc(t)
-      .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
-      .replace(/\[([^\]]+)\]\(([^)\s]+)\)/g, (_, text, href) =>
-        href.startsWith('/') ? `<a href="${href}">${text}</a>` : `<a href="${href}" rel="noopener">${text}</a>`
-      );
   const out = [];
   let list = [];
+  let table = [];
   const flush = () => {
     if (list.length) out.push(`      <ul>\n${list.map((li) => `        <li class="ml-6 list-disc mb-2 text-zinc-300">${inline(li)}</li>`).join('\n')}\n      </ul>`);
+    if (table.length) out.push(tableHtml(table));
     list = [];
+    table = [];
   };
   for (const raw of md.split('\n')) {
     const line = raw.trim();
     if (line.startsWith('- ')) { list.push(line.slice(2)); continue; }
+    if (line.startsWith('|')) {
+      const cells = line.slice(1, -1).split('|').map((c) => c.trim());
+      if (!cells.every((c) => /^-+$/.test(c))) table.push(cells);
+      continue;
+    }
     flush();
     if (!line) continue;
     if (line.startsWith('### ')) out.push(`      <h3>${inline(line.slice(4))}</h3>`);
@@ -565,7 +555,7 @@ const sitemapPaths = [];
 const lastmod = { '/safety': PAGES.safety.updated, '/terms': PAGES.terms.updated };
 
 // Shells first: both are built from the untouched template.
-write('app.html', render(headBlock({ title: 'Vibelly' })));
+write('app.html', render(headBlock({ title: 'Vibelly', robots: 'noindex, follow' })));
 write(
   '404.html',
   render(headBlock({ title: 'Page not found | Vibelly', robots: 'noindex, follow' }), buildBody({ h1: 'Page not found', lead: 'This page does not exist.' }, null))
@@ -622,7 +612,7 @@ for (const [slug, page] of Object.entries(APP_PAGES)) {
     `${slug}/index.html`,
     render(
       headBlock({ title: page.title, description: page.description, url, graph: pageGraph(slug, page.title, page.description, null, [], page.pageType) }),
-      buildBody({ h1: page.h1, lead: page.lead || page.description, sections: page.sections }, `/${slug}`)
+      buildBody({ h1: page.h1, lead: page.lead || page.description, sections: page.sections, faqs: page.faqs }, `/${slug}`)
     )
   );
   sitemapPaths.push(`/${slug}`);

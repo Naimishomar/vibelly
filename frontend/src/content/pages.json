@@ -5,7 +5,7 @@
       {
         "h2": "Adults only (18+)",
         "paragraphs": [
-          "Vibelly is only for people aged 18 or older. You confirm you are 18+ before every chat. If you are under 18, do not use Vibelly. Accounts found to belong to minors are banned."
+          "Vibelly is only for people aged 18 or older. You confirm you are 18+ before every chat. This is a self-declaration: Vibelly does not check ID. If you are under 18, do not use Vibelly. Signed-in accounts found to belong to minors are banned."
         ]
       },
       {
@@ -22,7 +22,7 @@
         "h2": "How reporting and bans work",
         "paragraphs": [
           "You can start a video or text chat without creating an account. Reporting someone requires you to be signed in, so that reports are tied to real accounts and cannot be abused anonymously.",
-          "Every call has a Report button. Reports are reviewed by hand, and accounts that break these rules are banned. Bans apply to the account, and serious cases can lead to a permanent ban.",
+          "Every call has a Report button. Reports are reviewed by hand, and signed-in accounts that break these rules are banned; serious cases lead to a permanent ban. Only signed-in users can be reported and banned. Someone chatting as a guest has no account to report, so if a guest breaks the rules, skip them: skipping ends the call instantly.",
           "You can also email reports to vibellyofficial@gmail.com with the time of the call and what happened."
         ]
       },
@@ -41,7 +41,8 @@
           "Skip any conversation instantly. You never owe a stranger your time.",
           "Be careful with requests to move to another app. That is a common scam pattern.",
           "Assume anything you show on camera could be recorded by the other person.",
-          "If someone threatens or blackmails you, do not pay. Keep evidence, report the account, and contact your local police."
+          "If someone threatens or blackmails you, do not pay. Keep evidence, report the account, and contact your local police.",
+          "If someone threatens to share intimate images of you, StopNCII.org (adults) and Take It Down (takeitdown.ncmec.org, for images taken when you were under 18) can help stop them spreading. In India, report online crimes at cybercrime.gov.in or call the 1930 helpline."
         ]
       }
     ]
@@ -56,9 +57,9 @@
         ]
       },
       {
-        "h2": "2. Premium Subscriptions",
+        "h2": "2. Premium Purchases",
         "paragraphs": [
-          "Premium subscriptions are billed as specified at the time of purchase. All sales are final and non-refundable unless required by law. Premium unlocks gender and country filters, 720p HD video, and voice calls for the duration of the billing period. If you purchase additional time while active, the remaining days are added to your new expiry date."
+          "Each Premium purchase is a one-time payment through Razorpay for the period shown at checkout (1 day, 1 month, or 1 year). Plans do not renew automatically. All sales are final and non-refundable unless required by law. Premium unlocks gender and country filters, 720p HD video, and voice calls for the period you purchased. If you purchase additional time while active, the remaining days are added to your new expiry date."
         ]
       },
       {
@@ -85,7 +86,7 @@
       {
         "h2": "5. Account Termination",
         "paragraphs": [
-          "We reserve the right to suspend or terminate your account without notice or liability for any reason, including if you breach the Terms. Upon termination, your right to use the Service will immediately cease. Premium subscription fees will not be refunded in the event of an account ban due to Terms of Service violations."
+          "We reserve the right to suspend or terminate your account without notice or liability for any reason, including if you breach the Terms. Upon termination, your right to use the Service will immediately cease. Premium purchases will not be refunded in the event of an account ban due to Terms of Service violations."
         ]
       },
       {
@@ -97,7 +98,7 @@
       {
         "h2": "7. Dispute Resolution",
         "paragraphs": [
-          "Any disputes arising out of or related to these Terms or the Service will be governed by the laws of the State of California, United States, without regard to its conflict of law provisions. You agree to submit to the personal jurisdiction of the courts located within Silicon Valley, California for the purpose of litigating all such claims or disputes."
+          "These Terms are governed by the laws of India. Any dispute arising out of or related to these Terms or the Service will be subject to the jurisdiction of the courts of India. Before starting a dispute, please email vibellyofficial@gmail.com so we can try to resolve it."
         ]
       }
     ],
@@ -127,7 +128,7 @@
         "h2": "How we approach safety",
         "bullets": [
           "Vibelly is strictly for adults. You confirm you are 18 or older before every chat.",
-          "Every call has a Report button. Reporting requires signing in with Google or GitHub; reports are reviewed by hand, and accounts that break the rules are banned.",
+          "Every call has a Report button. Reporting requires signing in with Google or GitHub; reports are reviewed by hand, and signed-in accounts that break the rules are banned.",
           "Calls connect directly between browsers over encrypted WebRTC and are never recorded."
         ],
         "paragraphs": [
@@ -154,6 +155,56 @@
             "Every call has a Report button. Reporting requires you to be signed in, so reports are tied to real accounts, and every report is reviewed by hand. Calls are encrypted in transit and never recorded, but as with any peer-to-peer call, the other person can see your IP address.",
             "Want to compare options first? Our blog compares nine Omegle alternatives, including Vibelly, with sources for every claim."
           ]
+        },
+        {
+          "h2": "Omegle alternatives at a glance",
+          "table": [
+            [
+              "Service",
+              "Age rule",
+              "Account to chat",
+              "Cost",
+              "Moderation (as stated)"
+            ],
+            [
+              "Vibelly",
+              "18+, confirmed before every chat",
+              "Not needed",
+              "Free; Premium from ₹49 a month",
+              "Report button (sign-in), reviewed by hand"
+            ],
+            [
+              "OmeTV",
+              "Adults, at your country's legal age",
+              "Not clearly stated",
+              "Free; paid VIP on Android",
+              "Report button, 24/7 moderators"
+            ],
+            [
+              "Chatroulette",
+              "18+, age confirmation",
+              "Not needed",
+              "Free, including a country filter",
+              "AI and human moderation"
+            ],
+            [
+              "Uhmegle",
+              "Minors forbidden",
+              "Not needed",
+              "Free",
+              "Claims AI and human moderation"
+            ],
+            [
+              "Monkey",
+              "Not stated; Google Play rates it 12+",
+              "Social login",
+              "In-app purchases",
+              "AI moderation"
+            ]
+          ],
+          "paragraphs": [
+            "Each service's own rules as stated on its site or app listing, checked October 2026. Sources for every row are in our [comparison of nine Omegle alternatives](/blog/omegle-alternatives-compared)."
+          ]
         }
       ]
     },
@@ -163,9 +214,52 @@
         {
           "h2": "Vibelly and OmeTV: what is different",
           "paragraphs": [
-            "Both let you video chat with strangers for free. The differences are in the details. OmeTV's own FAQ says it has no gender filters; on Vibelly, gender and country filters are part of Premium. Vibelly runs only in the browser, with no app to install, and you can start a chat without creating an account.",
+            "Both let you video chat with strangers for free. The differences are in the details. [OmeTV's own FAQ](https://ome.tv/faq/) says it has no gender filters; on Vibelly, gender and country filters are part of Premium. Vibelly runs only in the browser, with no app to install, and you can start a chat without creating an account.",
             "On Vibelly you confirm you are 18 or older before every chat. Signed-in users can report anyone in one tap, and reports are reviewed by hand. Free video runs at 480p, and Premium unlocks 720p HD and voice-only calls.",
             "Every service changes over time, so check each one's current rules before you decide. Our sourced comparison of Omegle alternatives covers OmeTV and seven other services."
+          ]
+        },
+        {
+          "h2": "OmeTV vs Vibelly side by side",
+          "table": [
+            [
+              "",
+              "OmeTV",
+              "Vibelly"
+            ],
+            [
+              "Age rule",
+              "Adults, at your country's legal age",
+              "18+, confirmed before every chat"
+            ],
+            [
+              "Account to chat",
+              "Not clearly stated; signing in adds profiles and friends",
+              "Not needed"
+            ],
+            [
+              "Platforms",
+              "Web, iOS, Android",
+              "Web only, on phone and desktop"
+            ],
+            [
+              "Cost",
+              "Free; paid VIP Lounge on Android",
+              "Free; Premium from ₹49 a month"
+            ],
+            [
+              "Gender filter",
+              "None, per its FAQ",
+              "Premium"
+            ],
+            [
+              "Reporting",
+              "Report button sends moderators a screenshot; 24/7 moderators",
+              "Report button for signed-in users, reviewed by hand"
+            ]
+          ],
+          "paragraphs": [
+            "Checked October 2026 against [OmeTV's rules](https://ome.tv/rules/) and [FAQ](https://ome.tv/faq/). Services change often, so check before you decide."
           ]
         }
       ]
@@ -180,6 +274,56 @@
             "What Vibelly offers: random video and text chat in your browser with no account needed, an age confirmation before every chat, and a Report button on every call. Reporting requires signing in, and reports are reviewed by hand. Vibelly does not use automated AI moderation.",
             "On Vibelly, filters are paid: Premium adds gender and country filters, 720p HD video, and voice-only calls, from ₹49 a month. Free video runs at 480p.",
             "For more options side by side, see our comparison of nine Omegle alternatives, which includes Chatroulette."
+          ]
+        },
+        {
+          "h2": "Why people look for a Chatroulette alternative",
+          "paragraphs": [
+            "Chatroulette launched in November 2009 and is still running. Most people looking for an alternative want one of three things: a different crowd, a site that works without an app, or stricter rules about who can join.",
+            "Age checks are the hard part for every service. An October 2025 [LBC investigation](https://www.lbc.co.uk/news/exclusive/video-chatrooms-british-children/) reported that Chatroulette did not require proof of age. Vibelly does not check ID either: you confirm you are 18 or older before every chat, and signed-in accounts found to belong to minors are banned. If proof of age matters to you, no site in this category offers it today."
+          ]
+        },
+        {
+          "h2": "Chatroulette vs Vibelly side by side",
+          "table": [
+            [
+              "",
+              "Chatroulette",
+              "Vibelly"
+            ],
+            [
+              "Launched",
+              "2009",
+              "After Omegle closed in 2023"
+            ],
+            [
+              "Age rule",
+              "18+, age confirmation",
+              "18+, confirmed before every chat"
+            ],
+            [
+              "Account to chat",
+              "Not needed",
+              "Not needed"
+            ],
+            [
+              "Platforms",
+              "Web, iOS, Android",
+              "Web only, on phone and desktop"
+            ],
+            [
+              "Filters",
+              "Country filter, free",
+              "Gender and country filters, Premium"
+            ],
+            [
+              "Moderation",
+              "AI and human moderation, 24/7 team",
+              "Reports reviewed by hand; no automated AI moderation"
+            ]
+          ],
+          "paragraphs": [
+            "Each service's own rules as stated on its site or app listing, checked October 2026. Sources for every row are in our [comparison of nine Omegle alternatives](/blog/omegle-alternatives-compared)."
           ]
         }
       ]
@@ -202,13 +346,6 @@
       "updated": "2026-10-29",
       "sections": [
         {
-          "h2": "Why talk to strangers online?",
-          "paragraphs": [
-            "Talking to strangers is a low-pressure way to practise conversation. Nobody you know is watching, and if a chat does not go well you can simply move on. People use random chat to beat boredom, to hear how life looks in another country, to practise a language with native speakers, or just to have a conversation they could never have predicted.",
-            "On Vibelly you can start a free video or text chat in your browser, with no app to install. You confirm you are 18 or older before every chat, and you can skip to someone new at any time."
-          ]
-        },
-        {
           "h2": "Conversation starters that work",
           "bullets": [
             "\"Where are you calling from?\" Easy to answer, and it leads somewhere.",
@@ -228,6 +365,13 @@
             "Report anyone who is sexual, abusive, hateful, or appears to be under 18. Reporting requires signing in, and every report is reviewed by hand.",
             "Be wary of anyone who quickly asks you to move to another app or asks for money, codes, or photos. Those are common scam patterns.",
             "Remember the other person can see your IP address on a peer-to-peer call, so never share your full name, address, school, or workplace."
+          ]
+        },
+        {
+          "h2": "Why talk to strangers online?",
+          "paragraphs": [
+            "Talking to strangers is a low-pressure way to practise conversation. Nobody you know is watching, and if a chat does not go well you can simply move on. People use random chat to beat boredom, to hear how life looks in another country, to practise a language with native speakers, or just to have a conversation they could never have predicted.",
+            "On Vibelly you can start a free video or text chat in your browser, with no app to install. You confirm you are 18 or older before every chat, and you can skip to someone new at any time."
           ]
         }
       ]
@@ -288,5 +432,43 @@
       "question": "Can I choose who I match with?",
       "answer": "Basic random video chat is free and matches you with anyone. Vibelly Premium lets you filter matches by gender or by country."
     }
-  ]
+  ],
+  "pricingFaq": [
+    {
+      "question": "Does Premium renew automatically?",
+      "answer": "No. Each purchase is a one-time payment through Razorpay. When your time runs out you go back to the free plan, and nothing is charged again."
+    },
+    {
+      "question": "What happens if I buy more time while Premium is active?",
+      "answer": "The new days are added to your current expiry date, so you never lose time you already paid for."
+    },
+    {
+      "question": "Can I get a refund?",
+      "answer": "Purchases are non-refundable except where the law requires a refund. If a payment went through but Premium did not activate, email vibellyofficial@gmail.com with your Razorpay payment ID."
+    },
+    {
+      "question": "Do I need an account to buy Premium?",
+      "answer": "Yes. Premium is tied to your Google or GitHub sign-in so it works on any device you sign in on. Free random chat never needs an account."
+    }
+  ],
+  "contact": {
+    "sections": [
+      {
+        "h2": "Reporting a user by email",
+        "bullets": [
+          "The date and approximate time of the call, with your time zone.",
+          "Whether it was a video, voice, or text chat.",
+          "What happened, in a sentence or two.",
+          "A screenshot if you have one. Never send images that show nudity or a minor: describe them instead.",
+          "If you were signed in, the email address on your account, so we can find the call."
+        ]
+      },
+      {
+        "h2": "If you are in danger",
+        "paragraphs": [
+          "If someone threatens you or a child is at risk, contact your local police first. In India you can also report at cybercrime.gov.in or call 1930. Vibelly does not record calls, so the details you give us are what we have to act on."
+        ]
+      }
+    ]
+  }
 }

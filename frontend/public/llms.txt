@@ -1,6 +1,6 @@
 # Vibelly
 
-> Vibelly (https://vibelly.fun) is a free, browser-based random video chat for adults 18+, run by Naimish Omar. Users are matched with strangers worldwide for video or text chat, with no account needed to chat. Free video is 480p. Vibelly Premium (from ₹49/month) adds gender and country filters, 720p HD video, and voice-only calls. Every call has a Report button; reporting requires a Google or GitHub sign-in, reports are reviewed by hand, and rule-breakers are banned. No account is needed to chat. Calls are encrypted in transit and never recorded.
+> Vibelly (https://vibelly.fun) is a free, browser-based random video chat for adults 18+, run by Naimish Omar. Users are matched with strangers worldwide for video or text chat, with no account needed to chat. Free video is 480p. Vibelly Premium (from ₹49/month) adds gender and country filters, 720p HD video, and voice-only calls. Every call has a Report button; reporting requires a Google or GitHub sign-in, reports are reviewed by hand, and signed-in accounts that break the rules are banned. Calls are encrypted in transit and never recorded.
 
 ## Pages
 

@@ -10,6 +10,7 @@ import { useNavigate } from 'react-router-dom';
 import html2canvas from 'html2canvas';
 import jsPDF from 'jspdf';
 import LoginModal from '../components/LoginModal';
+import pages from '../content/pages.json';
 
 const loadScript = (src: string) => {
   return new Promise((resolve) => {
@@ -367,6 +368,15 @@ export default function Pricing() {
         <p className="max-w-2xl mx-auto mt-10 px-6 text-center text-sm text-zinc-500">
           Each purchase is a one-time payment through Razorpay. Plans do not renew automatically: when your time runs out you go back to the free plan. Purchases are non-refundable except where required by law.
         </p>
+        <section className="max-w-2xl mx-auto mt-12 px-6 w-full">
+          <h2 className="text-2xl font-semibold text-white mb-4">Billing questions</h2>
+          {pages.pricingFaq.map((f) => (
+            <details key={f.question} className="border-b border-white/10 py-3">
+              <summary className="cursor-pointer text-white font-medium">{f.question}</summary>
+              <p className="mt-2 text-zinc-400">{f.answer}</p>
+            </details>
+          ))}
+        </section>
       </main>
 
       {/* Active Subscription Modal */}

@@ -174,7 +174,7 @@ export default function ChatrouletteAlternative() {
           },
           {
             question: "How does Vibelly handle bad behavior?",
-            answer: "Every call has a Report button. Reporting requires signing in, every report is reviewed by hand, and users who break the rules are banned."
+            answer: "Every call has a Report button. Reporting requires signing in, every report is reviewed by hand, and signed-in accounts that break the rules are banned."
           },
           {
             question: "Do I need to download an app?",

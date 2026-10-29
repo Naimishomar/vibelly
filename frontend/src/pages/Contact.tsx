@@ -4,6 +4,8 @@ import SEO from '../components/SEO';
 import BlinkingDotsGrid from '../components/BlinkingDotsGrid';
 import { Link } from 'react-router-dom';
 import { Mail } from 'lucide-react';
+import ContentSections from '../components/ContentSections';
+import pages from '../content/pages.json';
 
 export default function Contact() {
   return (
@@ -42,6 +44,9 @@ export default function Contact() {
           <p className="text-zinc-400">
             Safety concern? Read our <Link to="/safety" className="underline hover:text-white">Safety &amp; Community Rules</Link>.
           </p>
+          <div className="text-zinc-300 leading-relaxed">
+            <ContentSections sections={pages.contact.sections} />
+          </div>
         </div>
       </main>
       <Footer />

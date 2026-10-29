@@ -100,21 +100,21 @@ const blogPosts = [
     title: 'How to Choose an Omegle Alternative: 7 Things That Actually Matter',
     category: 'Guides',
     date: 'October 28, 2026',
-    image: 'https://images.unsplash.com/photo-1516321497487-e288fb19713f?w=600&h=400&fit=crop',
+    image: 'https://images.unsplash.com/photo-1516321497487-e288fb19713f?w=600&h=338&fit=crop&auto=format&q=60',
     link: '/blog/how-to-choose-an-omegle-alternative'
   },
   {
     title: 'How to Start a Conversation With a Stranger on Video Chat',
     category: 'Tips',
     date: 'October 28, 2026',
-    image: 'https://images.unsplash.com/photo-1515378791036-0648a3ef77b2?w=600&h=400&fit=crop',
+    image: 'https://images.unsplash.com/photo-1515378791036-0648a3ef77b2?w=600&h=338&fit=crop&auto=format&q=60',
     link: '/blog/how-to-start-a-conversation-with-a-stranger'
   },
   {
     title: 'How to Stay Safe on Random Video Chat: A Practical Checklist',
     category: 'Safety',
     date: 'October 28, 2026',
-    image: 'https://images.unsplash.com/photo-1573164713988-8665fc963095?w=600&h=400&fit=crop',
+    image: 'https://images.unsplash.com/photo-1573164713988-8665fc963095?w=600&h=338&fit=crop&auto=format&q=60',
     link: '/blog/random-video-chat-safety-checklist'
   }
 ];
@@ -240,7 +240,7 @@ export default function Home() {
                 <div className="text-3xl md:text-4xl font-semibold text-white mb-2" style={{ fontFamily: 'Georgia, serif' }}>
                   {stat.value}
                 </div>
-                <div className="text-sm text-zinc-500 uppercase tracking-wider font-medium">
+                <div className="text-sm text-zinc-400 uppercase tracking-wider font-medium">
                   {stat.label}
                 </div>
               </div>
@@ -401,7 +401,7 @@ export default function Home() {
                     className="flex flex-col transition-opacity duration-500"
                     style={{ opacity: activeStep === step.id ? 1 : 0.4 }}
                   >
-                    <p className="text-[11px] tracking-[0.2em] text-zinc-500 font-semibold uppercase mb-4">
+                    <p className="text-[11px] tracking-[0.2em] text-zinc-400 font-semibold uppercase mb-4">
                       {step.number} &nbsp; {step.eyebrow}
                     </p>
                     <h3
@@ -545,7 +545,7 @@ export default function Home() {
             SECTION 5.3 — HOW WE COMPARE (SEO)
         ══════════════════════════════════════════ */}
         <section className="px-6 pb-28 max-w-3xl mx-auto w-full text-center">
-          <p className="text-[11px] tracking-[0.2em] text-zinc-500 font-semibold uppercase mb-4">
+          <p className="text-[11px] tracking-[0.2em] text-zinc-400 font-semibold uppercase mb-4">
             How we compare
           </p>
           <h2
@@ -603,7 +603,7 @@ export default function Home() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
             >
-              <p className="text-[11px] tracking-[0.2em] text-zinc-500 font-semibold uppercase mb-4">
+              <p className="text-[11px] tracking-[0.2em] text-zinc-400 font-semibold uppercase mb-4">
                 From the blog
               </p>
               <h2
@@ -633,7 +633,7 @@ export default function Home() {
                 onClick={() => navigate(post.link)}
               >
                 <div className="aspect-[16/9] w-full overflow-hidden">
-                  <img src={post.image} alt={post.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+                  <img src={post.image} alt={post.title} width={600} height={338} loading="lazy" decoding="async" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
                 </div>
                 <div className="p-6 flex flex-col flex-1">
                   <div className="text-xs font-bold text-white bg-white/10 px-3 py-1 rounded-full self-start mb-4">

@@ -6,32 +6,31 @@ import SEO from '../components/SEO';
 import { ArrowLeft } from 'lucide-react';
 import posts from '../content/blog-posts.json';
 import pages from '../content/pages.json';
-
-// Inline markdown: **bold** and [text](https://url). Mirrored by markdownToHtml in scripts/prerender.cjs.
-const renderInline = (text: string) =>
-  text.split(/(\*\*.*?\*\*|\[[^\]]+\]\([^)\s]+\))/g).map((p, j) => {
-    if (p.startsWith('**')) return <strong key={j} className="text-white font-semibold">{p.slice(2, -2)}</strong>;
-    const link = p.match(/^\[([^\]]+)\]\(([^)\s]+)\)$/);
-    if (link) {
-      return link[2].startsWith('/')
-        ? <Link key={j} to={link[2]} className="underline hover:text-white">{link[1]}</Link>
-        : <a key={j} href={link[2]} target="_blank" rel="noopener noreferrer" className="underline hover:text-white">{link[1]}</a>;
-    }
-    return p;
-  });
+import { Inline, Table } from '../components/Inline';
 
 const renderMarkdown = (content: string) => {
-  return content.split('\n').map((line, i) => {
+  const lines = content.split('\n');
+  return lines.map((line, i) => {
     const trimmed = line.trim();
+    // "| a | b |" rows form a table; the first row is the header and "|---|" separators are skipped.
+    if (trimmed.startsWith('|')) {
+      if (lines[i - 1]?.trim().startsWith('|')) return null;
+      const rows = [];
+      for (let k = i; lines[k]?.trim().startsWith('|'); k++) {
+        const cells = lines[k].trim().slice(1, -1).split('|').map((c) => c.trim());
+        if (!cells.every((c) => /^-+$/.test(c))) rows.push(cells);
+      }
+      return <Table key={i} rows={rows} />;
+    }
     if (trimmed.startsWith('### ')) return <h3 key={i} className="text-2xl font-bold mt-10 mb-4 text-white" style={{ fontFamily: 'Georgia, serif' }}>{trimmed.slice(4)}</h3>;
     if (trimmed.startsWith('## ')) return <h2 key={i} className="text-3xl font-bold mt-12 mb-6 text-white" style={{ fontFamily: 'Georgia, serif' }}>{trimmed.slice(3)}</h2>;
-    if (trimmed.startsWith('- ')) return <li key={i} className="ml-6 list-disc mb-2 text-zinc-300">{renderInline(trimmed.slice(2))}</li>;
+    if (trimmed.startsWith('- ')) return <li key={i} className="ml-6 list-disc mb-2 text-zinc-300"><Inline text={trimmed.slice(2)} /></li>;
     if (trimmed.match(/^[0-9]+\.\s/)) return <h3 key={i} className="text-xl font-semibold mt-8 mb-4 text-white">{trimmed}</h3>;
     if (trimmed === '') return null;
     
     return (
       <p key={i} className="mb-5 leading-relaxed text-zinc-400 text-lg">
-        {renderInline(trimmed)}
+        <Inline text={trimmed} />
       </p>
     );
   });

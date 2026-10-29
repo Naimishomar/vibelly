@@ -162,7 +162,7 @@ export default function RandomVideoChat() {
               heading: 'How to stay safe during random video chat',
               paragraphs: [
                 'Safety is the number one concern with any random video chat platform, and it is the reason Vibelly was built with moderation as a first-class feature rather than an afterthought.',
-                'Every call has a one-tap Report button (sign-in required), and reports are reviewed by hand. All conversations are ephemeral: the moment you skip or end a call, the chat is gone and the conversation is not stored.',
+                'Every call has a one-tap Report button (sign-in required), and reports are reviewed by hand. Random chats are not stored: the moment you skip or end a call, the conversation is gone.',
                 'As with any stranger chat, the golden rules are simple: never share personal financial information, keep your location vague, and trust your instincts — if a conversation feels wrong, skip to the next person. Vibelly makes that a single click.',
               ],
             },
@@ -198,7 +198,7 @@ export default function RandomVideoChat() {
           },
           {
             question: "Is it safe to use?",
-            answer: "Vibelly is strictly 18+. Every call has a Report button; reporting requires signing in, every report is reviewed by hand, and users who break the rules are banned."
+            answer: "Vibelly is strictly 18+. Every call has a Report button; reporting requires signing in, every report is reviewed by hand, and signed-in accounts that break the rules are banned."
           },
           {
             question: "Can I use it on my phone?",

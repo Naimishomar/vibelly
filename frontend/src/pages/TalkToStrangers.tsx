@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { Shield, Video, Zap, MessageSquare, Lock, Headphones} from 'lucide-react';
 import Navbar from '../components/Navbar';
@@ -55,8 +55,8 @@ export default function TalkToStrangers() {
   return (
     <div className="min-h-screen bg-[#15171B] text-white flex flex-col font-sans">
       <SEO 
-        title="Talk to Strangers | Random Stranger Chat Online" 
-        description="Talk to strangers from around the world on Vibelly. Free random video and text chat with strangers, plus tips for starting a good conversation."
+        title="How to Talk to Strangers Online (18+) | Vibelly" 
+        description="How to talk to strangers online: conversation starters that work, when to skip or report, and free random video chat for adults 18+."
         canonicalUrl="/talk-to-strangers"
       />
       <BlinkingDotsGrid />
@@ -81,8 +81,8 @@ export default function TalkToStrangers() {
             className="text-4xl md:text-6xl font-normal tracking-tight leading-[1.1] mb-8"
             style={{ fontFamily: '"Playfair Display", "Merriweather", "Lora", ui-serif, Georgia, Cambria, "Times New Roman", Times, serif' }}
           >
-            Talk to <br />
-            Strangers Instantly
+            How to Talk to <br />
+            Strangers Online
           </motion.h1>
 
           <motion.p
@@ -91,7 +91,7 @@ export default function TalkToStrangers() {
             transition={{ delay: 0.2 }}
             className="text-lg md:text-xl text-zinc-400 mb-10 max-w-2xl leading-relaxed"
           >
-            Connect with strangers from around the world. Vibelly is a free, adults-only random video chat that runs in your browser.
+            Conversation starters that work, when to skip or report, and a free, adults-only random video chat to try them on.
           </motion.p>
 
           <motion.div
@@ -117,6 +117,8 @@ export default function TalkToStrangers() {
           </motion.div>
         </section>
 
+        <KeywordBlock slug="talk-to-strangers" />
+
         {/* Features Grid */}
         <section className="px-6 py-20 bg-[#0f1115] border-y border-white/5 relative z-20">
           <div className="max-w-6xl mx-auto">
@@ -134,21 +136,6 @@ export default function TalkToStrangers() {
           </div>
         </section>
 
-        {/* Conversation advice */}
-        <section className="px-6 py-20 max-w-3xl mx-auto w-full">
-          <h2 className="text-2xl md:text-3xl font-semibold mb-6">How to start a good conversation with a stranger</h2>
-          <ul className="list-disc pl-6 space-y-3 text-zinc-400 mb-6">
-            <li>Open with a specific, easy question: &quot;Where are you calling from?&quot; works better than &quot;hi&quot;.</li>
-            <li>Ask open questions that start with what, how, or why, then follow up on the answer.</li>
-            <li>Share a little about yourself too, so it feels like a conversation, not an interview.</li>
-            <li>If it is not clicking, say &quot;nice talking to you&quot; and skip. No hard feelings.</li>
-          </ul>
-          <p className="text-zinc-400">
-            More opening lines and questions in our guide: <Link to="/blog/how-to-start-a-conversation-with-a-stranger" className="underline hover:text-white">How to Start a Conversation With a Stranger</Link>. Staying safe matters too: read the <Link to="/blog/random-video-chat-safety-checklist" className="underline hover:text-white">random video chat safety checklist</Link>.
-          </p>
-        </section>
-
-        <KeywordBlock slug="talk-to-strangers" />
 
 
         {/* FAQ Section */}
@@ -159,7 +146,7 @@ export default function TalkToStrangers() {
           },
           {
             question: "Is it safe to use?",
-            answer: "Vibelly is strictly 18+. Every call has a Report button; reporting requires signing in, every report is reviewed by hand, and users who break the rules are banned."
+            answer: "Vibelly is strictly 18+. Every call has a Report button; reporting requires signing in, every report is reviewed by hand, and signed-in accounts that break the rules are banned."
           },
           {
             question: "Can I use it on my phone?",
@@ -168,7 +155,7 @@ export default function TalkToStrangers() {
         ]} />
 
         <ShareButtons
-          title="Talk to Strangers | Random Stranger Chat Online"
+          title="How to Talk to Strangers Online (18+) | Vibelly"
           description="Talk to strangers online with free random stranger chat — video or text, anonymous and instant."
         />
 
