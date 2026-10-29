@@ -215,7 +215,7 @@
           "h2": "Vibelly and OmeTV: what is different",
           "paragraphs": [
             "Both let you video chat with strangers for free. The differences are in the details. [OmeTV's own FAQ](https://ome.tv/faq/) says it has no gender filters; on Vibelly, gender and country filters are part of Premium. Vibelly runs only in the browser, with no app to install, and you can start a chat without creating an account.",
-            "On Vibelly you confirm you are 18 or older before every chat. Signed-in users can report anyone in one tap, and reports are reviewed by hand. Free video runs at 480p, and Premium unlocks 720p HD and voice-only calls.",
+            "On Vibelly you confirm you are 18 or older before every chat. Signed-in users can report other signed-in users in one tap, and reports are reviewed by hand. Free video runs at 480p, and Premium unlocks 720p HD and voice-only calls.",
             "Every service changes over time, so check each one's current rules before you decide. Our sourced comparison of Omegle alternatives covers OmeTV and seven other services."
           ]
         },
@@ -280,7 +280,7 @@
           "h2": "Why people look for a Chatroulette alternative",
           "paragraphs": [
             "Chatroulette launched in November 2009 and is still running. Most people looking for an alternative want one of three things: a different crowd, a site that works without an app, or stricter rules about who can join.",
-            "Age checks are the hard part for every service. An October 2025 [LBC investigation](https://www.lbc.co.uk/news/exclusive/video-chatrooms-british-children/) reported that Chatroulette did not require proof of age. Vibelly does not check ID either: you confirm you are 18 or older before every chat, and signed-in accounts found to belong to minors are banned. If proof of age matters to you, no site in this category offers it today."
+            "Age checks are the hard part for every service. An October 2025 [LBC investigation](https://www.lbc.co.uk/news/exclusive/video-chatrooms-british-children/) reported that Chatroulette did not require proof of age. Vibelly does not check ID either: you confirm you are 18 or older before every chat, and signed-in accounts found to belong to minors are banned. If proof of age matters to you, note that none of the services we compared state that they verify ID."
           ]
         },
         {
@@ -359,6 +359,15 @@
           ]
         },
         {
+          "h2": "What if the conversation goes quiet?",
+          "bullets": [
+            "Silence is normal in the first few seconds. Give the other person a moment to set up their camera before you skip.",
+            "Fall back on what you can see: their background, the time of day where they are, the language on a sign behind them.",
+            "Ask a follow-up instead of a new question. \"What made you pick that?\" keeps a thread going.",
+            "If you want to practise a language, say so early. Many people are happy to switch, and our guide to [practising a language on video chat](/blog/practice-a-language-on-video-chat) has more ideas."
+          ]
+        },
+        {
           "h2": "When to skip, and when to report",
           "bullets": [
             "Skip whenever a conversation is not working for you. Skipping is never penalised.",
@@ -371,6 +380,7 @@
           "h2": "Why talk to strangers online?",
           "paragraphs": [
             "Talking to strangers is a low-pressure way to practise conversation. Nobody you know is watching, and if a chat does not go well you can simply move on. People use random chat to beat boredom, to hear how life looks in another country, to practise a language with native speakers, or just to have a conversation they could never have predicted.",
+            "Research backs this up. In a study of Chicago commuters, people asked to talk to a stranger reported a more pleasant journey than people asked to keep to themselves, even though most predicted the opposite ([Epley & Schroeder, 2014](https://doi.org/10.1037/a0037323)). Another study found people felt happier on days when they talked with more casual acquaintances, not just close friends ([Sandstrom & Dunn, 2014](https://doi.org/10.1177/0146167214529799)). Both studies looked at face-to-face conversations, not video chat, but the lesson carries over: a short chat with someone new tends to go better than you expect.",
             "On Vibelly you can start a free video or text chat in your browser, with no app to install. You confirm you are 18 or older before every chat, and you can skip to someone new at any time."
           ]
         }
@@ -401,12 +411,22 @@
           ]
         },
         {
+          "h2": "Downsides of anonymous chat, and how to reduce them",
+          "bullets": [
+            "People can behave worse when nobody knows who they are. Psychologists call this the [online disinhibition effect](https://doi.org/10.1089/1094931041291295). Skip anyone who turns rude or sexual; skipping ends the call instantly.",
+            "You cannot verify who you are talking to. On Vibelly, as on every site in this category, age is self-declared, and the other person's name and story may not be true.",
+            "Guests cannot be reported on Vibelly, because there is no account to act on. Only signed-in users can be reported and banned, so skip a guest who breaks the rules.",
+            "Anonymous does not mean invisible. The other person can see your IP address on a peer-to-peer call and can record their own screen.",
+            "Scammers use anonymity too. Be wary of anyone who asks you to move to another app or to send money, codes, or photos."
+          ]
+        },
+        {
           "h2": "Tips for chatting anonymously",
           "bullets": [
             "Use a first name or nickname only.",
             "Keep your school, workplace, street, and social media handles to yourself.",
             "Be careful with requests to move to another app, or to send photos, money, or codes.",
-            "Skip any conversation that makes you uncomfortable, and report anyone who breaks the rules."
+            "Skip any conversation that makes you uncomfortable, and report signed-in users who break the rules."
           ],
           "paragraphs": [
             "For more, read the random video chat safety checklist on the Vibelly blog."
@@ -435,6 +455,10 @@
   ],
   "pricingFaq": [
     {
+      "question": "Is Vibelly free?",
+      "answer": "Yes. Random video chat at 480p and text chat are free, with no account needed. Premium is optional and adds filters, 720p HD video, and voice-only calls."
+    },
+    {
       "question": "Does Premium renew automatically?",
       "answer": "No. Each purchase is a one-time payment through Razorpay. When your time runs out you go back to the free plan, and nothing is charged again."
     },
@@ -454,7 +478,7 @@
   "contact": {
     "sections": [
       {
-        "h2": "Reporting a user by email",
+        "h2": "How do I report a user by email?",
         "bullets": [
           "The date and approximate time of the call, with your time zone.",
           "Whether it was a video, voice, or text chat.",
@@ -464,11 +488,69 @@
         ]
       },
       {
-        "h2": "If you are in danger",
+        "h2": "What if I am in danger?",
         "paragraphs": [
           "If someone threatens you or a child is at risk, contact your local police first. In India you can also report at cybercrime.gov.in or call 1930. Vibelly does not record calls, so the details you give us are what we have to act on."
         ]
       }
     ]
-  }
+  },
+  "pricingTable": [
+    [
+      "",
+      "Free",
+      "Daily pass",
+      "Monthly",
+      "Yearly"
+    ],
+    [
+      "Price",
+      "₹0",
+      "₹9",
+      "₹49",
+      "₹499"
+    ],
+    [
+      "Access",
+      "Always",
+      "1 day",
+      "30 days",
+      "365 days"
+    ],
+    [
+      "Video quality",
+      "480p",
+      "720p HD",
+      "720p HD",
+      "720p HD"
+    ],
+    [
+      "Random video and text chat",
+      "Yes",
+      "Yes",
+      "Yes",
+      "Yes"
+    ],
+    [
+      "Voice-only calls",
+      "No",
+      "Yes",
+      "Yes",
+      "Yes"
+    ],
+    [
+      "Gender and country filters",
+      "No",
+      "Yes",
+      "Yes",
+      "Yes"
+    ],
+    [
+      "Renews automatically",
+      "No",
+      "No",
+      "No",
+      "No"
+    ]
+  ]
 }

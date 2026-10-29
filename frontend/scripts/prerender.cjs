@@ -73,14 +73,15 @@ const SITE_GRAPH = [
     featureList: ['Random video chat (480p)', 'Text chat', 'Gender and country filters (Premium)', '720p HD video (Premium)', 'Voice-only calls (Premium)'],
     isAccessibleForFree: true,
     audience: { '@type': 'PeopleAudience', suggestedMinAge: 18 },
+    contentRating: '18+',
     applicationCategory: 'SocialNetworkingApplication',
     operatingSystem: 'Any (web browser)',
     browserRequirements: 'Requires JavaScript and WebRTC',
     offers: [
-      { '@type': 'Offer', availability: 'https://schema.org/InStock', url: `${siteUrl}/pricing`, name: 'Free', price: '0', priceCurrency: 'INR' },
-      { '@type': 'Offer', availability: 'https://schema.org/InStock', url: `${siteUrl}/pricing`, name: 'Premium (1 day)', price: '9', priceCurrency: 'INR' },
-      { '@type': 'Offer', availability: 'https://schema.org/InStock', url: `${siteUrl}/pricing`, name: 'Premium (monthly)', price: '49', priceCurrency: 'INR' },
-      { '@type': 'Offer', availability: 'https://schema.org/InStock', url: `${siteUrl}/pricing`, name: 'Premium (yearly)', price: '499', priceCurrency: 'INR' },
+      { '@type': 'Offer', availability: 'https://schema.org/InStock', url: `${siteUrl}/pricing`, name: 'Free', description: 'Random video (480p) and text chat, free forever', price: '0', priceCurrency: 'INR' },
+      { '@type': 'Offer', availability: 'https://schema.org/InStock', url: `${siteUrl}/pricing`, name: 'Premium (1 day)', description: '24-hour pass, one-time payment, no auto-renewal', price: '9', priceCurrency: 'INR' },
+      { '@type': 'Offer', availability: 'https://schema.org/InStock', url: `${siteUrl}/pricing`, name: 'Premium (monthly)', description: '30 days, one-time payment, no auto-renewal', price: '49', priceCurrency: 'INR' },
+      { '@type': 'Offer', availability: 'https://schema.org/InStock', url: `${siteUrl}/pricing`, name: 'Premium (yearly)', description: '365 days, one-time payment, no auto-renewal', price: '499', priceCurrency: 'INR' },
     ],
     publisher: { '@id': `${siteUrl}/#org` },
   },
@@ -124,14 +125,15 @@ const APP_PAGES = {
     description: 'Vibelly Premium adds gender and country filters, 720p HD video, and voice calls. ₹49 a month, ₹499 a year, or ₹9 for a single day.',
     h1: 'Vibelly Premium',
     sections: [
-      { h2: 'Free', bullets: ['Random video chat at 480p', 'Text chat with strangers', 'Unlimited sessions', 'One-tap reporting (sign-in required)'] },
+      { h2: 'Free vs Premium at a glance', table: PAGES.pricingTable },
+      { h2: 'What do you get for free?', bullets: ['Random video chat at 480p', 'Text chat with strangers', 'Unlimited sessions', 'One-tap reporting (sign-in required)'] },
       {
-        h2: 'Premium: ₹49 per month or ₹499 per year',
+        h2: 'What does Premium cost? ₹49 for 30 days or ₹499 for a year',
         bullets: ['Gender filters', 'HD video calls (720p)', 'Random voice calls', 'Country filters'],
       },
-      { h2: 'Daily pass: ₹9', paragraphs: ['Everything in Premium for 24 hours, with no commitment.'] },
+      { h2: 'Is there a daily pass? Yes, ₹9', paragraphs: ['Everything in Premium for 24 hours, with no commitment.'] },
       {
-        h2: 'Billing',
+        h2: 'How does billing work?',
         paragraphs: [
           'Each purchase is a one-time payment through Razorpay. Plans do not renew automatically: when your time runs out you go back to the free plan. Purchases are non-refundable except where required by law.',
         ],
@@ -191,7 +193,7 @@ const CORE_COPY = {
       {
         h2: 'Why Omegle shut down and what replaced it',
         paragraphs: [
-          'Omegle was the internet\'s most famous random video chat site for more than a decade, but it went offline in November 2023 after the founder said the platform had become too costly to moderate safely. That left millions of users searching for a working Omegle alternative.',
+          'Omegle was the internet\'s most famous random video chat site for more than a decade, but it went offline in November 2023 after the founder said the platform had become too costly to moderate safely ([Omegle\'s closing letter](https://www.omegle.com/), [Wikipedia](https://en.wikipedia.org/wiki/Omegle)). That left millions of users searching for a working Omegle alternative.',
           'Vibelly was built to fill that gap: free random video chat that keeps the simple start-and-match idea of Omegle, but with modern WebRTC video, one-tap reporting (sign-in required), and clear rules on what is and is not stored.',
         ],
       },
@@ -211,14 +213,14 @@ const CORE_COPY = {
       {
         h2: 'How to start a random video call on Vibelly',
         paragraphs: [
-          'Press Start, allow camera and microphone access, and you are matched with a stranger immediately. Skip to a new person anytime. Random chats are ephemeral: when one ends, it is gone.',
+          'Press Start, allow camera and microphone access, and you are matched with a stranger immediately. Skip to a new person anytime. Random chats are not stored: when one ends, it is gone.',
         ],
       },
     ],
     faqs: [
       { q: 'Is Vibelly a good alternative to Omegle?', a: 'Vibelly offers free random video and text chat in your browser, an 18+ policy, and one-tap reporting (sign-in required), with no account needed to chat. Our blog has a sourced comparison of other options.' },
       { q: 'Do I need to sign up to use Vibelly?', a: 'No account is needed to chat. Just click start and connect with strangers worldwide. Reporting, Premium, and direct messages use a Google or GitHub sign-in.' },
-      { q: 'Is Vibelly safe to use?', a: 'Vibelly is 18+ only, every call has a one-tap Report button (sign-in required) reviewed by hand, and random chats are not stored.' },
+      { q: 'Is Vibelly safe to use?', a: 'Vibelly is 18+ only. Every call has a one-tap Report button (sign-in required), every report is reviewed by hand, signed-in accounts that break the rules are banned, and random chats are not stored.' },
       { q: 'Can I use Vibelly on my phone?', a: 'Yes. Vibelly works in any modern mobile browser, on iPhone or Android, with no app to download.' },
     ],
   },
@@ -227,7 +229,7 @@ const CORE_COPY = {
     description:
       'Looking for an OmeTV alternative? Vibelly is free, adults-only random video chat with no account, email, or social login needed to start.',
     h1: 'OmeTV Alternative: Random Video Chat With No Account Needed',
-    lead: 'Vibelly is a free OmeTV alternative for adults 18+: random video and text chat in your browser, with no email, phone number, or account needed to start. Signed-in users can report anyone in one tap, and Premium adds filters, 720p HD, and voice calls.',
+    lead: 'Vibelly is a free OmeTV alternative for adults 18+: random video and text chat in your browser, with no email, phone number, or account needed to start. Signed-in users can report other signed-in users in one tap, and Premium adds filters, 720p HD, and voice calls.',
     sections: [
       {
         h2: 'Why people look for an OmeTV alternative',
@@ -250,7 +252,7 @@ const CORE_COPY = {
         h2: 'How to use Vibelly without logging in',
         paragraphs: [
           'Open the site in any browser, choose video or text, and press start. You are matched with a stranger in seconds, with no email, phone number, or social account.',
-          'Calls run over encrypted WebRTC streams directly between browsers, so media is encrypted in transit and latency stays low. Calls are never recorded, and chat messages are not kept after the call ends.',
+          'Calls run over encrypted WebRTC streams directly between browsers, so media is encrypted in transit and latency stays low. Calls are never recorded, and random chat messages are not kept after the call ends.',
         ],
       },
     ],
@@ -343,7 +345,7 @@ const CORE_COPY = {
     // Tips come first from the talk-to-strangers block in src/content/pages.json.
     sections: [],
     faqs: [
-      { q: 'Is talking to strangers online safe?', a: 'Vibelly is 18+ only. Signed-in users can report anyone in one tap, reports are reviewed by hand, and random chats are not stored. Never share personal details with strangers.' },
+      { q: 'Is talking to strangers online safe?', a: 'Vibelly is 18+ only. Signed-in users can report other signed-in users in one tap, reports are reviewed by hand, and random chats are not stored. Never share personal details with strangers.' },
       { q: 'Do I need to sign up?', a: 'No. You can talk to strangers instantly with no account and no email.' },
     ],
   },
@@ -461,7 +463,7 @@ const inline = (t) =>
 
 // First row is the header, as in the React <Table>.
 const tableHtml = ([head, ...body]) =>
-  `      <table>\n        <thead><tr>${head.map((h) => `<th>${inline(h)}</th>`).join('')}</tr></thead>\n        <tbody>\n${body
+  `      <table>\n        <thead><tr>${head.map((h) => `<th scope="col">${inline(h)}</th>`).join('')}</tr></thead>\n        <tbody>\n${body
     .map((r) => `          <tr>${r.map((c) => `<td>${inline(c)}</td>`).join('')}</tr>`)
     .join('\n')}\n        </tbody>\n      </table>`;
 

@@ -66,16 +66,20 @@ export default function BlogPost() {
         <Navbar />
 
         <main className="flex-1 px-6 py-20 md:py-32 max-w-3xl mx-auto w-full">
-          <Link to="/blog" className="inline-flex items-center gap-2 text-zinc-500 hover:text-white transition-colors mb-12">
+          <Link to="/blog" className="inline-flex items-center gap-2 min-h-11 text-zinc-500 hover:text-white transition-colors mb-12">
             <ArrowLeft size={16} />
             Back to all articles
           </Link>
 
           <div>
-            <div className="text-zinc-500 font-medium mb-4">{post.date} • By <Link to="/about" className="underline hover:text-white">{post.author}</Link></div>
+            <div className="text-zinc-500 font-medium mb-4">{post.date} • By <Link to="/about" className="underline hover:text-white py-3">{post.author}</Link></div>
             <h1 className="text-4xl md:text-5xl font-normal leading-tight mb-8" style={{ fontFamily: '"Playfair Display", "Merriweather", "Lora", ui-serif, Georgia, Cambria, "Times New Roman", Times, serif' }}>
               {post.title}
             </h1>
+            {/* Same start link as the prerendered page (scripts/prerender.cjs buildBody). */}
+            <Link to="/setup/video" className="inline-flex px-8 py-4 mb-10 rounded-xl bg-white text-black font-semibold hover:bg-zinc-200 transition-colors">
+              Start Video Chat (18+)
+            </Link>
             
             <div className="w-full h-px bg-white/10 mb-12"></div>
 

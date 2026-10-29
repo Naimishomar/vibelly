@@ -3,7 +3,6 @@ Allow: /
 Disallow: /admin
 Disallow: /oauth-callback
 Disallow: /call
-Disallow: /setup
 Disallow: /mcp
 
 Sitemap: https://vibelly.fun/sitemap.xml

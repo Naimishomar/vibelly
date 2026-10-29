@@ -49,7 +49,7 @@ const steps = [
     number: '03',
     eyebrow: 'CHAT & CONNECT',
     title: 'Talk, type, and actually connect.',
-    body: 'Use the live chat panel to type while you talk. Typing indicators let you know when the other person is responding. All messages are ephemeral — gone when the call ends.',
+    body: 'Use the live chat panel to type while you talk. Typing indicators let you know when the other person is responding. Random chat messages are not stored: they are gone when the call ends.',
     bullets: [
       'Real-time chat via Socket.io',
       'Live "is typing…" indicator',
@@ -77,8 +77,8 @@ const metrics = [
     body: 'Our Redis-backed queue pops users in real time. From pressing the button to a live call takes seconds.',
   },
   {
-    title: 'Zero data retained after the call',
-    body: 'No recordings, no logs, no chat history. When the call ends, it\'s gone. We build for privacy by default, not as an afterthought.',
+    title: 'Nothing recorded, random chats not stored',
+    body: 'Calls are never recorded and random chats are not stored. If you sign in, we keep only what the Terms list, such as your account and direct messages for up to 24 hours.',
   },
   {
     title: 'Same quality for every user',
@@ -331,9 +331,9 @@ export default function Home() {
                 <div className="w-12 h-12 rounded-full bg-white/5 flex items-center justify-center mb-6">
                   <SkipForward className="text-white" size={24} />
                 </div>
-                <h3 className="text-xl font-semibold mb-3">Ephemeral &amp; Safe</h3>
+                <h3 className="text-xl font-semibold mb-3">Not Recorded &amp; Safe</h3>
                 <p className="text-zinc-400 text-sm leading-relaxed">
-                  Connections exist only in the moment. When you skip, it's gone forever. We never record your video or store your random chat history.
+                  When you skip, the conversation is gone. We never record your video or store your random chat history.
                 </p>
               </div>
               <div className="bg-[#1A1C20] border border-white/5 rounded-2xl p-8 hover:bg-[#1C1F24] transition-colors h-full">

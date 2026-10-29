@@ -171,7 +171,7 @@ export default function OmegleAlternative() {
             {
               heading: 'Why Omegle shut down — and why people still search for it',
               paragraphs: [
-                "Omegle was one of the internet's most famous places to talk to strangers. For more than a decade, millions of users opened their browsers to be matched randomly with someone on the other side of the world. In November 2023, the site went dark: the founder said the platform had become unsustainable to run, largely because of the cost of keeping the community safe.",
+                "Omegle was one of the internet's most famous places to talk to strangers. For more than a decade, millions of users opened their browsers to be matched randomly with someone on the other side of the world. In November 2023, the site went dark: the founder said the platform had become unsustainable to run, largely because of the cost of keeping the community safe ([Omegle's closing letter](https://www.omegle.com/), [Wikipedia](https://en.wikipedia.org/wiki/Omegle)).",
                 "The shutdown left a huge gap. People who grew up using free random video chat were suddenly looking for an Omegle alternative that keeps the same idea, meeting someone completely new with one click, without the moderation problems that killed the original. That is exactly the gap Vibelly was built to fill.",
                 "A good Omegle alternative today needs three things: it must be free, it must not demand an account, and it must act on reports. Vibelly was built around all three from day one.",
               ],
@@ -179,7 +179,7 @@ export default function OmegleAlternative() {
             {
               heading: 'What Vibelly offers as an Omegle alternative',
               paragraphs: [
-                'A random video chat site only earns the title of "best Omegle alternative" when it fixes everything the original got wrong. Here is what Vibelly does differently:',
+                'Here is what Vibelly offers:',
               ],
               bullets: [
                 'Free random video chat with no sign-up, no email, and no app to download',
@@ -196,14 +196,6 @@ export default function OmegleAlternative() {
                 'Getting started is the whole point of an Omegle alternative — it should take seconds, not a registration form. On Vibelly you simply open the site, press "Start Video Call" (or choose text chat), and you are matched with a stranger immediately.',
                 'The moment a match is found, WebRTC negotiates a direct, low-latency connection between the two browsers. Your camera and microphone stream straight to the other person, which keeps the video chat crisp and responsive. You can skip to the next stranger at any time, and both users are re-queued instantly.',
                 'There is no setup wizard, no profile to fill in, and no payment required for the core random video call experience. Premium filters for gender and country are entirely optional upgrades.',
-              ],
-            },
-            {
-              heading: 'Omegle vs Vibelly: what actually changed',
-              paragraphs: [
-                'When people ask "is there anything like Omegle anymore?", what they usually mean is: can I still click one button and talk to a stranger? Yes — but the modern version is safer and better built.',
-                'Omegle had no reliable identity system and famously struggled with trolls and bad actors. Vibelly is 18+ only, gives signed-in users a one-click report button reviewed by hand, and keeps random chats ephemeral: when you skip or end a call, the chat is gone. It keeps the thrill of meeting a random stranger while removing the reasons the original platform was forced offline.',
-                'If you miss Omegle, or if you have never used it and want to know what the hype is about, Vibelly is the closest thing to the classic experience — free, anonymous, and ready in a single click.',
               ],
             },
           ]}
@@ -233,7 +225,7 @@ export default function OmegleAlternative() {
           },
           {
             question: "Is Vibelly safe to use?",
-            answer: "Vibelly is strictly 18+. Every call has a Report button; reporting requires signing in, every report is reviewed by hand, and signed-in accounts that break the rules are banned."
+            answer: "Vibelly is 18+ only. Every call has a one-tap Report button (sign-in required), every report is reviewed by hand, signed-in accounts that break the rules are banned, and random chats are not stored."
           },
           {
             question: "Can I use Vibelly on my phone?",

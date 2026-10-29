@@ -21,7 +21,7 @@ export function Table({ rows }: { rows: string[][] }) {
     <div className="overflow-x-auto my-6">
       <table className="w-full text-left text-sm border-collapse">
         <thead>
-          <tr>{head.map((h) => <th key={h} className="border-b border-white/20 p-2 text-white font-semibold">{h}</th>)}</tr>
+          <tr>{head.map((h) => <th key={h} scope="col" className="border-b border-white/20 p-2 text-white font-semibold">{h}</th>)}</tr>
         </thead>
         <tbody>
           {body.map((r) => (
