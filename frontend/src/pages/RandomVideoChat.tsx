@@ -143,7 +143,7 @@ export default function RandomVideoChat() {
               heading: 'What is random video chat?',
               paragraphs: [
                 'Random video chat is exactly what it sounds like: you press a button and are instantly connected over video to a stranger you have never met. There is no friend list, no matchmaking algorithm curating your feed, and no profile to build. Every conversation is a genuine surprise.',
-                'The concept was made famous by Omegle and Chatroulette, and it remains one of the most exciting ways to meet people online. Random video chat platforms match two anonymous users, let them talk for as long as they like, and let either person skip to a new stranger at any moment.',
+                'The concept was made famous by [Omegle](https://en.wikipedia.org/wiki/Omegle) and [Chatroulette](https://en.wikipedia.org/wiki/Chatroulette), and it remains one of the most exciting ways to meet people online. Random video chat platforms match two anonymous users, let them talk for as long as they like, and let either person skip to a new stranger at any moment.',
                 'Vibelly keeps that core idea but rebuilds the technology around it: modern WebRTC video, one-tap reporting (sign-in required), and an interface that starts a free video chat in seconds.',
               ],
             },
@@ -162,7 +162,7 @@ export default function RandomVideoChat() {
               heading: 'How to stay safe during random video chat',
               paragraphs: [
                 'Safety is the number one concern with any random video chat platform, and it is the reason Vibelly was built with moderation as a first-class feature rather than an afterthought.',
-                'Every call has a one-tap Report button (sign-in required), and reports are reviewed by hand. Random chats are not stored: the moment you skip or end a call, the conversation is gone.',
+                'Every call has a one-tap Report button (sign-in required), and reports are reviewed by hand. Random chat content is not stored: the moment you skip or end a call, the conversation is gone.',
                 'As with any stranger chat, the golden rules are simple: never share personal financial information, keep your location vague, and trust your instincts — if a conversation feels wrong, skip to the next person. Vibelly makes that a single click.',
               ],
             },

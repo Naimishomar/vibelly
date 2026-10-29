@@ -77,8 +77,8 @@ const metrics = [
     body: 'Our Redis-backed queue pops users in real time. From pressing the button to a live call takes seconds.',
   },
   {
-    title: 'Nothing recorded, random chats not stored',
-    body: 'Calls are never recorded and random chats are not stored. If you sign in, we keep only what the Terms list, such as your account and direct messages for up to 24 hours.',
+    title: 'Nothing recorded, chat content not stored',
+    body: 'Calls are never recorded and random chat content is not stored. We keep a basic record of each call (who, type, length) for 24 hours for abuse reports, and anything else the Terms list, such as direct messages for up to 24 hours.',
   },
   {
     title: 'Same quality for every user',
@@ -447,7 +447,7 @@ export default function Home() {
               Built for Adults, With Safety in Mind
             </h2>
             <p className="text-zinc-500 text-sm max-w-lg mx-auto leading-relaxed">
-              Vibelly is 18+ only, calls are never recorded, and random chats are not stored. Comparing options? See how Vibelly differs from <Link to="/chatroulette-alternative" className="underline hover:text-white">Chatroulette</Link>.
+              Vibelly is 18+ only, calls are never recorded, and random chat content is not stored. Comparing options? See how Vibelly differs from <Link to="/chatroulette-alternative" className="underline hover:text-white">Chatroulette</Link>.
             </p>
           </motion.div>
 

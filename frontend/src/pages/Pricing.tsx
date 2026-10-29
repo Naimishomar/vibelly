@@ -7,8 +7,6 @@ import SEO from '../components/SEO';
 import BlinkingDotsGrid from '../components/BlinkingDotsGrid';
 import { useAuthStore } from '../store/useAuthStore';
 import { useNavigate } from 'react-router-dom';
-import html2canvas from 'html2canvas';
-import jsPDF from 'jspdf';
 import LoginModal from '../components/LoginModal';
 import pages from '../content/pages.json';
 import { Table } from '../components/Inline';
@@ -42,6 +40,9 @@ export default function Pricing() {
     if (!receiptRef.current) return;
     try {
       // Temporarily remove rounded corners for clean PDF edges if needed, but it's fine
+      // Loaded on demand: these are only needed for the receipt download and would otherwise
+      // add ~180 KB to the pricing page and delay its first paint.
+      const [{ default: html2canvas }, { default: jsPDF }] = await Promise.all([import('html2canvas'), import('jspdf')]);
       const canvas = await html2canvas(receiptRef.current, { scale: 2, backgroundColor: '#15171B', useCORS: true });
       const imgData = canvas.toDataURL('image/png');
       const pdf = new jsPDF('p', 'mm', 'a4');
@@ -189,7 +190,7 @@ export default function Pricing() {
     {
       name: 'Free',
       subtitle: 'Perfect for getting started',
-      price: 'Free',
+      price: '₹0',
       period: '',
       highlight: false,
       buttonText: 'Start free',
@@ -236,7 +237,7 @@ export default function Pricing() {
   return (
     <div className="min-h-screen bg-[#15171B] text-white font-sans flex flex-col relative">
       <SEO 
-        title="Vibelly Premium | Enhance Your Random Chat Experience" 
+        title="Vibelly Premium Pricing: ₹9 a Day, ₹49 a Month, ₹499 a Year" 
         description="Vibelly Premium adds gender and country filters, 720p HD video, and voice calls. ₹49 a month, ₹499 a year, or ₹9 for a single day."
         canonicalUrl="/pricing"
       />
@@ -249,16 +250,13 @@ export default function Pricing() {
 
       <main className="flex-1 flex flex-col items-center pt-20 px-6 max-w-7xl mx-auto w-full relative z-10">
         {/* Header */}
-        <motion.div 
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="text-center mb-10"
-        >
-          <h1 className="text-4xl md:text-5xl font-bold mb-4">Simple, transparent pricing</h1>
+        {/* No fade-in here: the h1 is the LCP element. Text matches the prerendered h1 in scripts/prerender.cjs. */}
+        <div className="text-center mb-10">
+          <h1 className="text-4xl md:text-5xl font-bold mb-4">Vibelly Premium Pricing</h1>
           <p className="text-zinc-400 text-sm md:text-base">
-            Connect instantly with anyone, anywhere. Pay only for premium features. Save on longer plans.
+            Free random chat for everyone. Premium adds filters, 720p HD video, and voice calls, as a one-time pass.
           </p>
-        </motion.div>
+        </div>
 
         {/* Toggle */}
         <motion.div 
@@ -270,6 +268,9 @@ export default function Pricing() {
           <span className={`text-sm font-medium ${!isAnnual ? 'text-white' : 'text-zinc-500'}`}>Monthly</span>
           <button 
             onClick={() => setIsAnnual(!isAnnual)}
+            role="switch"
+            aria-checked={isAnnual}
+            aria-label="Bill yearly"
             className="w-12 h-6 rounded-full bg-zinc-800 relative transition-colors border border-white/5"
           >
             <div className={`absolute top-0.5 w-5 h-5 rounded-full bg-zinc-400 transition-all ${isAnnual ? 'right-0.5' : 'left-0.5'}`} />
@@ -349,7 +350,7 @@ export default function Pricing() {
 
               <button
                 onClick={() => {
-                  if (plan.price === 'Free') {
+                  if (plan.name === 'Free') {
                     navigate('/');
                   } else {
                     initiatePayment(plan.price);

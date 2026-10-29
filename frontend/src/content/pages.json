@@ -30,8 +30,8 @@
         "h2": "What we store",
         "paragraphs": [
           "Video and voice calls connect directly between browsers using WebRTC, which encrypts media in transit. When a direct connection is not possible, media passes through a relay server, which forwards it without being able to read it. As with any peer-to-peer video call, the other person can see your IP address, which can reveal your approximate location.",
-          "Vibelly does not record calls, and random chat messages are not stored. Direct messages between signed-in users are kept for up to 24 hours (the last 25 per conversation) so you can read them, then deleted.",
-          "If you sign in, we store your account details, your Premium status, and the details of any reports you make or receive, so that we can enforce these rules. See the Terms & Privacy Policy for more."
+          "Vibelly does not record calls, and random chat messages are not stored. A basic record of each random call (the two participants, call type, video quality and length) is kept for 24 hours to help with abuse reports, then deleted automatically. Direct messages between signed-in users are kept for up to 24 hours (the last 25 per conversation) so you can read them, then deleted.",
+          "If you sign in, we store your account details, your Premium status, and the details of any reports you make or receive, so that we can enforce these rules. If you use groups, live streams, or a creator profile, we also store what those features need; the Terms & Privacy Policy lists it all."
         ]
       },
       {
@@ -75,10 +75,14 @@
         ],
         "bullets": [
           "Accounts: you can sign in with Google or GitHub. We store your name, username, email address, and profile image from that provider, the gender and country you choose, your Premium status and expiry date, referral details, and any reports you make or receive.",
-          "Random chats: video and voice calls connect directly between browsers over WebRTC, encrypted in transit, and are never recorded. Random text chat messages are relayed and not stored.",
+          "Random chats: video and voice calls connect directly between browsers over WebRTC, encrypted in transit, and are never recorded. Random text chat messages are relayed and not stored. A basic record of each random call (the two participants, call type, video quality and length) is kept for 24 hours to help with abuse reports, then deleted automatically.",
           "Direct messages between signed-in users: the last 25 messages of each conversation are kept for up to 24 hours, then deleted.",
           "IP addresses: As with any peer-to-peer video call, the other person can see your IP address, which can reveal your approximate location.",
-          "Payments: Premium payments are processed by Razorpay. We do not receive or store your card or bank details; we store only your Premium status and expiry date.",
+          "Payments: Premium and live-stream payments are processed by Razorpay (or UPI for some live-stream payments). We never receive your card details. For Premium we store your status and expiry date; for live-stream and creator payments we store the amount, the creator's and Vibelly's share, and the payment reference.",
+          "Groups: the group name, description, photo, admin, and whether it is public.",
+          "Creator profiles: your bio, cover and gallery photos, posts and captions, comments, likes, followers, your stream or subscription price, and the UPI ID or bank account number you give us for payouts.",
+          "Creator verification: to get verified you upload a selfie and a photo of an ID document. These are stored in our cloud storage (Cloudflare R2) so they can be reviewed by hand, and kept until you ask us to delete them.",
+          "Follows and blocks: who you follow and who you have blocked.",
           "Analytics: a random visitor ID is saved in your browser so we can count visits. It is not linked to your name.",
           "Your choices: email vibellyofficial@gmail.com to request a copy of your account data or to have your account deleted."
         ]
@@ -121,7 +125,7 @@
         "h2": "What Vibelly is",
         "paragraphs": [
           "Vibelly is a free random video chat that runs in your browser. You press start and are matched with a stranger for a video or text chat, with no app to install and no account needed to chat.",
-          "Vibelly Premium is an optional paid plan. It adds gender and country filters, 720p HD video, and voice-only calls, and it is how Vibelly is funded."
+          "Vibelly Premium is an optional paid plan. It adds gender and country filters, 720p HD video, and voice-only calls, Vibelly is funded by Premium and by a share of the payments viewers make to creators during live streams."
         ]
       },
       {
@@ -339,6 +343,15 @@
             "You can skip to someone new at any time. Free video runs at 480p and adapts to your connection; Premium adds 720p HD, voice-only calls, and gender and country filters.",
             "Ready to try it? Start a chat from the Vibelly homepage."
           ]
+        },
+        {
+          "h2": "What to expect on your first random video call",
+          "paragraphs": [
+            "Your browser asks for camera and microphone access the first time. Allow both, check that your face is lit and your background shows nothing personal, then confirm you are 18 or older.",
+            "Matching usually takes a few seconds, longer at quiet times because Vibelly is still a small community. When the call connects you will see the other person straight away, and they will see you.",
+            "Many first calls are short. People skip quickly while they look for someone to talk to, so do not take it personally, and feel free to do the same. Free video runs at 480p and adapts to your connection; if the picture is choppy, a steadier Wi-Fi signal helps more than anything else.",
+            "If anything makes you uncomfortable, skip at once. If you are signed in, you can also report the other person, as long as they are signed in too; every report is reviewed by hand. Our [random video chat safety checklist](/blog/random-video-chat-safety-checklist) covers the rest."
+          ]
         }
       ]
     },
@@ -371,9 +384,19 @@
           "h2": "When to skip, and when to report",
           "bullets": [
             "Skip whenever a conversation is not working for you. Skipping is never penalised.",
-            "Report anyone who is sexual, abusive, hateful, or appears to be under 18. Reporting requires signing in, and every report is reviewed by hand.",
+            "Report signed-in users who are sexual, abusive, hateful, or appear to be under 18. Reporting requires signing in, every report is reviewed by hand, and guests cannot be reported, so skip them.",
             "Be wary of anyone who quickly asks you to move to another app or asks for money, codes, or photos. Those are common scam patterns.",
             "Remember the other person can see your IP address on a peer-to-peer call, so never share your full name, address, school, or workplace."
+          ]
+        },
+        {
+          "h2": "Talking to strangers when you are shy",
+          "bullets": [
+            "Start with text chat. You can switch to video once you feel comfortable, or never.",
+            "Keep three questions ready before you press start, so the first ten seconds are covered.",
+            "Set a small goal, such as one conversation that lasts two minutes. It is easier to begin than to aim for a great chat.",
+            "Treat a skip as information, not rejection. People skip for all sorts of reasons, including their own nerves.",
+            "End on your terms. \"Nice talking to you, good luck with the exam\" is a complete goodbye."
           ]
         },
         {
@@ -381,6 +404,7 @@
           "paragraphs": [
             "Talking to strangers is a low-pressure way to practise conversation. Nobody you know is watching, and if a chat does not go well you can simply move on. People use random chat to beat boredom, to hear how life looks in another country, to practise a language with native speakers, or just to have a conversation they could never have predicted.",
             "Research backs this up. In a study of Chicago commuters, people asked to talk to a stranger reported a more pleasant journey than people asked to keep to themselves, even though most predicted the opposite ([Epley & Schroeder, 2014](https://doi.org/10.1037/a0037323)). Another study found people felt happier on days when they talked with more casual acquaintances, not just close friends ([Sandstrom & Dunn, 2014](https://doi.org/10.1177/0146167214529799)). Both studies looked at face-to-face conversations, not video chat, but the lesson carries over: a short chat with someone new tends to go better than you expect.",
+            "It also tends to go better than it feels. Researchers found that after a first conversation, people consistently underestimate how much the other person liked them, which they call the \"liking gap\" ([Boothby et al., 2018](https://doi.org/10.1177/0956797618783714)). If a chat felt awkward to you, it probably felt fine to them.",
             "On Vibelly you can start a free video or text chat in your browser, with no app to install. You confirm you are 18 or older before every chat, and you can skip to someone new at any time."
           ]
         }
@@ -400,10 +424,10 @@
         {
           "h2": "What is and is not stored",
           "bullets": [
-            "Random chats: video and voice connect directly between browsers, encrypted in transit, and are never recorded. Random text chat messages are relayed and not stored.",
+            "Random chats: video and voice connect directly between browsers, encrypted in transit, and are never recorded. Random text chat messages are relayed and not stored. A basic record of each random call (the two participants, call type, video quality and length) is kept for 24 hours to help with abuse reports, then deleted automatically.",
             "If you sign in: your name, username, email, and profile image from Google or GitHub, the gender and country you choose, your Premium status, and any reports you make or receive.",
             "Direct messages between signed-in users: the last 25 per conversation are kept for up to 24 hours, then deleted.",
-            "Payments are handled by Razorpay. Vibelly never sees your card or bank details.",
+            "Payments are handled by Razorpay. Vibelly never receives your card details.",
             "Your IP address is visible to the other person during a peer-to-peer call."
           ],
           "paragraphs": [
@@ -442,7 +466,7 @@
     },
     {
       "question": "How do I talk to strangers safely?",
-      "answer": "Click Start Video Call, confirm you are 18 or older, and you are matched with a random stranger. Video and voice calls are encrypted in transit and never recorded, and random chats are not stored. Never share personal details, and skip anyone who makes you uncomfortable. Reporting requires signing in with Google or GitHub, so reports are tied to real accounts."
+      "answer": "Click Start Video Call, confirm you are 18 or older, and you are matched with a random stranger. Video and voice calls are encrypted in transit and never recorded, and random chat content is not stored. Never share personal details, and skip anyone who makes you uncomfortable. Reporting requires signing in with Google or GitHub, so reports are tied to real accounts."
     },
     {
       "question": "Is this random video chat anonymous?",

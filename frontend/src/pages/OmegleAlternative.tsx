@@ -172,7 +172,7 @@ export default function OmegleAlternative() {
               heading: 'Why Omegle shut down — and why people still search for it',
               paragraphs: [
                 "Omegle was one of the internet's most famous places to talk to strangers. For more than a decade, millions of users opened their browsers to be matched randomly with someone on the other side of the world. In November 2023, the site went dark: the founder said the platform had become unsustainable to run, largely because of the cost of keeping the community safe ([Omegle's closing letter](https://www.omegle.com/), [Wikipedia](https://en.wikipedia.org/wiki/Omegle)).",
-                "The shutdown left a huge gap. People who grew up using free random video chat were suddenly looking for an Omegle alternative that keeps the same idea, meeting someone completely new with one click, without the moderation problems that killed the original. That is exactly the gap Vibelly was built to fill.",
+                "The full story is in [What Happened to Omegle?](/blog/what-happened-to-omegle). The shutdown left a huge gap. People who grew up using free random video chat were suddenly looking for an Omegle alternative that keeps the same idea, meeting someone completely new with one click, without the moderation problems that killed the original. That is exactly the gap Vibelly was built to fill.",
                 "A good Omegle alternative today needs three things: it must be free, it must not demand an account, and it must act on reports. Vibelly was built around all three from day one.",
               ],
             },
@@ -225,7 +225,7 @@ export default function OmegleAlternative() {
           },
           {
             question: "Is Vibelly safe to use?",
-            answer: "Vibelly is 18+ only. Every call has a one-tap Report button (sign-in required), every report is reviewed by hand, signed-in accounts that break the rules are banned, and random chats are not stored."
+            answer: "Vibelly is 18+ only. Every call has a one-tap Report button (sign-in required), every report is reviewed by hand, signed-in accounts that break the rules are banned, and random chat content is not stored."
           },
           {
             question: "Can I use Vibelly on my phone?",
