@@ -12,7 +12,7 @@ export default function About() {
   return (
     <div className="min-h-screen bg-[#15171B] text-white font-sans flex flex-col relative">
       <SEO
-        title="About Vibelly | Who Runs Vibelly"
+        title="About Vibelly: Who Runs It and How It Is Funded"
         description="Vibelly is a free, adults-only random video chat built and run by Naimish Omar. Who runs it, how it is funded, and how we approach safety."
         canonicalUrl="/about"
       />

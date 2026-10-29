@@ -57,7 +57,7 @@ export default function BlogPost() {
   return (
     <div className="min-h-screen bg-[#15171B] text-white flex flex-col font-sans">
       <SEO 
-        title={`${post.title} | Vibelly Blog`}
+        title={post.title}
         description={post.description}
         canonicalUrl={`/blog/${post.slug}`}
         type="article"

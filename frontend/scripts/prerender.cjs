@@ -45,6 +45,7 @@ const SITE_GRAPH = [
     email: 'vibellyofficial@gmail.com',
     contactPoint: { '@type': 'ContactPoint', contactType: 'customer support', email: 'vibellyofficial@gmail.com' },
     sameAs: ['https://instagram.com/vibelly.official'],
+    address: { '@type': 'PostalAddress', addressCountry: 'IN' },
     founder: { '@id': `${siteUrl}/about#founder` },
   },
   {
@@ -78,10 +79,10 @@ const SITE_GRAPH = [
     operatingSystem: 'Any (web browser)',
     browserRequirements: 'Requires JavaScript and WebRTC',
     offers: [
-      { '@type': 'Offer', availability: 'https://schema.org/InStock', url: `${siteUrl}/pricing`, name: 'Free', description: 'Random video (480p) and text chat, free forever', price: '0', priceCurrency: 'INR' },
-      { '@type': 'Offer', availability: 'https://schema.org/InStock', url: `${siteUrl}/pricing`, name: 'Premium (1 day)', description: '24-hour pass, one-time payment, no auto-renewal', eligibleDuration: { '@type': 'QuantitativeValue', value: 1, unitCode: 'DAY' }, price: '9', priceCurrency: 'INR' },
-      { '@type': 'Offer', availability: 'https://schema.org/InStock', url: `${siteUrl}/pricing`, name: 'Premium (monthly)', description: '30 days, one-time payment, no auto-renewal', eligibleDuration: { '@type': 'QuantitativeValue', value: 30, unitCode: 'DAY' }, price: '49', priceCurrency: 'INR' },
-      { '@type': 'Offer', availability: 'https://schema.org/InStock', url: `${siteUrl}/pricing`, name: 'Premium (yearly)', description: '365 days, one-time payment, no auto-renewal', eligibleDuration: { '@type': 'QuantitativeValue', value: 365, unitCode: 'DAY' }, price: '499', priceCurrency: 'INR' },
+      { '@type': 'Offer', seller: { '@id': `${siteUrl}/#org` }, availability: 'https://schema.org/InStock', url: `${siteUrl}/pricing`, name: 'Free', description: 'Random video (480p) and text chat, free forever', price: '0', priceCurrency: 'INR' },
+      { '@type': 'Offer', seller: { '@id': `${siteUrl}/#org` }, availability: 'https://schema.org/InStock', url: `${siteUrl}/pricing`, name: 'Premium (1 day)', description: '24-hour pass, one-time payment, no auto-renewal', eligibleDuration: { '@type': 'QuantitativeValue', value: 1, unitCode: 'DAY' }, price: '9', priceCurrency: 'INR' },
+      { '@type': 'Offer', seller: { '@id': `${siteUrl}/#org` }, availability: 'https://schema.org/InStock', url: `${siteUrl}/pricing`, name: 'Premium (30 days)', description: '30 days, one-time payment, no auto-renewal', eligibleDuration: { '@type': 'QuantitativeValue', value: 30, unitCode: 'DAY' }, price: '49', priceCurrency: 'INR' },
+      { '@type': 'Offer', seller: { '@id': `${siteUrl}/#org` }, availability: 'https://schema.org/InStock', url: `${siteUrl}/pricing`, name: 'Premium (yearly)', description: '365 days, one-time payment, no auto-renewal', eligibleDuration: { '@type': 'QuantitativeValue', value: 365, unitCode: 'DAY' }, price: '499', priceCurrency: 'INR' },
     ],
     publisher: { '@id': `${siteUrl}/#org` },
   },
@@ -106,13 +107,13 @@ const HOME = {
         'Free random video chat in any browser, with no app to download',
         'Text chat with strangers when you would rather not be on camera',
         'Voice-only calls plus gender and country filters with Vibelly Premium',
-        'Group chats and live streams with the Vibelly community',
+        'Groups and live streams for signed-in members, with paid streams only from verified creators',
       ],
     },
     {
       h2: 'Safety on Vibelly',
       paragraphs: [
-        'Vibelly is strictly 18+. Every call has a Report button; reporting requires signing in, reports are reviewed by hand, and signed-in accounts that break the community rules are banned. Video and voice calls connect directly between browsers over encrypted WebRTC, and calls are never recorded.',
+        'Vibelly is strictly 18+. Every call has a Report button; reporting requires signing in, reports are reviewed by hand, and signed-in accounts that break the community rules are banned. Only signed-in users can be reported, so skip a guest who breaks the rules. Video and voice calls connect directly between browsers over encrypted WebRTC, and calls are never recorded.',
       ],
     },
   ],
@@ -122,11 +123,11 @@ const HOME = {
 const APP_PAGES = {
   pricing: {
     title: 'Vibelly Premium Pricing: ₹9 a Day, ₹49 a Month, ₹499 a Year',
-    description: 'Vibelly Premium adds gender and country filters, 720p HD video, and voice calls. ₹49 a month, ₹499 a year, or ₹9 for a single day.',
+    description: 'Vibelly Premium adds gender and country filters, 720p HD video, and voice calls. ₹9 for a day, ₹49 for 30 days, or ₹499 a year.',
     h1: 'Vibelly Premium Pricing',
     sections: [
       { h2: 'Free vs Premium at a glance', table: PAGES.pricingTable },
-      { h2: 'What do you get for free?', bullets: ['Random video chat at 480p', 'Text chat with strangers', 'Unlimited sessions', 'One-tap reporting (sign-in required)'] },
+      { h2: 'What do you get for free?', bullets: ['Random video chat at 480p', 'Text chat with strangers', 'Unlimited sessions', 'One-tap reporting (sign-in required), see [Safety & Community Rules](/safety)'] },
       {
         h2: 'What does Premium cost? ₹49 for 30 days or ₹499 for a year',
         bullets: ['Gender filters', 'HD video calls (720p)', 'Random voice calls', 'Country filters'],
@@ -158,13 +159,13 @@ const APP_PAGES = {
   },
   terms: {
     title: 'Terms of Service & Privacy Policy | Vibelly',
-    description: 'Read the terms of service and privacy policy for Vibelly. See what we store and how we use it.',
-    h1: 'Terms & Conditions',
+    description: 'Vibelly terms of service and privacy policy: the rules for using Vibelly, Premium purchases, what data we store, and how to delete it.',
+    h1: 'Terms of Service & Privacy Policy',
     lead: `Last updated ${PAGES.terms.updated}. ${PAGES.terms.intro}`,
     sections: PAGES.terms.sections,
   },
   about: {
-    title: 'About Vibelly | Who Runs Vibelly',
+    title: 'About Vibelly: Who Runs It and How It Is Funded',
     description:
       'Vibelly is a free, adults-only random video chat built and run by Naimish Omar. Who runs it, how it is funded, and how we approach safety.',
     h1: 'About Vibelly',
@@ -188,7 +189,7 @@ const CORE_COPY = {
     description:
       'Looking for an Omegle alternative? Vibelly is free random video and text chat for adults 18+, with no account needed to start chatting.',
     h1: 'Omegle Alternative for Adults, No Account Needed',
-    lead: 'Omegle closed in November 2023. Vibelly is a free random video and text chat for adults 18+ that runs in your browser with no account needed to chat. Free video is 480p; Premium adds 720p HD, voice calls, and gender and country filters from ₹49 a month.',
+    lead: 'Omegle closed in November 2023. Vibelly is a free random video and text chat for adults 18+ that runs in your browser with no account needed to chat. Free video is 480p; Premium adds 720p HD, voice calls, and gender and country filters from ₹9 a day.',
     sections: [
       {
         h2: 'Why Omegle shut down and what replaced it',
@@ -221,7 +222,7 @@ const CORE_COPY = {
     faqs: [
       { q: 'Is Vibelly a good alternative to Omegle?', a: 'Vibelly offers free random video and text chat in your browser, an 18+ policy, and one-tap reporting (sign-in required), with no account needed to chat. Our blog has a sourced comparison of other options.' },
       { q: 'Do I need to sign up to use Vibelly?', a: 'No account is needed to chat. Just click start and connect with strangers worldwide. Reporting, Premium, and direct messages use a Google or GitHub sign-in.' },
-      { q: 'Is Vibelly safe to use?', a: 'Vibelly is 18+ only. Every call has a one-tap Report button (sign-in required), every report is reviewed by hand, signed-in accounts that break the rules are banned, and random chat content is not stored.' },
+      { q: 'Is Vibelly safe to use?', a: 'Vibelly is 18+ only. Every call has a one-tap Report button (sign-in required), every report is reviewed by hand, signed-in accounts that break the rules are banned, and random chat content is not stored. Guests cannot be reported, so skip a guest who breaks the rules.' },
       { q: 'Can I use Vibelly on my phone?', a: 'Yes. Vibelly works in any modern mobile browser, on iPhone or Android, with no app to download.' },
     ],
   },
@@ -267,7 +268,7 @@ const CORE_COPY = {
   'random-video-chat': {
     title: 'What Is Random Video Chat? How It Works and Staying Safe | Vibelly',
     description:
-      'Free random video chat in your browser for adults 18+. Meet strangers instantly with no login: what it is, how it works, and how to stay safe.',
+      'What random video chat is, how matching and WebRTC calls work, what is stored, and how to stay safe. A guide for adults 18+.',
     h1: 'What Is Random Video Chat?',
     lead: 'Random video chat pairs you with a stranger for a live one-to-one call. This guide explains how it works on Vibelly, what is and is not stored, and how to stay safe. Vibelly is free for adults 18+, runs in your browser, and needs no account to chat.',
     sections: [
@@ -293,14 +294,14 @@ const CORE_COPY = {
       {
         h2: 'How to stay safe during random video chat',
         paragraphs: [
-          'Every call has a one-tap Report button (sign-in required), and every report is reviewed by hand. Random chat content is not stored: when you skip or end a call, the conversation is gone.',
+          'Every call has a one-tap Report button (sign-in required), and every report is reviewed by hand. Only signed-in users can be reported, so skip a guest who breaks the rules. Random chat content is not stored: when you skip or end a call, the conversation is gone.',
           'Never share personal financial information, keep your location vague, and trust your instincts. Skipping to a new person is always one click away.',
         ],
       },
     ],
     faqs: [
       { q: 'Do I need to sign up?', a: 'No account is needed to start a random video chat. Reporting, Premium, and direct messages use a Google or GitHub sign-in.' },
-      { q: 'Is it safe to use?', a: 'Vibelly is 18+ only, every call has a one-tap Report button (sign-in required) reviewed by hand, and random chat content is not stored.' },
+      { q: 'Is it safe to use?', a: 'Vibelly is 18+ only, every call has a one-tap Report button (sign-in required) reviewed by hand, and random chat content is not stored. Only signed-in users can be reported, so skip a guest who breaks the rules.' },
       { q: 'Can I use it on my phone?', a: 'Yes. Vibelly works in any modern mobile browser, on iPhone or Android, with no app to download.' },
       { q: 'Is random video chat really free?', a: 'Yes. Core random video chat is completely free with no time limits or hidden charges.' },
     ],
@@ -308,12 +309,12 @@ const CORE_COPY = {
   'chatroulette-alternative': {
     title: 'Chatroulette Alternative for Adults (18+) | Vibelly',
     description:
-      'Looking for a modern Chatroulette alternative? Vibelly offers free random video and text chat for adults 18+, with no account needed to start.',
+      'Looking for a Chatroulette alternative? Vibelly offers free random video and text chat for adults 18+, with no account needed to start.',
     h1: 'The Modern Chatroulette Alternative',
     lead: 'Vibelly is a free Chatroulette alternative for adults 18+. Random video (480p) and text chat run in your browser with no account needed, every call has a Report button for signed-in users, and Premium adds country and gender filters, 720p HD, and voice calls.',
     sections: [
       {
-        h2: 'Why Vibelly is the modern Chatroulette upgrade',
+        h2: 'Why try Vibelly instead of Chatroulette',
         paragraphs: [
           'Vibelly is built on modern WebRTC for fast, direct video connections, with an 18+ policy and one-tap reporting (sign-in required) reviewed by hand.',
         ],
@@ -333,7 +334,7 @@ const CORE_COPY = {
     ],
     faqs: [
       { q: 'Is Vibelly a good Chatroulette alternative?', a: 'Yes. Vibelly offers instant matching, WebRTC video, and a modern interface, as an independent alternative to Chatroulette.' },
-      { q: 'How does Vibelly handle bad behavior?', a: 'Every call has a one-tap Report button (sign-in required). Reports are reviewed by hand, and signed-in accounts that break the rules are banned.' },
+      { q: 'How does Vibelly handle bad behavior?', a: 'Every call has a one-tap Report button (sign-in required). Reports are reviewed by hand, and signed-in accounts that break the rules are banned. Only signed-in users can be reported, so skip a guest who breaks the rules.' },
       { q: 'Do I need to download an app?', a: 'No. Vibelly works right in your browser on desktop and mobile.' },
     ],
   },
@@ -372,7 +373,7 @@ const CORE_COPY = {
     ],
     faqs: [
       { q: 'Is Vibelly anonymous?', a: 'You do not need an account to chat, and random chat messages are not kept after a call ends. As with any peer-to-peer video call, the other person can see your IP address, which can reveal your approximate location.' },
-      { q: 'Is anonymous chat safe?', a: 'Vibelly is 18+ only, every call has a one-tap Report button (sign-in required), and random chat content is not stored. Never share personal details with strangers.' },
+      { q: 'Is anonymous chat safe?', a: 'Vibelly is 18+ only, every call has a one-tap Report button (sign-in required), and random chat content is not stored. Only signed-in users can be reported, so skip a guest who breaks the rules. Never share personal details with strangers.' },
     ],
   },
 };
@@ -416,7 +417,7 @@ function pageGraph(slug, title, description, faqs, crumbs = [], pageType = 'WebP
       '@type': pageType,
       '@id': `${url}#webpage`,
       url,
-      name: title,
+      name: title.split(' | ')[0],
       description,
       isPartOf: { '@id': `${siteUrl}/#website` },
       about: { '@id': `${siteUrl}/#app` },
@@ -446,14 +447,14 @@ function pageGraph(slug, title, description, faqs, crumbs = [], pageType = 'WebP
 }
 
 const NAV_LINKS = [
+  ['/', 'Vibelly: free random video chat'],
   ...Object.entries(CORE_COPY).map(([slug, c]) => [`/${slug}`, c.h1]),
   ['/safety', 'Safety & Community Rules'],
   ['/about', 'About Vibelly'],
   ['/pricing', 'Vibelly Premium pricing'],
   ['/contact', 'Contact Vibelly'],
   ['/terms', 'Terms & Privacy Policy'],
-  ['/blog/omegle-alternatives-compared', 'Omegle Alternatives Compared'],
-  ['/blog/how-to-start-a-conversation-with-a-stranger', 'How to Start a Conversation With a Stranger'],
+  ...BLOG_POSTS.map((p) => [`/blog/${p.slug}`, p.title]),
   ['/blog', 'Vibelly Blog: tips & guides'],
 ];
 
@@ -560,7 +561,7 @@ function write(relPath, html) {
 // ─── Write all pages ───
 const sitemapPaths = [];
 // Real content dates only (blog posts, Safety, Terms); other pages carry no <lastmod>.
-const lastmod = { '/safety': PAGES.safety.updated, '/terms': PAGES.terms.updated };
+const lastmod = { '/safety': PAGES.safety.updated, '/terms': PAGES.terms.updated, '/pricing': PAGES.pricingUpdated };
 
 // Shells first: both are built from the untouched template.
 write('app.html', render(headBlock({ title: 'Vibelly', robots: 'noindex, follow' })));
@@ -616,10 +617,12 @@ for (const [slug, core] of Object.entries(CORE_COPY)) {
 
 for (const [slug, page] of Object.entries(APP_PAGES)) {
   const url = `${siteUrl}/${slug}`;
+  const graph = pageGraph(slug, page.title, page.description, null, [], page.pageType);
+  if (lastmod[`/${slug}`]) graph.find((n) => n['@id'] === `${url}#webpage`).dateModified = lastmod[`/${slug}`];
   write(
     `${slug}/index.html`,
     render(
-      headBlock({ title: page.title, description: page.description, url, graph: pageGraph(slug, page.title, page.description, null, [], page.pageType) }),
+      headBlock({ title: page.title, description: page.description, url, graph }),
       buildBody({ h1: page.h1, lead: page.lead || page.description, sections: page.sections, faqs: page.faqs }, `/${slug}`)
     )
   );
@@ -645,7 +648,7 @@ for (const [slug, page] of Object.entries(APP_PAGES)) {
 for (const post of BLOG_POSTS) {
   const slug = `blog/${post.slug}`;
   const url = `${siteUrl}/${slug}`;
-  const title = `${post.title} | Vibelly Blog`;
+  const title = post.title;
   const graph = pageGraph(slug, title, post.description, null, [['Blog', `${siteUrl}/blog`]]);
   graph.find((n) => n['@id'] === `${url}#webpage`).mainEntity = { '@id': `${url}#article` };
   graph.push({

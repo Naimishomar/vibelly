@@ -35,6 +35,13 @@
         ]
       },
       {
+        "h2": "Live streams, groups, and creators",
+        "paragraphs": [
+          "Besides random chat, signed-in members can join groups and watch live streams from other members. A stream connects viewers directly to the creator's browser, with up to 10 viewers per stream, and every stream has a Report button for reporting the creator.",
+          "Creators can set a price for a stream. Only creators who have been verified by hand, with a selfie and an ID document, can run paid streams. Viewers pay the creator through Razorpay or UPI, and Vibelly keeps a share. These payments are separate from Vibelly Premium, and the same community rules apply to every stream."
+        ]
+      },
+      {
         "h2": "Staying safe with strangers",
         "bullets": [
           "Never share your full name, address, school, workplace, or financial details.",
@@ -118,25 +125,33 @@
       {
         "h2": "Who runs Vibelly",
         "paragraphs": [
-          "Vibelly is built and run by Naimish Omar, an independent developer. Naimish started Vibelly after Omegle shut down in November 2023, to offer random video chat that keeps the fun of meeting strangers while taking safety seriously."
+          "Vibelly is built and run by Naimish Omar, an independent developer based in India. Naimish started Vibelly after Omegle shut down in November 2023, to offer random video chat that keeps the fun of meeting strangers while taking safety seriously."
         ]
       },
       {
         "h2": "What Vibelly is",
         "paragraphs": [
           "Vibelly is a free random video chat that runs in your browser. You press start and are matched with a stranger for a video or text chat, with no app to install and no account needed to chat.",
-          "Vibelly Premium is an optional paid plan. It adds gender and country filters, 720p HD video, and voice-only calls, Vibelly is funded by Premium and by a share of the payments viewers make to creators during live streams."
+          "Vibelly Premium is an optional paid plan. It adds gender and country filters, 720p HD video, and voice-only calls. Signed-in members can also join groups and watch live streams from verified creators; see Safety & Community Rules for how streams and creator payments work."
         ]
       },
       {
         "h2": "How we approach safety",
         "bullets": [
           "Vibelly is strictly for adults. You confirm you are 18 or older before every chat.",
-          "Every call has a Report button. Reporting requires signing in with Google or GitHub; reports are reviewed by hand, and signed-in accounts that break the rules are banned.",
+          "Every call has a Report button. Reporting requires signing in with Google or GitHub; reports are reviewed by hand, and signed-in accounts that break the rules are banned. Only signed-in users can be reported, so skip a guest who breaks the rules.",
           "Calls connect directly between browsers over encrypted WebRTC and are never recorded."
         ],
         "paragraphs": [
           "Read the Safety & Community Rules for the full details."
+        ]
+      },
+      {
+        "h2": "How Vibelly runs",
+        "paragraphs": [
+          "The website is hosted on Vercel. A matching server pairs people who are waiting, and calls then connect directly between the two browsers over WebRTC, with a relay server only when a direct connection is not possible.",
+          "Reports land in an admin dashboard and are reviewed by hand; there is no automated AI moderation. Accounts that break the rules are banned from the same dashboard.",
+          "Vibelly is funded by Premium passes (₹9 for a day, ₹49 for 30 days, or ₹499 a year, all one-time payments through Razorpay) and by a share of the payments viewers make to creators during live streams. There are no ads."
         ]
       },
       {
@@ -156,7 +171,7 @@
           "paragraphs": [
             "Omegle closed in November 2023. Vibelly keeps the same idea, a random one-to-one chat with a stranger, and changes the rules around it.",
             "You confirm you are 18 or older before every chat. You can start a video or text chat in your browser without an account. Free video runs at 480p; Vibelly Premium adds gender and country filters, 720p HD video, and voice-only calls.",
-            "Every call has a Report button. Reporting requires you to be signed in, so reports are tied to real accounts, and every report is reviewed by hand. Calls are encrypted in transit and never recorded, but as with any peer-to-peer call, the other person can see your IP address.",
+            "Every call has a Report button. Reporting requires you to be signed in, so reports are tied to real accounts, and every report is reviewed by hand. Only signed-in users can be reported, so skip a guest who breaks the rules. Calls are encrypted in transit and never recorded, but as with any peer-to-peer call, the other person can see your IP address.",
             "Want to compare options first? Our blog compares nine Omegle alternatives, including Vibelly, with sources for every claim."
           ]
         },
@@ -174,7 +189,7 @@
               "Vibelly",
               "18+, confirmed before every chat",
               "Not needed",
-              "Free; Premium from ₹49 a month",
+              "Free; Premium from ₹9 a day",
               "Report button (sign-in), reviewed by hand"
             ],
             [
@@ -249,7 +264,7 @@
             [
               "Cost",
               "Free; paid VIP Lounge on Android",
-              "Free; Premium from ₹49 a month"
+              "Free; Premium from ₹9 a day"
             ],
             [
               "Gender filter",
@@ -272,11 +287,11 @@
       "updated": "2026-10-29",
       "sections": [
         {
-          "h2": "Vibelly and Chatroulette compared",
+          "h2": "What Vibelly offers instead of Chatroulette",
           "paragraphs": [
             "Chatroulette launched in 2009 and is free, including a country filter. Vibelly is newer and smaller, so there may be fewer people online at quiet times.",
-            "What Vibelly offers: random video and text chat in your browser with no account needed, an age confirmation before every chat, and a Report button on every call. Reporting requires signing in, and reports are reviewed by hand. Vibelly does not use automated AI moderation.",
-            "On Vibelly, filters are paid: Premium adds gender and country filters, 720p HD video, and voice-only calls, from ₹49 a month. Free video runs at 480p.",
+            "What Vibelly offers: random video and text chat in your browser with no account needed, an age confirmation before every chat, and a Report button on every call. Reporting requires signing in, reports are reviewed by hand, and only signed-in users can be reported. Vibelly does not use automated AI moderation.",
+            "On Vibelly, filters are paid: Premium adds gender and country filters, 720p HD video, and voice-only calls, from ₹9 a day or ₹49 for 30 days. Free video runs at 480p.",
             "For more options side by side, see our comparison of nine Omegle alternatives, which includes Chatroulette."
           ]
         },
@@ -284,7 +299,7 @@
           "h2": "Why people look for a Chatroulette alternative",
           "paragraphs": [
             "Chatroulette launched in November 2009 and is still running. Most people looking for an alternative want one of three things: a different crowd, a site that works without an app, or stricter rules about who can join.",
-            "Age checks are the hard part for every service. An October 2025 [LBC investigation](https://www.lbc.co.uk/news/exclusive/video-chatrooms-british-children/) reported that Chatroulette did not require proof of age. Vibelly does not check ID either: you confirm you are 18 or older before every chat, and signed-in accounts found to belong to minors are banned. If proof of age matters to you, note that none of the services we compared state that they verify ID."
+            "Age checks are the hard part for every service. An October 2025 [LBC investigation](https://www.lbc.co.uk/article/video-chatrooms-british-children-5HjdF9B_2/) reported that Chatroulette did not require proof of age. Vibelly does not check ID either: you confirm you are 18 or older before every chat, and signed-in accounts found to belong to minors are banned. If proof of age matters to you, note that none of the services we compared state that they verify ID."
           ]
         },
         {
@@ -359,16 +374,10 @@
       "updated": "2026-10-29",
       "sections": [
         {
-          "h2": "Conversation starters that work",
-          "bullets": [
-            "\"Where are you calling from?\" Easy to answer, and it leads somewhere.",
-            "\"What is the time where you are?\" A natural follow-up that often turns into a story.",
-            "\"What is something you are into that most people do not know about?\"",
-            "\"What food from your country should I try?\"",
-            "Notice something real: a poster, a guitar, a view. It shows you are paying attention."
-          ],
+          "h2": "How to open a conversation with a stranger",
           "paragraphs": [
-            "After they answer, share something of your own so it feels like a conversation, not an interview. If the chat is not clicking, say \"nice talking to you\" and skip. Our guide How to Start a Conversation With a Stranger has more ideas."
+            "Open with a simple question about the other person's day or place, then share something of your own so it feels like a conversation, not an interview. If the chat is not clicking, say \"nice talking to you\" and skip.",
+            "For a full list of opening lines and follow-ups, read [How to Start a Conversation With a Stranger](/blog/how-to-start-a-conversation-with-a-stranger)."
           ]
         },
         {
@@ -462,11 +471,11 @@
   "homeFaqs": [
     {
       "question": "Is Vibelly free?",
-      "answer": "Yes. Random video chat (480p) and text chat are free for adults 18+, with no account needed to chat. Vibelly Premium adds gender and country filters, 720p HD video, and voice-only calls, from ₹49 a month."
+      "answer": "Yes. Random video chat (480p) and text chat are free for adults 18+, with no account needed to chat. Vibelly Premium adds gender and country filters, 720p HD video, and voice-only calls, from ₹9 a day or ₹49 for 30 days."
     },
     {
       "question": "How do I talk to strangers safely?",
-      "answer": "Click Start Video Call, confirm you are 18 or older, and you are matched with a random stranger. Video and voice calls are encrypted in transit and never recorded, and random chat content is not stored. Never share personal details, and skip anyone who makes you uncomfortable. Reporting requires signing in with Google or GitHub, so reports are tied to real accounts."
+      "answer": "Click Start Video Call, confirm you are 18 or older, and you are matched with a random stranger. Video and voice calls are encrypted in transit and never recorded, and random chat content is not stored. Never share personal details, and skip anyone who makes you uncomfortable. Reporting requires signing in with Google or GitHub, and only signed-in users can be reported, so skip a guest who breaks the rules."
     },
     {
       "question": "Is this random video chat anonymous?",
@@ -497,6 +506,10 @@
     {
       "question": "Do I need an account to buy Premium?",
       "answer": "Yes. Premium is tied to your Google or GitHub sign-in so it works on any device you sign in on. Free random chat never needs an account."
+    },
+    {
+      "question": "Are live-stream payments part of Premium?",
+      "answer": "No. Paid live streams are priced by verified creators, and viewers pay the creator directly through Razorpay or UPI, with Vibelly keeping a share. Premium does not include paid streams. The Safety & Community Rules page explains how streams work."
     }
   ],
   "contact": {
@@ -576,5 +589,6 @@
       "No",
       "No"
     ]
-  ]
+  ],
+  "pricingUpdated": "2026-10-29"
 }

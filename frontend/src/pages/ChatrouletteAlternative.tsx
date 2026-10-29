@@ -56,7 +56,7 @@ export default function ChatrouletteAlternative() {
     <div className="min-h-screen bg-[#15171B] text-white flex flex-col font-sans">
       <SEO 
         title="Chatroulette Alternative for Adults (18+) | Vibelly" 
-        description="Looking for a modern Chatroulette alternative? Vibelly offers free random video and text chat for adults 18+, with no account needed to start."
+        description="Looking for a Chatroulette alternative? Vibelly offers free random video and text chat for adults 18+, with no account needed to start."
         canonicalUrl="/chatroulette-alternative"
       />
       <BlinkingDotsGrid />
@@ -174,7 +174,7 @@ export default function ChatrouletteAlternative() {
           },
           {
             question: "How does Vibelly handle bad behavior?",
-            answer: "Every call has a Report button. Reporting requires signing in, every report is reviewed by hand, and signed-in accounts that break the rules are banned."
+            answer: "Every call has a Report button. Reporting requires signing in, every report is reviewed by hand, and signed-in accounts that break the rules are banned. Only signed-in users can be reported, so skip a guest who breaks the rules."
           },
           {
             question: "Do I need to download an app?",

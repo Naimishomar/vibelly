@@ -4,7 +4,7 @@ import ProductHuntBadge from './ProductHuntBadge';
 
 export default function Footer() {
   return (
-    <div className="w-full px-4 md:px-6 pb-8 mt-12">
+    <div className="w-full px-4 md:px-6 pb-24 md:pb-8 mt-12">
       <footer className="w-full max-w-7xl mx-auto bg-[#15171B] border border-white/10 rounded-[2rem] py-12 px-8 lg:px-12 text-sm relative z-10 shadow-[0_20px_60px_rgba(0,0,0,0.5)]">
         <div className="grid grid-cols-1 md:grid-cols-5 gap-10">
         

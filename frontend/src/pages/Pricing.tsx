@@ -202,6 +202,20 @@ export default function Pricing() {
       ],
     },
     {
+      name: 'Daily',
+      subtitle: 'Try premium for a day',
+      price: '₹9',
+      period: '/day',
+      highlight: false,
+      buttonText: 'Get started',
+      features: [
+        'Everything in Premium',
+        '24 hours of access',
+        'Perfect for testing',
+        'No commitment',
+      ],
+    },
+    {
       name: 'Premium',
       subtitle: 'Filters, HD video, and voice calls',
       price: isAnnual ? '₹499' : '₹49',
@@ -218,27 +232,13 @@ export default function Pricing() {
         'Unlimited skips',
       ],
     },
-    {
-      name: 'Daily',
-      subtitle: 'Try premium for a day',
-      price: '₹9',
-      period: '/day',
-      highlight: false,
-      buttonText: 'Get started',
-      features: [
-        'Everything in Premium',
-        '24 hours of access',
-        'Perfect for testing',
-        'No commitment',
-      ],
-    },
   ];
 
   return (
     <div className="min-h-screen bg-[#15171B] text-white font-sans flex flex-col relative">
       <SEO 
         title="Vibelly Premium Pricing: ₹9 a Day, ₹49 a Month, ₹499 a Year" 
-        description="Vibelly Premium adds gender and country filters, 720p HD video, and voice calls. ₹49 a month, ₹499 a year, or ₹9 for a single day."
+        description="Vibelly Premium adds gender and country filters, 720p HD video, and voice calls. ₹9 for a day, ₹49 for 30 days, or ₹499 a year."
         canonicalUrl="/pricing"
       />
       {/* ─── Dot Grid ─── */}
@@ -304,9 +304,11 @@ export default function Pricing() {
                 <p className="text-sm text-zinc-400 h-10">{plan.subtitle}</p>
               </div>
 
-              <div className="mb-8">
-                <h2 className="text-3xl font-bold text-white">{plan.name}</h2>
-              </div>
+              {plan.name === 'Free' && (
+                <div className="mb-8">
+                  <span className="text-4xl font-bold">{plan.price}</span>
+                </div>
+              )}
 
               {plan.name === 'Free' && (
                  <div className="w-full bg-zinc-800/50 border border-white/5 text-center text-sm font-medium py-3 rounded-lg mb-8">

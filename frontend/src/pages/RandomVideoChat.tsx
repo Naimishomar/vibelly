@@ -58,7 +58,7 @@ export default function RandomVideoChat() {
     <div className="min-h-screen bg-[#15171B] text-white flex flex-col font-sans">
       <SEO 
         title="What Is Random Video Chat? How It Works and Staying Safe | Vibelly" 
-        description="Free random video chat in your browser for adults 18+. Meet strangers instantly with no login: what it is, how it works, and how to stay safe."
+        description="What random video chat is, how matching and WebRTC calls work, what is stored, and how to stay safe. A guide for adults 18+."
         canonicalUrl="/random-video-chat"
       />
       <BlinkingDotsGrid />
@@ -162,7 +162,7 @@ export default function RandomVideoChat() {
               heading: 'How to stay safe during random video chat',
               paragraphs: [
                 'Safety is the number one concern with any random video chat platform, and it is the reason Vibelly was built with moderation as a first-class feature rather than an afterthought.',
-                'Every call has a one-tap Report button (sign-in required), and reports are reviewed by hand. Random chat content is not stored: the moment you skip or end a call, the conversation is gone.',
+                'Every call has a one-tap Report button (sign-in required), and reports are reviewed by hand. Only signed-in users can be reported, so skip a guest who breaks the rules. Random chat content is not stored: the moment you skip or end a call, the conversation is gone.',
                 'As with any stranger chat, the golden rules are simple: never share personal financial information, keep your location vague, and trust your instincts — if a conversation feels wrong, skip to the next person. Vibelly makes that a single click.',
               ],
             },
@@ -198,7 +198,7 @@ export default function RandomVideoChat() {
           },
           {
             question: "Is it safe to use?",
-            answer: "Vibelly is strictly 18+. Every call has a Report button; reporting requires signing in, every report is reviewed by hand, and signed-in accounts that break the rules are banned."
+            answer: "Vibelly is strictly 18+. Every call has a Report button; reporting requires signing in, every report is reviewed by hand, and signed-in accounts that break the rules are banned. Only signed-in users can be reported, so skip a guest who breaks the rules."
           },
           {
             question: "Can I use it on my phone?",

@@ -94,7 +94,7 @@ export default function CurvedCarousel() {
                 <div className="relative w-full h-full rounded-[28px] md:rounded-[38px] overflow-hidden bg-zinc-900 border border-white/10">
                   <img 
                     src={item.image} 
-                    alt={item.title}
+                    alt="Phone screen showing a random video chat match"
                     loading="lazy"
                     decoding="async"
                     className="w-full h-full object-cover"
